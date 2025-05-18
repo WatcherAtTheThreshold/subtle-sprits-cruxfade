@@ -84,7 +84,7 @@ h1 {
   border: 2px solid #888;
 }
 .card.defeated {
-  opacity: 0;
+  opacity: 0.3;
   transform: scale(0.9);
   transition: opacity 1s ease-out, transform 1s ease-out;
   pointer-events: none;
