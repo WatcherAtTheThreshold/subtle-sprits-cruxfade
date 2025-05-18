@@ -1,9 +1,5 @@
 
-/* styles.css — Final Responsive Layout
-   - Tighter mobile spacing
-   - Extra card scaling on small screens
-   - Button text color locked to #222
-*/
+/* styles.css — Final Responsive Layout with Polished Effects */
 
 body {
   margin: 0;
@@ -77,7 +73,6 @@ h1 {
 }
 
 .card {
- /* width: 160px; */
   height: 230px;
   background: #f6f5f1;
   border: 2px solid #aaa;
@@ -112,10 +107,11 @@ h1 {
   background: rgba(255, 255, 255, 0.85);
   padding: 0.2rem 0.6rem;
   border-radius: 4px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
 }
 
-.hp { top: 8px; left: 8px; color: #cc4444;  /* Muted crimson */ }
-.atk { top: 48px; left: 8px; color: #2b5885;  /* Bold ink blue, in harmony with button text */ }
+.hp { top: 8px; left: 8px; color: #cc4444; }
+.atk { top: 48px; left: 8px; color: #2b5885; }
 
 .bust-container {
   display: flex;
@@ -161,37 +157,31 @@ h1 {
 .action-button, .restart-button {
   display: inline-block;
   padding: 1rem 2.5rem;
-  background: #f5a623;  /* Vivid golden amber */
-  color: #2a5b94;        /* Stronger steel blue *//
-  border: none;
+  background: linear-gradient(to bottom, #f5a623, #e0951c);
+  color: #2a5b94;
+  border: 2px solid #d4881f;
+  box-shadow: inset 0 1px 0 #fff5cc, 0 2px 6px rgba(0, 0, 0, 0.2);
   font-weight: bold;
   font-size: 2rem;
   border-radius: 8px;
   cursor: pointer;
   letter-spacing: 1px;
+  animation: flickerPulse 3s ease-in-out infinite;
+  transition: all 0.3s ease-in-out;
+}
+
+@keyframes flickerPulse {
+  0%   { transform: scale(1); background: #f5a623; }
+  50%  { transform: scale(1.025); background: #f7b13f; }
+  100% { transform: scale(1); background: #f5a623; }
 }
 
 .action-button:hover,
 .restart-button:hover {
-  background: #c29d4d; /* darker golden wheat */
+  background: #c29d4d;
   box-shadow: 0 0 12px #d4b15f;
   transform: scale(1.03);
 }
-
-/* Pulse animation */
-@keyframes softPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.025); }
-  100% { transform: scale(1); }
-}
-
-.action-button,
-.restart-button {
-  animation: softPulse 3s ease-in-out infinite;
-  transition: all 0.3s ease-in-out;
-}
-
-
 
 .highlight-turn {
   outline: 3px solid gold;
@@ -254,7 +244,6 @@ h1 {
   background: none;
 }
 
-/* Orientation Tip for Phones */
 @media screen and (max-width: 768px) {
   body::before {
     content: "🔄 Rotate device to landscape for best experience.";
@@ -270,12 +259,10 @@ h1 {
   }
 }
 
-/* Responsive Scaling */
 @media screen and (max-width: 1200px) {
   .board {
     transform: scale(0.9);
   }
-
   .card {
     width: 150px;
   }
@@ -285,7 +272,6 @@ h1 {
   .board {
     transform: scale(0.75);
   }
-
   .card {
     width: 140px;
   }
@@ -295,20 +281,18 @@ h1 {
   .board {
     transform: scale(0.5);
   }
-
   .card {
     width: 120px;
   }
-
   h1 {
     font-size: 1.8rem;
     margin: 0.2rem auto 0.2rem;
   }
-
   .button-controls {
     margin: 0.2rem auto 0.5rem;
   }
 }
+
 @media screen and (min-width: 1600px) {
   .card {
     width: 180px;
@@ -338,4 +322,3 @@ h1 {
     width: 110px;
   }
 }
-
