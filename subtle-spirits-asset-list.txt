@@ -1,0 +1,34 @@
+
+Subtle Spirits: Cruxfade – Image Asset List
+===========================================
+
+🌿 Player Team (Always Present)
+-------------------------------
+- Timothy     → images/Timothy.png
+- Magdaline   → images/Magdaline.png
+- Fizzwick    → images/Fizzwick.png
+- Simon (Pet) → images/Simon.png
+
+🔥 Enemy Main Characters (Randomized Each Battle)
+-------------------------------------------------
+- Gwar        → images/Gwar.png
+- Mildred     → images/Mildred.png
+- Dr. Burgly  → images/Dr-Burgly.png
+- Shelindra   → images/Shelindra.png
+- Bill        → images/Bill.png
+- Draxel      → images/Draxel.png
+- Xavier      → images/Xavier.png
+- Tong        → images/Tong.png
+- Tim (Blue)  → images/Tim_blue.png
+- Tim (Pink)  → images/Tim_pink.png
+
+🐾 Enemy Pets (One Randomly Per Battle)
+--------------------------------------
+- Thorn       → images/Thorn.png
+- Morris      → images/Morris.png
+- Dragon      → images/Dragon.png
+
+☁️ Other Assets
+---------------
+- Background  → images/mist-overlay.png
+- Spritesheet → images/subtle-spirits-sprites.png
