@@ -108,12 +108,60 @@ h1 {
 }
 
 /* Mobile Scaling (max-width: 600px) */
+
 @media screen and (max-width: 600px) {
   .card {
-    width: 140px;
-    height: 220px;
+    width: 120px;
+    height: 240px;
     padding: 0.5rem;
   }
+
+  .card img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .bust-container {
+    height: 90px;
+    margin: 0.3rem 0 0.25rem 0;
+  }
+
+  .description,
+  .special-move {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    padding: 0.15rem 0.4rem;
+  }
+
+  .stat {
+    font-size: 1rem;
+    padding: 0.1rem 0.35rem;
+  }
+
+  .name-tag {
+    font-size: 1rem;
+    padding: 2px 4px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    margin: 0.2rem auto;
+  }
+
+  #special-info {
+    font-size: 1rem;
+    margin: 0.2rem 0;
+  }
+
+  .button-controls {
+    margin: 0.2rem auto 0.4rem;
+  }
+
+  .action-button, .restart-button {
+    font-size: 1.4rem;
+    padding: 0.6rem 1.5rem;
+  }
+}
 
   .card img {
     width: 85px;
@@ -285,11 +333,60 @@ h1 {
 }
 
 /* Mobile responsive */
+
 @media screen and (max-width: 600px) {
-  .board {
-    transform: scale(0.45);
-    transform-origin: top center;
+  .card {
+    width: 120px;
+    height: 240px;
+    padding: 0.5rem;
   }
+
+  .card img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .bust-container {
+    height: 90px;
+    margin: 0.3rem 0 0.25rem 0;
+  }
+
+  .description,
+  .special-move {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    padding: 0.15rem 0.4rem;
+  }
+
+  .stat {
+    font-size: 1rem;
+    padding: 0.1rem 0.35rem;
+  }
+
+  .name-tag {
+    font-size: 1rem;
+    padding: 2px 4px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    margin: 0.2rem auto;
+  }
+
+  #special-info {
+    font-size: 1rem;
+    margin: 0.2rem 0;
+  }
+
+  .button-controls {
+    margin: 0.2rem auto 0.4rem;
+  }
+
+  .action-button, .restart-button {
+    font-size: 1.4rem;
+    padding: 0.6rem 1.5rem;
+  }
+}
 
   
 /* styles.css — Balanced Card Size Layout */
@@ -326,12 +423,60 @@ h1 {
 }
 
 /* Mobile Scaling (max-width: 600px) */
+
 @media screen and (max-width: 600px) {
   .card {
-    width: 140px;
-    height: 220px;
+    width: 120px;
+    height: 240px;
     padding: 0.5rem;
   }
+
+  .card img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .bust-container {
+    height: 90px;
+    margin: 0.3rem 0 0.25rem 0;
+  }
+
+  .description,
+  .special-move {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    padding: 0.15rem 0.4rem;
+  }
+
+  .stat {
+    font-size: 1rem;
+    padding: 0.1rem 0.35rem;
+  }
+
+  .name-tag {
+    font-size: 1rem;
+    padding: 2px 4px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    margin: 0.2rem auto;
+  }
+
+  #special-info {
+    font-size: 1rem;
+    margin: 0.2rem 0;
+  }
+
+  .button-controls {
+    margin: 0.2rem auto 0.4rem;
+  }
+
+  .action-button, .restart-button {
+    font-size: 1.4rem;
+    padding: 0.6rem 1.5rem;
+  }
+}
 
   .card img {
     width: 85px;
