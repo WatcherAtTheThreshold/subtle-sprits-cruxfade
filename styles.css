@@ -193,6 +193,7 @@ h1 {
   color: #333;
   font-style: italic;
   margin-top: 4px;
+  background: none; /* removes any previously applied background */ 
 }
 
 
