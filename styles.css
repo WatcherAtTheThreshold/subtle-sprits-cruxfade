@@ -261,7 +261,7 @@ h1 {
 
 @media screen and (max-width: 1200px) {
   .board {
-    transform: scale(0.9);
+    transform: scale(1.25);
   }
   .card {
     width: 150px;
