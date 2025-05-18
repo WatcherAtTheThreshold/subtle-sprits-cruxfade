@@ -5,10 +5,7 @@
    - Orientation hint overlay for portrait mode
 */
 
-.card.enemy .description {
-  color: #ddd;
-  background: rgba(255, 255, 255, 0.15);
-}
+
 
 body {
   margin: 0;
@@ -133,6 +130,13 @@ h1 {
   border-radius: 4px;
   padding: 0.2rem 0.5rem;
 }
+
+.card.enemy .description {
+  color: #ddd;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+
 .button-controls {
   text-align: center;
   margin: 2rem 0;
