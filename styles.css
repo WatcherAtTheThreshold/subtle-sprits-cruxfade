@@ -246,4 +246,38 @@ h1 {
   }
 }
 
+/* Lighten enemy card description text */
+.card.enemy .description {
+  color: #ddd;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Mobile scaling and layout constraints */
+@media screen and (max-width: 768px) {
+  html, body {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .board, .button-controls {
+    transform: scale(0.7);
+    transform-origin: top center;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+  }
+
+  #special-info {
+    font-size: 1.1rem;
+    margin: 0.25rem 0;
+  }
+
+  .action-button {
+    font-size: 1.2rem;
+    padding: 0.4rem 1rem;
+  }
+}
+
 
