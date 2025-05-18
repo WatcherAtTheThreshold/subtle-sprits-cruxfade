@@ -175,72 +175,16 @@ h1 {
   }
 }
 
+
 .card.enemy {
   background: #2c2c2a;
   border: 2px solid #888;
+  color: #fff;
 }
 
-.card.defeated {
-  opacity: 0.3;
-  transform: scale(0.9);
-  transition: opacity 1s ease-out, transform 1s ease-out;
-  pointer-events: none;
-}
-
-.stat {
-  position: absolute;
-  font-size: 1.4rem;
-  font-weight: bold;
-  background: rgba(255, 255, 255, 0.85);
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-}
-
-.hp { top: 8px; left: 8px; color: #cc4444; }
-.atk { top: 48px; left: 8px; color: #2b5885; }
-
-.bust-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 110px;
-  margin: 0.5rem 0 0.25rem 0;
-  width: 100%;
-}
-
-.card img {
-  width: 110px;
-  height: 110px;
-  object-fit: contain;
-}
-
-.name-tag {
-  margin: 0 auto;
-  text-align: center;
-  font-size: 1.3rem;
-  background: rgba(255, 255, 255, 0.85);
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: #000;
-}
-
-.description {
-  font-size: 1.05rem;
-  text-align: center;
-  margin-top: 0.4rem;
-  color: #333;
-  background: rgba(200, 200, 200, .6);
-  border-radius: 4px;
-  padding: 0.2rem 0.5rem;
-}
-
-.special-move {
-  font-size: 1.05rem;
-  color: #333;
-  font-style: italic;
-  margin-top: 4px;
-  background: none;
+.card.enemy .description {
+  color: #ddd;
+  background: rgba(93, 93, 93, 1);
 }
 
 .card.enemy .special-move,
@@ -250,7 +194,6 @@ h1 {
   font-style: italic;
 }
 
-.card.enemy .description {
   color: #ddd;
   background: rgba(93, 93, 93, 1);
 }
