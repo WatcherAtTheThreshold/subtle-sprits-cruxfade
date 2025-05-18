@@ -131,11 +131,6 @@ h1 {
   padding: 0.2rem 0.5rem;
 }
 
-.card.enemy .description {
-  color: #ddd;
-  background: rgba(255, 255, 255, 0.15);
-}
-
 
 .button-controls {
   text-align: center;
@@ -283,7 +278,7 @@ h1 {
   color: #ddd;
   background: rgba(255, 255, 255, 0.1);
 }
-
+ /* 
   #special-info {
     font-size: 1.1rem;
     margin: 0.25rem 0;
@@ -312,6 +307,11 @@ h1 {
 .card.enemy .special-text {
   color: #eee !important;
 }
+   .card.enemy .description {
+  color: #ddd;
+  background: rgba(255, 255, 255, 0.15);
+}
+   */ 
   .action-button {
     font-size: 1.2rem;
     padding: 0.4rem 1rem;
