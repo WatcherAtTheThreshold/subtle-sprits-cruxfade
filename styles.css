@@ -122,7 +122,7 @@ h1 {
   font-size: 1rem;
   margin-top: 0.4rem;
   color: #333;
-  background: rgba(255, 255, 255, 0.6);
+  background: none;
   border-radius: 4px;
   padding: 0.2rem 0.5rem;
 }
@@ -187,7 +187,7 @@ h1 {
 
 .card.enemy .description {
     color: #ddd;
-    background: none;
+    background: rgba(255, 255, 255, 0.6);
   }
 .special-move {
   color: #333;
