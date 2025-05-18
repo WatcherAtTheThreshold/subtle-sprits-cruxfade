@@ -57,8 +57,7 @@ h1 {
   justify-content: space-evenly;
   align-items: flex-start;
   flex-wrap: nowrap;
-  max-width: none;
-  width: 100%;
+  max-width: 95vw;
   margin: 0 auto;
   padding: 1rem 0;
   gap: 2rem;
@@ -262,7 +261,7 @@ h1 {
 
 @media screen and (max-width: 1200px) {
   .board {
-    transform: scale(.9);
+    transform: scale(0.9);
   }
   .card {
     width: 150px;
@@ -442,4 +441,27 @@ h1 {
     line-height: 1.1;
     padding: 0.15rem 0.4rem;
   }
+}
+
+
+
+/* Final layout fixes */
+
+/* Allow card to expand to fit content */
+.card {
+  height: auto;
+  min-height: 230px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Remove max-width limit from board */
+.board {
+  max-width: none;
+  width: 100%;
+}
+
+/* Give each team column more breathing room */
+.team-column {
+  min-width: 340px;
 }
