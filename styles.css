@@ -88,7 +88,7 @@ h1 {
   border-radius: 4px;
 }
 .hp { top: 8px; left: 8px; color: red; }
-.atk { top: 36px; left: 8px; color: darkblue; }
+.atk { top: 48px; left: 8px; color: darkblue; }
 .bust-container {
   display: flex;
   justify-content: center;
