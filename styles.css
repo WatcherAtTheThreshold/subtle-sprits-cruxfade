@@ -189,7 +189,7 @@ h1 {
 }
 
 /* Mobile Shrink + Orientation Suggestion */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1000px) {
   body::before {
     content: "🔄 Rotate device to landscape for best experience.";
     position: fixed;
