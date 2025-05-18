@@ -170,3 +170,35 @@ h1 {
   text-align: center;
   margin-top: 1rem;
 }
+@media (max-width: 600px) {
+  .board {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .team-column {
+    grid-template-columns: 1fr; /* Stack cards vertically */
+  }
+
+  .card {
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  #special-info {
+    font-size: 2rem;
+  }
+
+  .action-button, .restart-button {
+    font-size: 1.5rem;
+    padding: 0.8rem 2rem;
+  }
+
+  .description {
+    font-size: 0.9rem;
+  }
+}
