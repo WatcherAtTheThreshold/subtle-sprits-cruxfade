@@ -73,9 +73,12 @@ h1 {
   min-width: 340px;
 }
 
+
+/* styles.css — Balanced Card Size Layout */
+
 .card {
-  width: 300px;
-  height: 360px;
+  width: 220px;
+  height: 300px;
   background: #f6f5f1;
   border: 2px solid #aaa;
   border-radius: 8px;
@@ -90,6 +93,38 @@ h1 {
   font-size: 0.65rem;
   box-sizing: border-box;
   overflow: hidden;
+}
+
+.card img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.description,
+.special-move {
+  font-size: 1rem;
+  padding: 0.2rem 0.5rem;
+}
+
+/* Mobile Scaling (max-width: 600px) */
+@media screen and (max-width: 600px) {
+  .card {
+    width: 140px;
+    height: 220px;
+    padding: 0.5rem;
+  }
+
+  .card img {
+    width: 85px;
+    height: 85px;
+  }
+
+  .description,
+  .special-move {
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
 }
 
 .card.enemy {
@@ -256,11 +291,59 @@ h1 {
     transform-origin: top center;
   }
 
+  
+/* styles.css — Balanced Card Size Layout */
+
+.card {
+  width: 220px;
+  height: 300px;
+  background: #f6f5f1;
+  border: 2px solid #aaa;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1rem;
+  position: relative;
+  color: #000;
+  transition: transform 0.2s ease;
+  font-size: 0.65rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.card img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.description,
+.special-move {
+  font-size: 1rem;
+  padding: 0.2rem 0.5rem;
+}
+
+/* Mobile Scaling (max-width: 600px) */
+@media screen and (max-width: 600px) {
   .card {
     width: 140px;
-    height: 240px;
+    height: 220px;
     padding: 0.5rem;
   }
+
+  .card img {
+    width: 85px;
+    height: 85px;
+  }
+
+  .description,
+  .special-move {
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+}
 
   .card img {
     width: 95px;
