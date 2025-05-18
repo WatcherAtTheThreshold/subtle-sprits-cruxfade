@@ -161,8 +161,8 @@ h1 {
 .action-button, .restart-button {
   display: inline-block;
   padding: 1rem 2.5rem;
-  background: gold;
-  color: #336699;
+  background: #d4b15f;  /* golden wheat */
+  color: #336699;       /* soft steel blue */
   border: none;
   font-weight: bold;
   font-size: 2rem;
@@ -170,6 +170,7 @@ h1 {
   cursor: pointer;
   letter-spacing: 1px;
 }
+
 
 .highlight-turn {
   outline: 3px solid gold;
