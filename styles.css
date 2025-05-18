@@ -224,16 +224,18 @@ h1 {
   }
 
   .board {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
-    transform: scale(0.75);
-    transform-origin: top center;
-    padding: 1rem 0;
-    gap: 1rem;
-  }
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: flex-start;
+  transform: scale(0.75);
+  transform-origin: top center;
+  padding: 1rem 0;
+  gap: 1rem;
+  overflow-x: auto;
+}
+
 
   .card {
     width: 150px;
