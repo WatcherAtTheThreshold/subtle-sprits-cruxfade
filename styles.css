@@ -71,21 +71,7 @@ h1 {
   min-width: 280px;
 }
 
-.card {
-  height: 230px;
-  background: #f6f5f1;
-  border: 2px solid #aaa;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 1rem;
-  position: relative;
-  color: #000;
-  transition: transform 0.2s ease;
-  font-size: 0.65rem;
-}
+
 
 .card.enemy {
   background: #2c2c2a;
@@ -262,24 +248,18 @@ h1 {
   .board {
     transform: scale(0.9);
   }
-  .card {
-    width: 150px;
-  }
+  
 }
 
 @media screen and (max-width: 900px) {
   .board {
     transform: scale(0.75);
   }
-  .card {
-    width: 140px;
-  }
+  
 }
 
 
-  .card {
-    width: 120px;
-  }
+  
   h1 {
     font-size: 1.8rem;
     margin: 0.2rem auto 0.2rem;
@@ -290,33 +270,23 @@ h1 {
 }
 
 @media screen and (min-width: 1600px) {
-  .card {
-    width: 180px;
-  }
+  
 }
 
 @media screen and (min-width: 1200px) and (max-width: 1599px) {
-  .card {
-    width: 160px;
-  }
+  
 }
 
 @media screen and (min-width: 900px) and (max-width: 1199px) {
-  .card {
-    width: 150px;
-  }
+  
 }
 
 @media screen and (min-width: 600px) and (max-width: 899px) {
-  .card {
-    width: 130px;
-  }
+  
 }
 
 @media screen and (max-width: 599px) {
-  .card {
-    width: 110px;
-  }
+  
 }
 
 
@@ -325,9 +295,7 @@ h1 {
 
 
 
-  .card {
-    width: 100px;
-  }
+  
 
   h1 {
     font-size: 1.6rem;
@@ -353,10 +321,7 @@ h1 {
 
 /* Additional fix for vertical mobile overflow and bust alignment */
 
-.card {
-  box-sizing: border-box;
-  overflow: hidden;
-}
+
 
 
 
@@ -431,12 +396,7 @@ h1 {
 /* Final layout fixes */
 
 /* Allow card to expand to fit content */
-.card {
-  height: auto;
-  min-height: 230px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
+
 
 /* Remove max-width limit from board */
 .board {
@@ -451,15 +411,71 @@ h1 {
 
 
 /* Cleaned and unified mobile layout (max-width: 600px) */
-@media screen and (max-width: 600px) {
-  .board {
-    transform: scale(0.45);
-    transform-origin: top center;
+
+
+  
+
+  .card img {
+    width: 85px;
+    height: 85px;
   }
 
+  .bust-container {
+    height: 90px;
+    margin: 0.3rem 0 0.25rem 0;
+  }
+
+  .stat {
+    font-size: 1rem;
+    padding: 0.1rem 0.35rem;
+  }
+
+  .name-tag {
+    font-size: 1rem;
+    padding: 2px 4px;
+  }
+
+  .description,
+  .special-move {
+    font-size: 0.75rem;
+    line-height: 1.1;
+    padding: 0.15rem 0.4rem;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    margin: 0.2rem auto;
+  }
+
+  #special-info {
+    font-size: 1rem;
+    margin: 0.2rem 0;
+  }
+
+  .button-controls {
+    margin: 0.2rem auto 0.4rem;
+  }
+
+  .action-button, .restart-button {
+    font-size: 1.4rem;
+    padding: 0.6rem 1.5rem;
+  }
+}
+
+
+/* Reinforced global default for card width */
+.card {
+  width: 160px;
+  height: 230px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Cleaned mobile-specific override */
+@media screen and (max-width: 600px) {
   .card {
-    height: 210px;
     width: 100px;
+    height: 210px;
     padding: 0.5rem;
   }
 
