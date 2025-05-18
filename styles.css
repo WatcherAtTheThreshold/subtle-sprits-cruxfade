@@ -1,7 +1,8 @@
 
-/* styles.css — Responsive Final Layout
-   - Cards scale up on large screens, shrink down on mobile
-   - Header and button are closer to card board
+/* styles.css — Final Responsive Layout
+   - Tighter mobile spacing
+   - Extra card scaling on small screens
+   - Button text color locked to #222
 */
 
 body {
@@ -161,6 +162,7 @@ h1 {
   display: inline-block;
   padding: 1rem 2.5rem;
   background: gold;
+  color: #222;
   border: none;
   font-weight: bold;
   font-size: 2rem;
@@ -269,19 +271,19 @@ h1 {
 
 @media screen and (max-width: 600px) {
   .board {
-    transform: scale(0.6);
+    transform: scale(0.5);
   }
 
   .card {
-    width: 130px;
+    width: 120px;
   }
 
   h1 {
-    font-size: 2rem;
-    margin: 0.25rem auto;
+    font-size: 1.8rem;
+    margin: 0.2rem auto 0.2rem;
   }
 
   .button-controls {
-    margin: 0.5rem auto 1rem;
+    margin: 0.2rem auto 0.5rem;
   }
 }
