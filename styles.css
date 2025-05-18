@@ -184,7 +184,7 @@ h1 {
 }
 
 /* Mobile Shrink + Orientation Suggestion */
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 768px) {
   body::before {
     content: "🔄 Rotate device to landscape for best experience.";
     position: fixed;
@@ -273,12 +273,12 @@ h1 {
     font-size: 1.5rem;
     margin: 0.5rem 0;
   }
-
+ /*
    .card.enemy .special-move {
   color: #ddd;
   background: rgba(255, 255, 255, 0.1);
 }
- /* 
+ 
   #special-info {
     font-size: 1.1rem;
     margin: 0.25rem 0;
