@@ -303,6 +303,10 @@ h1 {
   background: rgba(255, 255, 255, 0.1);
 }
 
+.special-move {
+  color: #ddd !important;
+  background: rgba(255, 255, 255, 0.1);
+}
 .card.enemy .special-text {
   color: #eee !important;
 }
