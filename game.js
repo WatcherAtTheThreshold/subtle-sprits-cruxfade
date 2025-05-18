@@ -14,7 +14,7 @@ const enemyMains = [
   { name: "Bill", hp: 30, atk: 10, img: "images/Bill.png", desc: "Wandering blade. Kind eyes, sharp horns.", special: "Horn Sweep", isPet: false },
   { name: "Draxel", hp: 30, atk: 10, img: "images/Draxel.png", desc: "Shrouded hunter. Lurks at the edge.", special: "Ebon Fangs", isPet: false },
   { name: "Xavier", hp: 30, atk: 10, img: "images/Xavier.png", desc: "Unstable energy. Crackles when provoked.", special: "Static Shock", isPet: false },
-  { name: "Tonq", hp: 30, atk: 10, img: "images/Tong.png", desc: "Massive brute. Calm until riled.", special: "Tectonic Slam", isPet: false },
+  { name: "Tong", hp: 30, atk: 10, img: "images/Tong.png", desc: "Massive brute. Calm until riled.", special: "Tectonic Slam", isPet: false },
   { name: "Tim_blue", hp: 30, atk: 10, img: "images/Tim_blue.png", desc: "Experimental bot. Built for mischief.", special: "Spark Bomb", isPet: false },
   { name: "Tim_pink", hp: 30, atk: 10, img: "images/Tim_pink.png", desc: "Colorful copy. Brighter than real.", special: "Mirror Flash", isPet: false }
 ];
