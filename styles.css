@@ -322,3 +322,86 @@ h1 {
     width: 110px;
   }
 }
+
+
+
+/* Only the mobile breakpoint (max-width: 600px) is adjusted here */
+
+@media screen and (max-width: 600px) {
+  .board {
+    transform: scale(0.4);
+    transform-origin: top center;
+  }
+
+  .card {
+    width: 100px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    margin: 0.2rem auto 0.2rem;
+  }
+
+  #special-info {
+    font-size: 1rem;
+    margin: 0.2rem 0;
+  }
+
+  .button-controls {
+    margin: 0.2rem auto 0.4rem;
+  }
+
+  .action-button, .restart-button {
+    font-size: 1.4rem;
+    padding: 0.6rem 1.5rem;
+  }
+}
+
+
+
+/* Additional fix for vertical mobile overflow and bust alignment */
+
+.card {
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 600px) {
+  .card {
+    width: 100px;
+    height: 210px;
+  }
+
+  .card img {
+    width: 90px;
+    height: 90px;
+  }
+
+  .bust-container {
+    height: 100px;
+  }
+
+  .stat {
+    font-size: 1.2rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    margin: 0.2rem auto 0.2rem;
+  }
+
+  #special-info {
+    font-size: 1rem;
+    margin: 0.2rem 0;
+  }
+
+  .button-controls {
+    margin: 0.2rem auto 0.4rem;
+  }
+
+  .action-button, .restart-button {
+    font-size: 1.4rem;
+    padding: 0.6rem 1.5rem;
+  }
+}
