@@ -3,7 +3,7 @@ const playerTeam = [
   { name: "Timothy", hp: 30, atk: 10, img: "images/Timothy.png", desc: "Brave and kind. Searches for sprouting light.", special: "Plant Blessing", isPet: false },
   { name: "Magdaline", hp: 30, atk: 10, img: "images/Magdaline.png", desc: "Gentle healer. Touched by glimmering light.", special: "Luminous Veil", isPet: false },
   { name: "Fizzwick", hp: 30, atk: 10, img: "images/Fizzwick.png", desc: "Fast, clever, and full of sparks.", special: "Spark Trick", isPet: false },
-  { name: "Simon", hp: 10, atk: 5, img: "images/Simon.png", desc: "Pet spirit. Encourages and uplifts allies.", special: "Encouraging Chirp", isPet: true }
+  { name: "Simon", hp: 10, atk: 5, img: "images/Simon.png", desc: "Pet spirit. Encourages and uplifts allies.", special: "Meowing Chirp", isPet: true }
 ];
 
 const enemyMains = [
