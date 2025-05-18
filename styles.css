@@ -170,3 +170,63 @@ h1 {
   text-align: center;
   margin-top: 1rem;
 }
+@media (max-width: 600px) {
+  .board {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .team-column {
+    grid-template-columns: 1fr; /* Stack cards vertically */
+  }
+
+  .card {
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  #special-info {
+    font-size: 2rem;
+  }
+
+  .action-button, .restart-button {
+    font-size: 1.5rem;
+    padding: 0.8rem 2rem;
+  }
+
+  .description {
+    font-size: 0.9rem;
+  }
+/* Hide game in portrait orientation */
+@media screen and (orientation: portrait) {
+  body::before {
+    content: "🔁 Please rotate your device to landscape to play";
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    background: #111;
+    color: white;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 2rem;
+    padding: 2rem;
+  }
+
+  .board,
+  .button-controls,
+  #battle-status,
+  #special-info {
+    display: none !important;
+  }
+}
+
+
