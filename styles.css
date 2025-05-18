@@ -24,6 +24,8 @@ h1, h2, .action-button, .restart-button, .name-tag {
   min-height: 2.4em;
   transition: opacity 0.3s ease;
 }
+
+
 #special-info.hidden {
   opacity: 0;
 }
