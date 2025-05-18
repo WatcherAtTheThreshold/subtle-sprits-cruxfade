@@ -184,6 +184,11 @@ h1 {
   background: rgba(255, 255, 255, 0.1);
   font-style: italic;
 }
+
+.card.enemy .description {
+    color: #ddd;
+    background: rgba(255, 255, 255, 0.15);
+  }
 .special-move {
   color: #333;
   font-style: italic;
@@ -238,11 +243,5 @@ h1 {
     padding: 0.4rem 1rem;
   }
 
-  .card.enemy .description {
-    color: #ddd;
-    background: rgba(255, 255, 255, 0.15);
-  }
-
   
-
 }
