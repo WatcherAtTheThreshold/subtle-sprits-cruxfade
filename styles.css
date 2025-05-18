@@ -218,3 +218,28 @@ h1 {
     padding: 0.5rem 1.25rem;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .board, .button-controls {
+    transform: scale(0.85);
+    transform-origin: top center;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  #special-info {
+    font-size: 1.1rem;
+  }
+
+  .action-button {
+    font-size: 1.2rem;
+    padding: 0.5rem 1.25rem;
+  }
+
+  body {
+    overflow-y: hidden;
+  }
+}
+
