@@ -1,5 +1,4 @@
 
-/* ────── Base Styles ────── */
 body {
   margin: 0;
   padding: 0;
@@ -7,15 +6,41 @@ body {
   background: #111;
   color: #fff;
   overflow-x: hidden;
-  letter-spacing: 0.25px;
 }
-
+h1, h2, .action-button, .restart-button, .name-tag {
+  font-family: 'Bangers', cursive;
+}
+#special-info {
+  text-align: center;
+  font-size: 2rem;
+  margin: 0;
+  color: #fff;
+  min-height: 2.4em;
+  transition: opacity 0.3s ease;
+}
+#special-info.hidden {
+  opacity: 0;
+}
+.mist-overlay {
+  background: url("images/mist-overlay.png") repeat;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.6;
+  animation: mistScroll 120s linear infinite;
+}
+@keyframes mistScroll {
+  0% { background-position: 0 0; }
+  100% { background-position: -500px 500px; }
+}
 h1 {
   text-align: center;
-  font-size: 3rem;
+  font-size: 2rem;
   margin: 1rem 0 0.5rem;
 }
-
 .board {
   display: flex;
   justify-content: space-around;
@@ -56,18 +81,14 @@ h1 {
 }
 .stat {
   position: absolute;
-  font-size: 1.8rem;
+  font-size: 1.1rem;
   font-weight: bold;
   background: rgba(255, 255, 255, 0.85);
   padding: 0.2rem 0.6rem;
   border-radius: 4px;
 }
 .hp { top: 8px; left: 8px; color: red; }
-.atk {
-  top: 48px; /* Adjusted from 36px to 48px to move it below HP */
-  left: 8px;
-  color: darkblue;
-}
+.atk { top: 36px; left: 8px; color: darkblue; }
 .bust-container {
   display: flex;
   justify-content: center;
@@ -84,7 +105,7 @@ h1 {
 .name-tag {
   margin: 0 auto;
   text-align: center;
-  font-size: 1.8rem;
+  font-size: 1.1rem;
   background: rgba(255, 255, 255, 0.85);
   padding: 2px 6px;
   border-radius: 4px;
@@ -92,7 +113,7 @@ h1 {
 }
 .description {
   text-align: center;
-  font-size: 1rem;
+  font-size: 0.75rem;
   margin-top: 0.4rem;
   color: #333;
   background: rgba(255, 255, 255, 0.6);
@@ -109,7 +130,7 @@ h1 {
   background: gold;
   border: none;
   font-weight: bold;
-  font-size: 2rem;
+  font-size: 1.5rem;
   border-radius: 8px;
   cursor: pointer;
   letter-spacing: 1px;
@@ -132,15 +153,15 @@ h1 {
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: bold;
   pointer-events: none;
   transition: all 1s ease-out;
   text-shadow: 1px 1px 2px #000;
 }
 .float-damage { color: red; }
-.float-ko { color: gold; font-size: 1.8rem; opacity: 1; }
-.float-special { color: gold; font-size: 1.4rem; }
+.float-ko { color: gold; font-size: 1.6rem; opacity: 1; }
+.float-special { color: gold; font-size: 1.2rem; }
 .damage-glow {
   box-shadow: 0 0 12px 4px rgba(255, 0, 0, 0.4);
   transition: box-shadow 0.3s ease-in-out;
@@ -148,148 +169,4 @@ h1 {
 #restart-container {
   text-align: center;
   margin-top: 1rem;
-}
-
-.container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  padding: 1rem;
-}
-
-.card {
-  position: relative;
-  width: 200px;
-  height: 320px;
-  background: #f4f4f4;
-  color: #000;
-  border-radius: 12px;
-  overflow: hidden;
-  text-align: center;
-  font-size: 0.95rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-.card.dark {
-  background: #222;
-  color: #fff;
-}
-
-.card img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  margin-top: 4px;
-}
-
-.card h2 {
-  margin: 0.3rem 0 0;
-  font-family: 'Bangers', cursive;
-  font-size: 1.4rem;
-}
-
-.card p {
-  padding: 0 0.5rem;
-  font-size: 0.85rem;
-  margin: 0.25rem 0;
-}
-
-.card .stats {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  font-size: 1.1rem;
-  font-weight: bold;
-  gap: 4px;
-}
-
-.hp {
-  color: red;
-  background: rgba(255,255,255,0.9);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.atk {
-  color: darkblue;
-  background: rgba(255,255,255,0.9);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-#battle-btn {
-  display: block;
-  margin: 1rem auto 2rem;
-  font-family: 'Bangers', cursive;
-  font-size: 1.5rem;
-  padding: 0.5rem 1.5rem;
-  background: yellow;
-  color: #111;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  transition: background 0.2s ease;
-}
-
-#battle-btn:hover {
-  background: gold;
-}
-
-/* ────── Floating Damage Text ────── */
-.floating-text {
-  position: absolute;
-  font-size: 1.2rem;
-  font-weight: bold;
-  pointer-events: none;
-  opacity: 0;
-  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
-  text-shadow: 1px 1px 2px black;
-  z-index: 10;
-}
-
-/* ────── Responsive Styles for Mobile ────── */
-@media (max-width: 768px) {
-  .card {
-    width: 40vw;
-    height: auto;
-    margin: 4px;
-    font-size: 0.75rem;
-  }
-
-  .card .stats {
-    font-size: 0.8rem;
-    gap: 2px;
-  }
-
-  .container {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px;
-    padding: 0 4px;
-    transform: scale(0.85);
-  }
-
-  h1 {
-    font-size: 1.25rem;
-    margin: 0.5rem 0;
-  }
-
-  #battle-btn {
-    font-size: 1rem;
-    padding: 0.4rem 0.75rem;
-    margin: 0.5rem 0 1.5rem;
-  }
-
-  body {
-    overflow-y: hidden;
-  }
 }
