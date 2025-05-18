@@ -161,8 +161,8 @@ h1 {
 .action-button, .restart-button {
   display: inline-block;
   padding: 1rem 2.5rem;
-  background: #fcb813; /* bold golden amber */
-  color: #204b74;       /* cool, enchanted blue */
+  background: #e0a838; /* richer but still warm */
+  color: #1f4e79; /* deeper steel blue */
   border: none;
   font-weight: bold;
   font-size: 2rem;
