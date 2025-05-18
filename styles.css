@@ -288,6 +288,10 @@ h1 {
     margin: 0.25rem 0;
   }
 
+   .card.enemy .special-text {
+  color: #ddd;
+}
+
   .action-button {
     font-size: 1.2rem;
     padding: 0.4rem 1rem;
