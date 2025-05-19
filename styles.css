@@ -292,13 +292,16 @@ h1 {
     gap: 1rem;
     transform: scale(0.9);
     transform-origin: top center;
+    width: 100%;
+    max-width: unset;
+    overflow-x: auto;
   }
 
   .team-column {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.5rem;
-    min-width: unset;
+    min-width: 300px;
   }
 
   .card {
@@ -351,4 +354,14 @@ h1 {
     margin: 0.4rem auto 1rem;
   }
 }
+/* ─── Pet Card Styling ─── */
+.card.pet {
+  transform: scale(0.85);
+  transform-origin: center;
+}
 
+@media screen and (max-width: 600px) {
+  .card.pet {
+    transform: scale(0.8);
+  }
+}
