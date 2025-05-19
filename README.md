@@ -39,7 +39,7 @@ Subtle Spirits: Cruxfade is a surreal web-based combat prototype blending pixel 
 ## 🕹️ Play the Game
 
 Coming soon to GitHub Pages:  
-`https://your-username.github.io/subtle-spirits-cruxfade/`
+`https://watcheratthethreshold.github.io/subtle-spirits-cruxfade/`
 
 ---
 
