@@ -52,10 +52,20 @@ const specialEffects = {
 
 function createCard(data, isEnemy) {
   const div = document.createElement("div");
-  div.className = "card" + (isEnemy ? " enemy" : "");
+
+  let className = "card";
+  if (isEnemy) className += " enemy";
+  if (["Simon", "Thorn", "Morris", "Dragon"].includes(data.name)) {
+    className += " pet";
+  }
+
+  div.className = className;
+
   div.dataset.name = data.name;
   div.dataset.isPet = data.isPet;
   div.dataset.specialUsed = "false";
+
+
 
   div.innerHTML = `
     <div class="stat hp">${data.hp}</div>
