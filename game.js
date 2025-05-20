@@ -122,6 +122,12 @@ function floatDamage(card, amt) {
   tag.className = "float-damage";
   tag.textContent = `-${amt}`;
   card.appendChild(tag);
+
+  // Add shrink-hit animation
+  card.classList.add("shrink-hit");
+  setTimeout(() => card.classList.remove("shrink-hit"), 250);
+
+  // Animate the damage text
   setTimeout(() => tag.style.top = '-30px', 50);
   setTimeout(() => tag.style.opacity = '0', 50);
   setTimeout(() => tag.remove(), 1000);
