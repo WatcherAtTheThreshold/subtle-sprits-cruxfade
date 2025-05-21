@@ -291,7 +291,14 @@ h1 {
 }
 
 .float-damage { color: red; }
-.float-ko { color: gold; font-size: 1.8rem; opacity: 1; }
+.float-ko {
+  color: gold;
+  font-size: 2.8rem;        /* Make it big! */
+  font-weight: 900;
+  opacity: 1;
+  text-shadow: 2px 2px 4px #000, 0 0 10px gold;
+  transform: translateX(-50%) scale(1.2); /* Optional slight scale-up */
+}
 .float-special { color: gold; font-size: 1.4rem; }
 
 .damage-glow {
