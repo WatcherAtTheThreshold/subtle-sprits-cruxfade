@@ -43,12 +43,12 @@ h1 {
   height: 100%;
   z-index: -1;
   opacity: 0.6;
-  animation: mistScroll 120s linear infinite;
+  animation: mistScroll 40s linear infinite;
 }
 
 @keyframes mistScroll {
   0% { background-position: 0 0; }
-  100% { background-position: -500px 500px; }
+  100% { background-position: -800px 800px; }
 }
 
 .board {
