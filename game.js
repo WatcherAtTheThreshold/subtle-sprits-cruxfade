@@ -263,3 +263,21 @@ function checkVictory(players, enemies) {
 }
 
 buildTeams();
+
+document.addEventListener('click', function (e) {
+  if (e.target.closest('.card')) {
+    const card = e.target.closest('.card');
+
+    // Remove 'active' from all other cards
+    document.querySelectorAll('.card.active').forEach(c => {
+      if (c !== card) c.classList.remove('active');
+    });
+
+    // Toggle active on clicked card
+    card.classList.toggle('active');
+  } else {
+    // Clicked outside any card — remove all active
+    document.querySelectorAll('.card.active').forEach(c => c.classList.remove('active'));
+  }
+});
+
