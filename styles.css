@@ -99,7 +99,7 @@ h1 {
   overflow: hidden;
 }
 .card:hover {
-  transform: scale(1.25);
+  transform: scale(1.5);
   z-index: 10;             /* bring above neighbors */
   position: relative;      /* allow z-index to apply */
   box-shadow:
