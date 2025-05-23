@@ -100,6 +100,8 @@ h1 {
 }
 .card:hover {
   transform: scale(1.25);
+  z-index: 10;             /* bring above neighbors */
+  position: relative;      /* allow z-index to apply */
   box-shadow:
     inset 0 1px 0 #fff8f0,
     inset 0 -1px 0 #aaa,
@@ -117,6 +119,11 @@ h1 {
 .special-move {
   font-size: 1rem;
   padding: 0.2rem 0.5rem;
+}
+
+.team-column,
+.board {
+  overflow: visible;
 }
 
 /* Mobile Scaling (max-width: 600px) */
