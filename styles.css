@@ -108,7 +108,11 @@ h1 {
     0 6px 14px rgba(0, 0, 0, 0.4);
 }
 
-
+.card.active {
+  transform: scale(1.5);
+  z-index: 10;
+  position: relative;
+}
 .card img {
   width: 100px;
   height: 100px;
