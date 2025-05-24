@@ -51,13 +51,36 @@ const specialEffects = {
 };
 
 function createCard(data, isEnemy) {
-  const div = document.createElement("div");
+  const flipContainer = document.createElement("div");
+  flipContainer.className = "card flip-container" + (isEnemy ? " enemy" : "");
+  flipContainer.dataset.name = data.name;
+  flipContainer.dataset.isPet = data.isPet;
+  flipContainer.dataset.specialUsed = "false";
 
-  let className = "card";
-  if (isEnemy) className += " enemy";
-  if (["Simon", "Thorn", "Morris", "Dragon"].includes(data.name)) {
-    className += " pet";
-  }
+  const inner = document.createElement("div");
+  inner.className = "card-inner";
+
+  const front = document.createElement("div");
+  front.className = "card-front";
+  front.innerHTML = `
+    <div class="bust-container"><img src="images/${data.image}" alt="${data.name}"></div>
+    <div class="name-tag">${data.name}</div>
+    <div class="stat hp">${data.hp}</div>
+    <div class="stat atk">${data.atk}</div>
+    <div class="description">${data.description}</div>
+    <div class="special-move">${data.special}</div>
+  `;
+
+  const back = document.createElement("div");
+  back.className = "card-back";
+
+  inner.appendChild(front);
+  inner.appendChild(back);
+  flipContainer.appendChild(inner);
+
+  return flipContainer;
+}
+
 
   div.className = className;
 
@@ -94,7 +117,14 @@ function buildTeams() {
   const shuffledMains = [...availableMains].sort(() => 0.5 - Math.random()).slice(0, 3);
   const pet = enemyPets[Math.floor(Math.random() * enemyPets.length)];
   [pet, ...shuffledMains].forEach(data => enemyArea.appendChild(createCard(data, true)));
+
+setTimeout(() => {
+  document.querySelectorAll('.card').forEach(card => card.classList.add('flipped'));
+}, 1000);
+
 }
+
+
 
 function getHP(card) {
   return parseInt(card.querySelector(".hp").textContent);
