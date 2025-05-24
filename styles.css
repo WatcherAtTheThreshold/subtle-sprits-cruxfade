@@ -2,6 +2,47 @@
 /* ───── Subtle Spirits: Cruxfade – Complete CSS ───── */
 
 /* ========== Base Styles ========== */
+/* ========== Pet Card Size Modifications ========== */
+/* Add these rules to your existing styles.css */
+
+/* Pet cards are smaller than main character cards */
+.card[data-is-pet="true"] {
+  width: 180px;
+  height: 240px;
+  font-size: 0.6rem;
+}
+
+/* Pet card images are smaller */
+.card[data-is-pet="true"] img {
+  width: 80px;
+  height: 80px;
+}
+
+/* Pet card bust containers are smaller */
+.card[data-is-pet="true"] .bust-container {
+  height: 90px;
+  margin: 0.4rem 0;
+}
+
+/* Adjust pet card name tags to be proportional */
+.card[data-is-pet="true"] .name-tag {
+  font-size: 1.1rem;
+}
+
+/* Adjust pet card stats to be proportional */
+.card[data-is-pet="true"] .stat {
+  font-size: 1.2rem;
+  padding: 0.15rem 0.5rem;
+}
+
+/* Adjust pet card description and special move text */
+.card[data-is-pet="true"] .description,
+.card[data-is-pet="true"] .special-move {
+  font-size: 0.95rem;
+  padding: 0.15rem 0.4rem;
+  margin-top: 0.3rem;
+}
+
 body {
   margin: 0;
   padding: 0;
