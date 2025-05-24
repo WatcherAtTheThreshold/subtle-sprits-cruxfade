@@ -298,6 +298,15 @@ window.onload = () => {
 
 // Define setupBoard outside of the window.onload block
 function setupBoard(flipOnSetup = true) {
+  buildTeams(); // <-- MUST be here to generate and insert the cards
+
+  if (flipOnSetup) {
+    document.querySelectorAll(".card").forEach(card => {
+      card.classList.add("flipped");
+    });
+  }
+}
+
   // existing setup logic...
 
   // Only flip cards if flag is true
