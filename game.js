@@ -289,5 +289,5 @@ window.addEventListener('load', () => {
     document.querySelectorAll('.card').forEach(card => {
       card.classList.add('flipped');
     });
-  }, 800); // Adjust delay as needed
+  }, 2000); // Adjust delay as needed
 });
