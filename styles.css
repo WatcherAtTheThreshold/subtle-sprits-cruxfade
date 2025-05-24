@@ -11,6 +11,7 @@
   height: 240px;
   font-size: 0.6rem;
 justify-self: center; /* ADD THIS LINE */
+ align-self: center;   /* Centers vertically - ADD THIS LINE */
 }
 
 /* Pet card images are smaller */
