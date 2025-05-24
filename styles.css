@@ -413,3 +413,70 @@ h1 {
   font-size: 1.3rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
+/* Status effect visual indicators */
+.card.status-burning {
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.7);
+  border: 2px solid #ff4500;
+}
+
+.card.status-bleeding {
+  box-shadow: 0 0 8px rgba(139, 0, 0, 0.7);
+  border: 2px solid #8b0000;
+}
+
+.card.status-stunned,
+.card.status-paralyzed {
+  box-shadow: 0 0 8px rgba(255, 255, 0, 0.7);
+  border: 2px solid #ffd700;
+  opacity: 0.7;
+}
+
+.card.status-shield {
+  box-shadow: 0 0 12px rgba(0, 191, 255, 0.8);
+  border: 2px solid #00bfff;
+}
+
+.card.status-boosted {
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+  border: 2px solid #32cd32;
+}
+
+.card.status-confused,
+.card.status-haunted {
+  box-shadow: 0 0 8px rgba(128, 0, 128, 0.7);
+  border: 2px solid #800080;
+}
+
+.card.status-reflect {
+  box-shadow: 0 0 10px rgba(192, 192, 192, 0.8);
+  border: 2px solid #c0c0c0;
+  animation: shimmer 2s infinite;
+}
+
+.card.status-vanished {
+  opacity: 0.3;
+  animation: flicker 1s infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { box-shadow: 0 0 10px rgba(192, 192, 192, 0.8); }
+  50% { box-shadow: 0 0 20px rgba(255, 255, 255, 1); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.1; }
+}
+
+.float-heal {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #4CAF50;
+  font-weight: bold;
+  font-size: 18px;
+  pointer-events: none;
+  transition: all 1s ease-out;
+  z-index: 1000;
+}
