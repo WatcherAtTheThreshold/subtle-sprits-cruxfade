@@ -1,52 +1,9 @@
-
-/* ───── Subtle Spirits: Cruxfade – Complete CSS ───── */
-
-
-/* ========== Pet Card Size Modifications ========== */
-/* Add these rules to your existing styles.css */
-
-/* Pet cards are smaller than main character cards */
-.card[data-is-pet="true"] {
-  width: 180px;
-  height: 240px;
-  font-size: 0.6rem;
-justify-self: center; /* ADD THIS LINE */
- align-self: center;   /* Centers vertically - ADD THIS LINE */
-}
-
-/* Pet card images are smaller */
-.card[data-is-pet="true"] img {
-  width: 80px;
-  height: 80px;
-}
-
-/* Pet card bust containers are smaller */
-.card[data-is-pet="true"] .bust-container {
-  height: 90px;
-  margin: 0.4rem 0;
-}
-
-/* Adjust pet card name tags to be proportional */
-.card[data-is-pet="true"] .name-tag {
-  font-size: 1.1rem;
-}
-
-/* Adjust pet card stats to be proportional */
-.card[data-is-pet="true"] .stat {
-  font-size: 1.2rem;
-  padding: 0.15rem 0.5rem;
-}
-
-/* Adjust pet card description and special move text */
-.card[data-is-pet="true"] .description,
-.card[data-is-pet="true"] .special-move {
-  font-size: 0.95rem;
-  padding: 0.15rem 0.4rem;
-  margin-top: 0.3rem;
-}
+/* ───── Subtle Spirits: Cruxfade – Mobile-Friendly CSS ───── */
 
 /* ========== Base Styles ========== */
-
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -55,6 +12,8 @@ body {
   background: #111;
   color: #fff;
   overflow-x: hidden;
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
 }
 
 h1, h2, .action-button, .restart-button, .name-tag {
@@ -63,18 +22,22 @@ h1, h2, .action-button, .restart-button, .name-tag {
 
 h1 {
   text-align: center;
-  font-size: 2.8rem;
-  margin: 0.25rem auto;
-  max-width: 1000px;
+  font-size: clamp(1.5rem, 4vw, 2.8rem);
+  margin: clamp(0.25rem, 1vh, 0.5rem) auto;
+  max-width: 100%;
+  padding: 0 1rem;
+  line-height: 1.2;
 }
 
 #special-info {
   text-align: center;
-  font-size: 2.4rem;
+  font-size: clamp(1rem, 3vw, 2.4rem);
   margin: 0;
   color: #fff;
-  min-height: 2.4em;
+  min-height: clamp(1.5em, 3vh, 2.4em);
   transition: opacity 0.3s ease;
+  padding: 0 1rem;
+  line-height: 1.3;
 }
 
 #special-info.hidden {
@@ -98,32 +61,109 @@ h1 {
   100% { background-position: 800px -800px; }
 }
 
+/* ========== Responsive Board Layout ========== */
 .board {
   display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: flex-start;
-  flex-wrap: nowrap;
-  gap: 2rem;
-  padding: 1rem 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  gap: clamp(0.5rem, 2vh, 2rem);
+  padding: clamp(0.5rem, 2vh, 1rem);
   width: 100%;
+  height: auto;
   margin: 0 auto;
-  overflow-x: auto;
-  transform-origin: top center;
+  overflow: visible;
+}
+
+/* Landscape orientation: side-by-side teams */
+@media (orientation: landscape) and (min-width: 640px) {
+  .board {
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: flex-start;
+  }
 }
 
 .team-column {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  min-width: 340px;
+  gap: clamp(0.25rem, 1vmin, 1rem);
+  width: 100%;
+  max-width: min(90vw, 400px);
+  margin: 0 auto;
+  justify-items: center;
+  align-items: center;
+}
+
+@media (orientation: landscape) and (min-width: 640px) {
+  .team-column {
+    max-width: min(45vw, 350px);
+  }
+}
+
+/* Very small screens: single column layout */
+@media (max-width: 480px) and (orientation: portrait) {
+  .team-column {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 95vw;
+  }
+}
+
+/* ========== Responsive Card Sizing ========== */
+.card {
+  width: clamp(120px, 20vw, 220px);
+  height: clamp(160px, 27vw, 300px);
+  border: clamp(1px, 0.2vw, 2px) solid #999;
+  box-shadow: 0 clamp(2px, 0.5vw, 4px) clamp(4px, 1vw, 8px) rgba(0, 0, 0, 0.3);
+  font-size: clamp(0.45rem, 1.2vw, 0.65rem);
+  position: relative;
+  border-radius: clamp(6px, 1.5vw, 12px);
+  max-width: 100%;
+}
+
+@media (orientation: landscape) {
+  .card {
+    width: clamp(100px, 15vw, 190px);
+    height: clamp(130px, 20vw, 260px);
+  }
+}
+
+/* Pet Card Size Modifications */
+.card[data-is-pet="true"] {
+  width: clamp(90px, 16vw, 180px);
+  height: clamp(120px, 22vw, 240px);
+  font-size: clamp(0.4rem, 1vw, 0.6rem);
+  justify-self: center;
+  align-self: center;
+}
+
+@media (orientation: landscape) {
+  .card[data-is-pet="true"] {
+    width: clamp(80px, 12vw, 160px);
+    height: clamp(100px, 16vw, 210px);
+  }
+}
+
+.card.enemy {
+  border-color: #888;
+  background-color: #242422;
+}
+
+.card img {
+  width: clamp(60px, 12vw, 100px);
+  height: clamp(60px, 12vw, 100px);
+  object-fit: contain;
+}
+
+.card[data-is-pet="true"] img {
+  width: clamp(50px, 10vw, 80px);
+  height: clamp(50px, 10vw, 80px);
 }
 
 /* ========== Flip Card Layout ========== */
 .card.flip-container {
   perspective: 1000px;
-  border-radius: 12px; /* Add rounded corners to the card container */
-  border: none; /* Remove border during flip to prevent outline showing */
+  border-radius: clamp(6px, 1.5vw, 12px);
 }
 
 .card-inner {
@@ -132,6 +172,7 @@ h1 {
   height: 100%;
   transition: transform 0.8s ease;
   transform-style: preserve-3d;
+  border-radius: clamp(6px, 1.5vw, 12px);
 }
 
 .card.flipped .card-inner {
@@ -144,84 +185,87 @@ h1 {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 8px;
+  border-radius: clamp(6px, 1.5vw, 12px);
   overflow: hidden;
 }
 
-/* Back face starts at 0deg, visible initially */
+.card-front {
+  transform: rotateY(-180deg);
+  z-index: 2;
+  background-color: #fff;
+}
+
 .card-back {
   transform: rotateY(0deg);
   background: url('images/card-back.webp') center/cover no-repeat;
 }
 
-/* Ally cards have white card backs with the card back image */
-.card:not(.enemy) .card-back {
-  background: #fff url('images/card-back.webp') center/cover no-repeat;
+.card.enemy .card-front {
+  background-color: #2c2c2a;
 }
 
-/* Front face starts rotated 180deg so it appears normal when card flips */
-.card-front {
-  transform: rotateY(180deg);
-  z-index: 2;
-  background-color: #fff; /* White background for ally cards by default */
+.card.enemy .special-move {
+  color: #fff;
 }
 
-/* ========== Card Presentation ========== */
-.card {
-  width: 220px;
-  height: 300px;
-  border: 2px solid #999;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  font-size: 0.65rem;
-  box-sizing: border-box;
-  position: relative;
-  border-radius: 12px; /* Add this line */
-}
-
-.card.enemy {
-  border-color: #888;
-  background-color: #242422;
-}
-
-.card img {
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-}
-
+/* ========== Card Content Styling ========== */
 .bust-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 110px;
-  margin: 0.5rem 0;
+  height: clamp(70px, 15vw, 110px);
+  margin: clamp(0.3rem, 1vw, 0.5rem) 0;
+}
+
+.card[data-is-pet="true"] .bust-container {
+  height: clamp(60px, 12vw, 90px);
+  margin: clamp(0.25rem, 0.8vw, 0.4rem) 0;
 }
 
 .name-tag {
   text-align: center;
-  font-size: 1.3rem;
+  font-size: clamp(0.8rem, 2.5vw, 1.3rem);
   background: rgba(255, 255, 255, 0.85);
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: clamp(1px, 0.3vw, 2px) clamp(3px, 0.8vw, 6px);
+  border-radius: clamp(2px, 0.5vw, 4px);
   color: #000;
   margin: 0 auto;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-/* Make enemy and pet name tags white with matching dark backgrounds */
+
+.card[data-is-pet="true"] .name-tag {
+  font-size: clamp(0.7rem, 2vw, 1.1rem);
+}
+
 .card.enemy .name-tag,
 .card.pet.enemy .name-tag {
   background: #242422;
   color: #fff;
 }
 
-
 .description, .special-move {
-  font-size: 1.05rem;
+  font-size: clamp(0.6rem, 1.8vw, 1.05rem);
   text-align: center;
-  padding: 0.2rem 0.5rem;
-  margin-top: 0.4rem;
+  padding: clamp(0.1rem, 0.3vw, 0.2rem) clamp(0.3rem, 0.8vw, 0.5rem);
+  margin-top: clamp(0.2rem, 0.6vw, 0.4rem);
   background: rgba(200, 200, 200, 0.6);
-  /*border-radius: 4px;*/
   color: #333;
+  line-height: 1.2;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.card[data-is-pet="true"] .description,
+.card[data-is-pet="true"] .special-move {
+  font-size: clamp(0.55rem, 1.5vw, 0.95rem);
+  padding: clamp(0.1rem, 0.25vw, 0.15rem) clamp(0.25rem, 0.6vw, 0.4rem);
+  margin-top: clamp(0.15rem, 0.4vw, 0.3rem);
+  -webkit-line-clamp: 2;
 }
 
 .special-move {
@@ -231,42 +275,63 @@ h1 {
 
 .stat {
   position: absolute;
-  font-size: 1.4rem;
+  font-size: clamp(0.8rem, 2.2vw, 1.4rem);
   font-weight: bold;
   background: rgba(255, 255, 255, 0.85);
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
+  padding: clamp(0.1rem, 0.3vw, 0.2rem) clamp(0.3rem, 0.8vw, 0.6rem);
+  border-radius: clamp(2px, 0.5vw, 4px);
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+  min-width: clamp(20px, 4vw, 30px);
+  text-align: center;
 }
 
-.hp { top: 8px; left: 8px; color: #cc4444; }
-.atk { top: 48px; left: 8px; color: #2b5885; }
+.card[data-is-pet="true"] .stat {
+  font-size: clamp(0.7rem, 1.8vw, 1.2rem);
+  padding: clamp(0.08rem, 0.25vw, 0.15rem) clamp(0.25rem, 0.6vw, 0.5rem);
+}
+
+.hp { 
+  top: clamp(4px, 1vw, 8px); 
+  left: clamp(4px, 1vw, 8px); 
+  color: #cc4444; 
+}
+
+.atk { 
+  top: clamp(24px, 6vw, 48px); 
+  left: clamp(4px, 1vw, 8px); 
+  color: #2b5885; 
+}
 
 /* ========== Buttons ========== */
 .button-controls {
   text-align: center;
-  margin: 0.5rem auto 1rem auto;
-  max-width: 1000px;
+  margin: clamp(0.5rem, 2vh, 1rem) auto;
+  padding: 0 1rem;
+  width: 100%;
 }
 
 .action-button, .restart-button {
-  padding: 1rem 2.5rem;
+  padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 4vw, 2.5rem);
   background: linear-gradient(to bottom, #f5a623, #e0951c);
   color: #2a5b94;
-  border: 2px solid #d4881f;
+  border: clamp(1px, 0.3vw, 2px) solid #d4881f;
   box-shadow: inset 0 1px 0 #fff5cc, 0 2px 6px rgba(0, 0, 0, 0.2);
   font-weight: bold;
-  font-size: 2rem;
-  border-radius: 8px;
+  font-size: clamp(1rem, 3vw, 2rem);
+  border-radius: clamp(4px, 1vw, 8px);
   cursor: pointer;
   letter-spacing: 1px;
   animation: flickerPulse 3s ease-in-out infinite;
   transition: all 0.3s ease-in-out;
+  max-width: 90vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @keyframes flickerPulse {
   0% { transform: scale(1); background: #f5a623; }
-  50% { transform: scale(1.025); background: #f7b13f; }
+  50% { transform: scale(1.01); background: #f7b13f; }
   100% { transform: scale(1); background: #f5a623; }
 }
 
@@ -274,90 +339,34 @@ h1 {
 .restart-button:hover {
   background: #c29d4d;
   box-shadow: 0 0 12px #d4b15f;
-  transform: scale(1.03);
-}
-/* Add these styles to your existing styles.css - replace the flip card section */
-
-/* Add these styles to your existing styles.css - replace the flip card section */
-
-/* ========== Flip Card Layout (Updated) ========== */
-.card.flip-container {
-  perspective: 1000px;
-  border-radius: 12px; /* Add rounded corners to the card container */
+  transform: scale(1.02);
 }
 
-.card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.8s ease;
-  transform-style: preserve-3d;
-  border-radius: 12px; /* Ensure the inner container also has rounded corners */
-}
-
-.card.flipped .card-inner {
-  transform: rotateY(180deg);
-}
-
-.card-front,
-.card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 12px; /* Rounded corners for both faces */
-  overflow: hidden;
-}
-
-/* Front face starts rotated -180deg so it appears normal when card flips */
-.card-front {
-  transform: rotateY(-180deg);
-  z-index: 2;
-  background-color: #fff; /* White background for all cards by default */
-}
-
-/* Back face starts at 0deg, visible initially */
-.card-back {
-  transform: rotateY(0deg);
-  background: url('images/card-back.webp') center/cover no-repeat;
-}
-
-/* ========== Card Background Colors ========== */
-/* Enemy cards keep dark background */
-.card.enemy .card-front {
-  background-color: #2c2c2a;
-}
-
-/* Enemy special move text should be white */
-.card.enemy .special-move {
-  color: #fff;
-}
-
-/* ========== Card Animation Effects ========== */
+/* ========== Card Animation Effects (Mobile-Safe) ========== */
 .card.highlight-turn {
-  box-shadow: 0 0 20px #ffdd44;
-  transform: scale(1.05);
+  box-shadow: 0 0 clamp(10px, 3vw, 20px) #ffdd44;
+  transform: scale(clamp(1.02, 1.02, 1.05));
   transition: all 0.3s ease;
 }
 
 .card.special-glow {
-  box-shadow: 0 0 30px #ff6644;
+  box-shadow: 0 0 clamp(15px, 4vw, 30px) #ff6644;
   animation: specialPulse 0.5s ease-in-out 3;
 }
 
 @keyframes specialPulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.03); }
+  50% { transform: scale(clamp(1.01, 1.015, 1.03)); }
 }
 
 .card.damage-glow {
-  box-shadow: 0 0 15px #ff4444;
+  box-shadow: 0 0 clamp(8px, 2vw, 15px) #ff4444;
   animation: damagePulse 0.3s ease-in-out 2;
 }
 
 @keyframes damagePulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(0.95); }
+  50% { transform: scale(0.97); }
 }
 
 .card.shrink-hit {
@@ -366,35 +375,37 @@ h1 {
 
 @keyframes shrinkHit {
   0% { transform: scale(1); }
-  50% { transform: scale(0.9); }
+  50% { transform: scale(0.93); }
   100% { transform: scale(1); }
 }
 
 .card.defeated {
   opacity: 0.5;
   filter: grayscale(100%);
-  transform: scale(0.9);
+  transform: scale(0.95);
   transition: all 0.5s ease;
 }
 
 .card.active {
-  transform: scale(1.1);
+  transform: scale(clamp(1.05, 1.07, 1.1));
   z-index: 10;
-  box-shadow: 0 0 25px #44ddff;
+  box-shadow: 0 0 clamp(12px, 4vw, 25px) #44ddff;
   transition: all 0.3s ease;
 }
 
-/* ========== Floating Text Effects ========== */
+/* ========== Floating Text Effects (Mobile-Safe) ========== */
 .float-damage, .float-ko, .float-special {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: clamp(0.8rem, 2.5vw, 1.5rem);
   pointer-events: none;
   z-index: 100;
   transition: all 0.8s ease-out;
+  max-width: 80%;
+  text-align: center;
 }
 
 .float-damage {
@@ -404,68 +415,14 @@ h1 {
 
 .float-ko {
   color: #ff0000;
-  font-size: 2rem;
+  font-size: clamp(1rem, 3vw, 2rem);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .float-special {
   color: #ffdd44;
-  font-size: 1.3rem;
+  font-size: clamp(0.7rem, 2.2vw, 1.3rem);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-}
-/* Status effect visual indicators */
-.card.status-burning {
-  box-shadow: 0 0 10px rgba(255, 69, 0, 0.7);
-  border: 2px solid #ff4500;
-}
-
-.card.status-bleeding {
-  box-shadow: 0 0 8px rgba(139, 0, 0, 0.7);
-  border: 2px solid #8b0000;
-}
-
-.card.status-stunned,
-.card.status-paralyzed {
-  box-shadow: 0 0 8px rgba(255, 255, 0, 0.7);
-  border: 2px solid #ffd700;
-  opacity: 0.7;
-}
-
-.card.status-shield {
-  box-shadow: 0 0 12px rgba(0, 191, 255, 0.8);
-  border: 2px solid #00bfff;
-}
-
-.card.status-boosted {
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
-  border: 2px solid #32cd32;
-}
-
-.card.status-confused,
-.card.status-haunted {
-  box-shadow: 0 0 8px rgba(128, 0, 128, 0.7);
-  border: 2px solid #800080;
-}
-
-.card.status-reflect {
-  box-shadow: 0 0 10px rgba(192, 192, 192, 0.8);
-  border: 2px solid #c0c0c0;
-  animation: shimmer 2s infinite;
-}
-
-.card.status-vanished {
-  opacity: 0.3;
-  animation: flicker 1s infinite;
-}
-
-@keyframes shimmer {
-  0%, 100% { box-shadow: 0 0 10px rgba(192, 192, 192, 0.8); }
-  50% { box-shadow: 0 0 20px rgba(255, 255, 255, 1); }
-}
-
-@keyframes flicker {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.1; }
 }
 
 .float-heal {
@@ -475,8 +432,94 @@ h1 {
   transform: translateX(-50%);
   color: #4CAF50;
   font-weight: bold;
-  font-size: 18px;
+  font-size: clamp(0.8rem, 2.5vw, 18px);
   pointer-events: none;
   transition: all 1s ease-out;
   z-index: 1000;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* ========== Status Effect Visual Indicators (Mobile-Safe) ========== */
+.card.status-burning {
+  box-shadow: 0 0 clamp(5px, 1.5vw, 10px) rgba(255, 69, 0, 0.7);
+  border: clamp(1px, 0.3vw, 2px) solid #ff4500;
+}
+
+.card.status-bleeding {
+  box-shadow: 0 0 clamp(4px, 1.2vw, 8px) rgba(139, 0, 0, 0.7);
+  border: clamp(1px, 0.3vw, 2px) solid #8b0000;
+}
+
+.card.status-stunned,
+.card.status-paralyzed {
+  box-shadow: 0 0 clamp(4px, 1.2vw, 8px) rgba(255, 255, 0, 0.7);
+  border: clamp(1px, 0.3vw, 2px) solid #ffd700;
+  opacity: 0.7;
+}
+
+.card.status-shield {
+  box-shadow: 0 0 clamp(6px, 1.8vw, 12px) rgba(0, 191, 255, 0.8);
+  border: clamp(1px, 0.3vw, 2px) solid #00bfff;
+}
+
+.card.status-boosted {
+  box-shadow: 0 0 clamp(5px, 1.5vw, 10px) rgba(0, 255, 0, 0.7);
+  border: clamp(1px, 0.3vw, 2px) solid #32cd32;
+}
+
+.card.status-confused,
+.card.status-haunted {
+  box-shadow: 0 0 clamp(4px, 1.2vw, 8px) rgba(128, 0, 128, 0.7);
+  border: clamp(1px, 0.3vw, 2px) solid #800080;
+}
+
+.card.status-reflect {
+  box-shadow: 0 0 clamp(5px, 1.5vw, 10px) rgba(192, 192, 192, 0.8);
+  border: clamp(1px, 0.3vw, 2px) solid #c0c0c0;
+  animation: shimmer 2s infinite;
+}
+
+.card.status-vanished {
+  opacity: 0.3;
+  animation: flicker 1s infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { box-shadow: 0 0 clamp(5px, 1.5vw, 10px) rgba(192, 192, 192, 0.8); }
+  50% { box-shadow: 0 0 clamp(10px, 3vw, 20px) rgba(255, 255, 255, 1); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.1; }
+}
+
+/* ========== Mobile-Specific Optimizations ========== */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .board {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  .team-column {
+    gap: 0.5rem;
+  }
+}
+
+/* Prevent zoom on double-tap for iOS */
+@media (max-width: 768px) {
+  button, .card {
+    touch-action: manipulation;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+  .card img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
 }
