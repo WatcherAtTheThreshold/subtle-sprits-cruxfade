@@ -26,6 +26,7 @@ const enemyPets = [
 
 let roundCount = 1;
 let defeatedEnemyNames = [];
+let gameStarted = false;  // ADD THIS LINE
 
 const specialEffects = {
   "Plant Blessing": "Heals allies over time.",
@@ -95,9 +96,7 @@ function buildTeams() {
   const pet = enemyPets[Math.floor(Math.random() * enemyPets.length)];
   [pet, ...shuffledMains].forEach(data => enemyArea.appendChild(createCard(data, true)));
 
-  setTimeout(() => {
-    document.querySelectorAll('.card').forEach(card => card.classList.add('flipped'));
-  }, 1000);
+
 }
 
 function getHP(card) {
@@ -207,7 +206,20 @@ async function performTurn(card, opponents) {
 }
 
 async function startBattle() {
-  document.getElementById("battle-button").style.display = "none";
+  const battleButton = document.getElementById("battle-button");
+  
+  if (!gameStarted) {
+    // First click - flip the cards and change button text
+    gameStarted = true;
+    battleButton.textContent = "Start Round";
+    
+    // Flip all cards
+    document.querySelectorAll('.card').forEach(card => card.classList.add('flipped'));
+    return;
+  }
+  
+  // Subsequent clicks - start the actual battle
+  battleButton.style.display = "none";
 
   let allCards = Array.from(document.querySelectorAll(".card"));
   allCards = getLiving(allCards).sort(() => Math.random() - 0.5);
@@ -251,15 +263,18 @@ function checkVictory(players, enemies) {
     const btn = document.createElement("button");
     btn.className = "restart-button";
     btn.textContent = "Restart Game";
-    btn.onclick = () => {
-      document.getElementById("restart-container").innerHTML = "";
-      roundCount = 1;
-      buildTeams();
-      document.getElementById("battle-status").textContent = "Round 1";
-      document.getElementById("special-info").textContent = "&nbsp;";
-      document.getElementById("special-info").classList.add("hidden");
-      document.getElementById("battle-button").style.display = "inline-block";
-    };
+  btn.onclick = () => {
+  document.getElementById("restart-container").innerHTML = "";
+  roundCount = 1;
+  gameStarted = false;  // ADD THIS LINE
+  buildTeams();
+  document.getElementById("battle-status").textContent = "Round 1";
+  document.getElementById("special-info").textContent = "&nbsp;";
+  document.getElementById("special-info").classList.add("hidden");
+  const battleButton = document.getElementById("battle-button");
+  battleButton.textContent = "Start Game";  // ADD THIS LINE
+  battleButton.style.display = "inline-block";
+};
     document.getElementById("restart-container").appendChild(btn);
     return true;
   }
@@ -284,10 +299,4 @@ document.addEventListener('click', function (e) {
     document.querySelectorAll('.card.active').forEach(c => c.classList.remove('active'));
   }
 });
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.querySelectorAll('.card').forEach(card => {
-      card.classList.add('flipped');
-    });
-  }, 2000); // Adjust delay as needed
-});
+
