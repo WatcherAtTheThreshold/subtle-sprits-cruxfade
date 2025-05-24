@@ -211,3 +211,85 @@ h1 {
   box-shadow: 0 0 12px #d4b15f;
   transform: scale(1.03);
 }
+/* Add these styles to your existing styles.css */
+
+/* ========== Card Animation Effects ========== */
+.card.highlight-turn {
+  box-shadow: 0 0 20px #ffdd44;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+.card.special-glow {
+  box-shadow: 0 0 30px #ff6644;
+  animation: specialPulse 0.5s ease-in-out 3;
+}
+
+@keyframes specialPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+.card.damage-glow {
+  box-shadow: 0 0 15px #ff4444;
+  animation: damagePulse 0.3s ease-in-out 2;
+}
+
+@keyframes damagePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+}
+
+.card.shrink-hit {
+  animation: shrinkHit 0.25s ease-out;
+}
+
+@keyframes shrinkHit {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.card.defeated {
+  opacity: 0.5;
+  filter: grayscale(100%);
+  transform: scale(0.9);
+  transition: all 0.5s ease;
+}
+
+.card.active {
+  transform: scale(1.1);
+  z-index: 10;
+  box-shadow: 0 0 25px #44ddff;
+  transition: all 0.3s ease;
+}
+
+/* ========== Floating Text Effects ========== */
+.float-damage, .float-ko, .float-special {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: 1.5rem;
+  pointer-events: none;
+  z-index: 100;
+  transition: all 0.8s ease-out;
+}
+
+.float-damage {
+  color: #ff4444;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.float-ko {
+  color: #ff0000;
+  font-size: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.float-special {
+  color: #ffdd44;
+  font-size: 1.3rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
