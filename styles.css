@@ -211,7 +211,46 @@ h1 {
   box-shadow: 0 0 12px #d4b15f;
   transform: scale(1.03);
 }
-/* Add these styles to your existing styles.css */
+/* Add these styles to your existing styles.css - replace the flip card section */
+
+/* ========== Flip Card Layout (Updated) ========== */
+.card.flip-container {
+  perspective: 1000px;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s ease;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Front face starts rotated -180deg so it appears normal when card flips */
+.card-front {
+  transform: rotateY(-180deg);
+  z-index: 2;
+}
+
+/* Back face starts at 0deg, visible initially */
+.card-back {
+  transform: rotateY(0deg);
+  background: url('images/card-back.webp') center/cover no-repeat;
+}
 
 /* ========== Card Animation Effects ========== */
 .card.highlight-turn {
