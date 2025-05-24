@@ -206,7 +206,7 @@ async function performTurn(card, opponents) {
   await new Promise(r => setTimeout(r, 300));
 }
 
-async function startBattle() {
+async function startActualBattle() {
   document.getElementById("battle-button").style.display = "none";
 
   let allCards = Array.from(document.querySelectorAll(".card"));
@@ -254,8 +254,7 @@ function checkVictory(players, enemies) {
     btn.onclick = () => {
       document.getElementById("restart-container").innerHTML = "";
       roundCount = 1;
-      buildTeams();
-      document.getElementById("battle-status").textContent = "Round 1";
+            document.getElementById("battle-status").textContent = "Round 1";
       document.getElementById("special-info").textContent = "&nbsp;";
       document.getElementById("special-info").classList.add("hidden");
       document.getElementById("battle-button").style.display = "inline-block";
@@ -266,7 +265,6 @@ function checkVictory(players, enemies) {
   return false;
 }
 
-buildTeams();
 
 document.addEventListener('click', function (e) {
   if (e.target.closest('.card')) {
@@ -310,7 +308,7 @@ function setupBoard(flipOnSetup = true) {
   }
 }
 
-function startBattle() {
+function startActualBattle() {
   const button = document.getElementById("battle-button");
 
   if (!gameStarted) {
@@ -327,5 +325,43 @@ function startBattle() {
     }, 1000);
   } else {
     beginRound(); // your normal round-starting function
+  }
+}
+
+
+
+let gameStarted = false;
+
+window.onload = () => {
+  document.getElementById("battle-button").textContent = "Start Game";
+  setupBoard(false); // Build cards, don't flip yet
+};
+
+function setupBoard(flipOnSetup = true) {
+  buildTeams(); // Use existing build logic
+  if (flipOnSetup) {
+    document.querySelectorAll(".card").forEach(card => {
+      card.classList.add("flipped");
+    });
+  }
+}
+
+function startBattle() {
+  const button = document.getElementById("battle-button");
+
+  if (!gameStarted) {
+    gameStarted = true;
+
+    // Flip all cards to show their faces
+    document.querySelectorAll(".card").forEach(card => {
+      card.classList.add("flipped");
+    });
+
+    button.textContent = "Start Round";
+    setTimeout(() => {
+      startActualBattle(); // renamed to avoid confusion
+    }, 1000);
+  } else {
+    startActualBattle(); // normal flow
   }
 }
