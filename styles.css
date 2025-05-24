@@ -431,3 +431,41 @@ h1 {
 }
 
 
+
+/* ─── Flip Card Styles ─── */
+.card.flip-container {
+  perspective: 1000px;
+  background: none;
+  padding: 0;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s ease;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card-front {
+  z-index: 2;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  background: url('images/card-back.webp') center/cover no-repeat;
+}
