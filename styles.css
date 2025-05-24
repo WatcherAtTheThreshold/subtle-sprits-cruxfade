@@ -411,11 +411,11 @@ h1 {
 }
 
 .card.pet.active {
-  transform: scale(1.5); /* override the .pet scaling */
+  transform: scale(1.275); /* override the .pet scaling */
 }
 
 .card.pet:hover {
-  transform: scale(1.5);
+  transform: scale(1.275);
   z-index: 10;
   position: relative;
   box-shadow:
