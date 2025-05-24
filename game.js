@@ -235,6 +235,7 @@ async function performTurn(card, opponents) {
 
 async function startBattle() {
   buildTeams();
+}
   document.getElementById("battle-button").style.display = "none";
 
   let allCards = Array.from(document.querySelectorAll(".card"));
