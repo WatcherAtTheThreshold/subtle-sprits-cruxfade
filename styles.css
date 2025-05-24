@@ -106,6 +106,12 @@ h1 {
   background: url('images/card-back.webp') center/cover no-repeat;
 }
 
+/* Ally cards have white card backs */
+.card:not(.enemy) .card-back {
+  background-color: #fff;
+  background-image: none; /* Remove the card-back image for allies */
+}
+
 /* Front face starts rotated 180deg so it appears normal when card flips */
 .card-front {
   transform: rotateY(180deg);
