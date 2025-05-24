@@ -122,6 +122,8 @@ h1 {
 /* ========== Flip Card Layout ========== */
 .card.flip-container {
   perspective: 1000px;
+  border-radius: 12px; /* Add rounded corners to the card container */
+  border: none; /* Remove border during flip to prevent outline showing */
 }
 
 .card-inner {
