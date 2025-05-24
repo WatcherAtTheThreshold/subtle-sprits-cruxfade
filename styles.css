@@ -249,12 +249,24 @@ h1 {
 .card-front {
   transform: rotateY(-180deg);
   z-index: 2;
+  background-color: #fff; /* White background for all cards by default */
 }
 
 /* Back face starts at 0deg, visible initially */
 .card-back {
   transform: rotateY(0deg);
   background: url('images/card-back.webp') center/cover no-repeat;
+}
+
+/* ========== Card Background Colors ========== */
+/* Enemy cards keep dark background */
+.card.enemy .card-front {
+  background-color: #2c2c2a;
+}
+
+/* Enemy special move text should be white */
+.card.enemy .special-move {
+  color: #fff;
 }
 
 /* ========== Card Animation Effects ========== */
