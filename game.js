@@ -295,8 +295,20 @@ let gameStarted = false;
 
 window.onload = () => {
   document.getElementById("battle-button").textContent = "Start Game";
-  setupBoard();
+  setupBoard(false); // Call the function here, with flipping turned off
 };
+
+// Define setupBoard outside of the window.onload block
+function setupBoard(flipOnSetup = true) {
+  // existing setup logic...
+
+  // Only flip cards if flag is true
+  if (flipOnSetup) {
+    document.querySelectorAll(".card").forEach(card => {
+      card.classList.add("flipped");
+    });
+  }
+}
 
 function startBattle() {
   const button = document.getElementById("battle-button");
