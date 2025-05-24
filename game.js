@@ -291,3 +291,29 @@ window.addEventListener('load', () => {
     });
   }, 2000); // Adjust delay as needed
 });
+let gameStarted = false;
+
+window.onload = () => {
+  document.getElementById("battle-button").textContent = "Start Game";
+  setupBoard();
+};
+
+function startBattle() {
+  const button = document.getElementById("battle-button");
+
+  if (!gameStarted) {
+    gameStarted = true;
+
+    // Flip all cards to show their faces
+    document.querySelectorAll(".card").forEach(card => {
+      card.classList.add("flipped");
+    });
+
+    button.textContent = "Start Round";
+    setTimeout(() => {
+      beginRound(); // your existing round logic
+    }, 1000);
+  } else {
+    beginRound(); // your normal round-starting function
+  }
+}
