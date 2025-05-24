@@ -158,6 +158,13 @@ h1 {
   color: #000;
   margin: 0 auto;
 }
+/* Make enemy and pet name tags white with matching dark backgrounds */
+.card.enemy .name-tag,
+.card.pet.enemy .name-tag {
+  background: rgba(60, 60, 60, 0.85);
+  color: #fff;
+}
+
 
 .description, .special-move {
   font-size: 1.05rem;
