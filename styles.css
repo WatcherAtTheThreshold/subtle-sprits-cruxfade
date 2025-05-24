@@ -118,6 +118,7 @@ h1 {
   font-size: 0.65rem;
   box-sizing: border-box;
   position: relative;
+  border-radius: 12px; /* Add this line */
 }
 
 .card.enemy {
@@ -213,9 +214,12 @@ h1 {
 }
 /* Add these styles to your existing styles.css - replace the flip card section */
 
+/* Add these styles to your existing styles.css - replace the flip card section */
+
 /* ========== Flip Card Layout (Updated) ========== */
 .card.flip-container {
   perspective: 1000px;
+  border-radius: 12px; /* Add rounded corners to the card container */
 }
 
 .card-inner {
@@ -224,6 +228,7 @@ h1 {
   height: 100%;
   transition: transform 0.8s ease;
   transform-style: preserve-3d;
+  border-radius: 12px; /* Ensure the inner container also has rounded corners */
 }
 
 .card.flipped .card-inner {
@@ -236,7 +241,7 @@ h1 {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 8px;
+  border-radius: 12px; /* Rounded corners for both faces */
   overflow: hidden;
 }
 
