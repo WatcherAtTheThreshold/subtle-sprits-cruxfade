@@ -100,13 +100,17 @@ h1 {
   overflow: hidden;
 }
 
-.card-front {
-  z-index: 2;
+/* Back face starts at 0deg, visible initially */
+.card-back {
+  transform: rotateY(0deg);
+  background: url('images/card-back.webp') center/cover no-repeat;
 }
 
-.card-back {
+/* Front face starts rotated 180deg so it appears normal when card flips */
+.card-front {
   transform: rotateY(180deg);
-  background: url('images/card-back.webp') center/cover no-repeat;
+  z-index: 2;
+  background-color: #fff; /* White background for ally cards by default */
 }
 
 /* ========== Card Presentation ========== */
