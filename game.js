@@ -26,13 +26,13 @@ const enemyPets = [
 
 let roundCount = 1;
 let defeatedEnemyNames = [];
-let gameStarted = false;  // ADD THIS LINE
+let gameStarted = false;
 
 const specialEffects = {
   "Plant Blessing": "Heals allies over time.",
   "Luminous Veil": "Shields the team from the next hit.",
   "Spark Trick": "Deals extra damage and stuns.",
-  "Encouraging Chirp": "Boosts morale, raising attack.",
+  "Meowing Chirp": "Boosts morale, raising attack.",
   "Skull Bash": "Stuns and damages the target.",
   "Wildfire Curse": "Applies burning damage over time.",
   "Panic Injection": "Confuses and weakens.",
@@ -95,8 +95,6 @@ function buildTeams() {
   const shuffledMains = [...availableMains].sort(() => 0.5 - Math.random()).slice(0, 3);
   const pet = enemyPets[Math.floor(Math.random() * enemyPets.length)];
   [pet, ...shuffledMains].forEach(data => enemyArea.appendChild(createCard(data, true)));
-
-
 }
 
 function getHP(card) {
@@ -156,13 +154,33 @@ function floatSpecial(card) {
   setTimeout(() => tag.remove(), 1000);
 }
 
+function floatHeal(card, amt) {
+  const tag = document.createElement("div");
+  tag.className = "float-heal";
+  tag.textContent = `+${amt}`;
+  tag.style.position = "absolute";
+  tag.style.top = "50%";
+  tag.style.left = "50%";
+  tag.style.transform = "translate(-50%, -50%)";
+  tag.style.color = "#4CAF50";
+  tag.style.fontWeight = "bold";
+  tag.style.fontSize = "18px";
+  tag.style.pointerEvents = "none";
+  tag.style.transition = "all 1s ease-out";
+  tag.style.zIndex = "1000";
+  tag.style.textShadow = "2px 2px 4px rgba(0, 0, 0, 0.8)";
+  card.appendChild(tag);
+  
+  setTimeout(() => tag.style.top = '-30px', 50);
+  setTimeout(() => tag.style.opacity = '0', 50);
+  setTimeout(() => tag.remove(), 1000);
+}
+
 function randomDamage(card) {
   const atk = getATK(card);
   const isPet = card.dataset.isPet === 'true';
   return isPet ? Math.floor(Math.random() * 3) + 3 : Math.floor(Math.random() * (atk - 4)) + 5;
 }
-
-// Add these functions to handle special move effects
 
 // Helper function to get all team members (living and dead)
 function getTeamMembers(card) {
@@ -178,7 +196,7 @@ function getOpponentTeam(card) {
   return Array.from(document.querySelectorAll(teamSelector));
 }
 
-// Apply status effects (you might want to track these on cards)
+// Apply status effects
 function addStatusEffect(card, effect, duration = 3) {
   if (!card.statusEffects) card.statusEffects = {};
   card.statusEffects[effect] = duration;
@@ -225,7 +243,9 @@ async function executeSpecialMove(card, specialName, opponents) {
         const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
         const damage = 15; // Higher damage than normal
         floatDamage(target, damage);
+        target.classList.add("damage-glow");
         setHP(target, getHP(target) - damage);
+        setTimeout(() => target.classList.remove("damage-glow"), 900);
         addStatusEffect(target, "stunned", 2);
       }
       break;
@@ -247,7 +267,9 @@ async function executeSpecialMove(card, specialName, opponents) {
         const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
         const damage = 12;
         floatDamage(target, damage);
+        target.classList.add("damage-glow");
         setHP(target, getHP(target) - damage);
+        setTimeout(() => target.classList.remove("damage-glow"), 900);
         addStatusEffect(target, "stunned", 2);
       }
       break;
@@ -283,7 +305,9 @@ async function executeSpecialMove(card, specialName, opponents) {
       livingOpponents.forEach(enemy => {
         const damage = 8;
         floatDamage(enemy, damage);
+        enemy.classList.add("damage-glow");
         setHP(enemy, getHP(enemy) - damage);
+        setTimeout(() => enemy.classList.remove("damage-glow"), 900);
       });
       break;
       
@@ -293,7 +317,9 @@ async function executeSpecialMove(card, specialName, opponents) {
         const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
         const damage = 10;
         floatDamage(target, damage);
+        target.classList.add("damage-glow");
         setHP(target, getHP(target) - damage);
+        setTimeout(() => target.classList.remove("damage-glow"), 900);
         addStatusEffect(target, "bleeding", 3);
       }
       break;
@@ -311,7 +337,9 @@ async function executeSpecialMove(card, specialName, opponents) {
       livingOpponents.forEach(enemy => {
         const damage = 6;
         floatDamage(enemy, damage);
+        enemy.classList.add("damage-glow");
         setHP(enemy, getHP(enemy) - damage);
+        setTimeout(() => enemy.classList.remove("damage-glow"), 900);
         addStatusEffect(enemy, "stunned", 1);
       });
       break;
@@ -321,7 +349,9 @@ async function executeSpecialMove(card, specialName, opponents) {
       livingOpponents.forEach(enemy => {
         const damage = 12;
         floatDamage(enemy, damage);
+        enemy.classList.add("damage-glow");
         setHP(enemy, getHP(enemy) - damage);
+        setTimeout(() => enemy.classList.remove("damage-glow"), 900);
       });
       break;
       
@@ -336,7 +366,9 @@ async function executeSpecialMove(card, specialName, opponents) {
         const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
         const damage = 8;
         floatDamage(target, damage);
+        target.classList.add("damage-glow");
         setHP(target, getHP(target) - damage);
+        setTimeout(() => target.classList.remove("damage-glow"), 900);
         // Card becomes temporarily untargetable
         addStatusEffect(card, "vanished", 1);
       }
@@ -357,24 +389,13 @@ async function executeSpecialMove(card, specialName, opponents) {
       livingOpponents.forEach(enemy => {
         const damage = 5;
         floatDamage(enemy, damage);
+        enemy.classList.add("damage-glow");
         setHP(enemy, getHP(enemy) - damage);
+        setTimeout(() => enemy.classList.remove("damage-glow"), 900);
         addStatusEffect(enemy, "burning", 2);
       });
       break;
   }
-}
-
-// Add healing animation function
-function floatHeal(card, amt) {
-  const tag = document.createElement("div");
-  tag.className = "float-heal";
-  tag.textContent = `+${amt}`;
-  tag.style.color = "#4CAF50";
-  card.appendChild(tag);
-  
-  setTimeout(() => tag.style.top = '-30px', 50);
-  setTimeout(() => tag.style.opacity = '0', 50);
-  setTimeout(() => tag.remove(), 1000);
 }
 
 // Process status effects at the start of each turn
@@ -415,7 +436,7 @@ function canAct(card) {
   return !card.statusEffects.stunned && !card.statusEffects.paralyzed;
 }
 
-// Modified performTurn function (replace the existing one)
+// Main turn execution function
 async function performTurn(card, opponents) {
   if (getHP(card) <= 0 || getLiving(opponents).length === 0) return;
   
@@ -487,10 +508,6 @@ async function performTurn(card, opponents) {
   await new Promise(r => setTimeout(r, 300));
 }
 
-  card.classList.remove("highlight-turn");
-  await new Promise(r => setTimeout(r, 300));
-}
-
 async function startBattle() {
   const battleButton = document.getElementById("battle-button");
   
@@ -549,18 +566,18 @@ function checkVictory(players, enemies) {
     const btn = document.createElement("button");
     btn.className = "restart-button";
     btn.textContent = "Restart Game";
-  btn.onclick = () => {
-  document.getElementById("restart-container").innerHTML = "";
-  roundCount = 1;
-  gameStarted = false;  // ADD THIS LINE
-  buildTeams();
-  document.getElementById("battle-status").textContent = "Round 1";
-  document.getElementById("special-info").textContent = "&nbsp;";
-  document.getElementById("special-info").classList.add("hidden");
-  const battleButton = document.getElementById("battle-button");
-  battleButton.textContent = "Start Game";  // ADD THIS LINE
-  battleButton.style.display = "inline-block";
-};
+    btn.onclick = () => {
+      document.getElementById("restart-container").innerHTML = "";
+      roundCount = 1;
+      gameStarted = false;
+      buildTeams();
+      document.getElementById("battle-status").textContent = "Round 1";
+      document.getElementById("special-info").textContent = "&nbsp;";
+      document.getElementById("special-info").classList.add("hidden");
+      const battleButton = document.getElementById("battle-button");
+      battleButton.textContent = "Start Game";
+      battleButton.style.display = "inline-block";
+    };
     document.getElementById("restart-container").appendChild(btn);
     return true;
   }
@@ -585,4 +602,3 @@ document.addEventListener('click', function (e) {
     document.querySelectorAll('.card.active').forEach(c => c.classList.remove('active'));
   }
 });
-
