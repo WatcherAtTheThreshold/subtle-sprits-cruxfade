@@ -284,3 +284,10 @@ document.addEventListener('click', function (e) {
     document.querySelectorAll('.card.active').forEach(c => c.classList.remove('active'));
   }
 });
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.card').forEach(card => {
+      card.classList.add('flipped');
+    });
+  }, 800); // Adjust delay as needed
+});
