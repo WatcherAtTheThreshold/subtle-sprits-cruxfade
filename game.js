@@ -1,4 +1,3 @@
-
 const playerTeam = [
   { name: "Timothy", hp: 30, atk: 10, img: "images/Timothy.png", desc: "Brave and kind. Searches for sprouting light.", special: "Plant Blessing", isPet: false },
   { name: "Magdaline", hp: 30, atk: 10, img: "images/Magdaline.png", desc: "Gentle healer. Touched by glimmering light.", special: "Luminous Veil", isPet: false },
@@ -18,8 +17,6 @@ const enemyMains = [
   { name: "Tim_blue", hp: 30, atk: 10, img: "images/Tim_blue.png", desc: "Experimental bot. Built for mischief.", special: "Spark Bomb", isPet: false },
   { name: "Tim_pink", hp: 30, atk: 10, img: "images/Tim_pink.png", desc: "Colorful copy. Brighter than real.", special: "Mirror Flash", isPet: false }
 ];
- 
-
 
 const enemyPets = [
   { name: "Thorn", hp: 10, atk: 5, img: "images/Thorn.png", desc: "Vengeful whisper. Strikes when unseen.", special: "Vanishing Sting", isPet: true },
@@ -63,12 +60,11 @@ function createCard(data, isEnemy) {
   const front = document.createElement("div");
   front.className = "card-front";
   front.innerHTML = `
-    <div class="bust-container"><img src="${data.img}" alt="${data.name}">
-</div>
+    <div class="bust-container"><img src="${data.img}" alt="${data.name}"></div>
     <div class="name-tag">${data.name}</div>
     <div class="stat hp">${data.hp}</div>
     <div class="stat atk">${data.atk}</div>
-    <div class="description">${data.description}</div>
+    <div class="description">${data.desc}</div>
     <div class="special-move">${data.special}</div>
   `;
 
@@ -80,26 +76,6 @@ function createCard(data, isEnemy) {
   flipContainer.appendChild(inner);
 
   return flipContainer;
-}
-
-
-  div.className = className;
-
-  div.dataset.name = data.name;
-  div.dataset.isPet = data.isPet;
-  div.dataset.specialUsed = "false";
-
-
-
-  div.innerHTML = `
-    <div class="stat hp">${data.hp}</div>
-    <div class="stat atk">${data.atk}</div>
-    <div class="bust-container"><img src="${data.img}" /></div>
-    <div class="name-tag">${data.name}</div>
-    <div class="description">${data.desc}</div>
-    <div class="special-move"><strong>Special:</strong> <span class="special-text">${data.special}</span></div>
-  `;
-  return div;
 }
 
 function buildTeams() {
@@ -119,13 +95,10 @@ function buildTeams() {
   const pet = enemyPets[Math.floor(Math.random() * enemyPets.length)];
   [pet, ...shuffledMains].forEach(data => enemyArea.appendChild(createCard(data, true)));
 
-setTimeout(() => {
-  document.querySelectorAll('.card').forEach(card => card.classList.add('flipped'));
-}, 1000);
-
+  setTimeout(() => {
+    document.querySelectorAll('.card').forEach(card => card.classList.add('flipped'));
+  }, 1000);
 }
-
-
 
 function getHP(card) {
   return parseInt(card.querySelector(".hp").textContent);
@@ -203,7 +176,7 @@ async function performTurn(card, opponents) {
 
   if (useSpecial) {
     status.textContent = `${name} uses their special!`;
-    const specialName = card.querySelector(".special-text").textContent;
+    const specialName = card.querySelector(".special-move").textContent;
     specialInfo.classList.remove("hidden");
     specialInfo.textContent = `Special: ${specialName} — ${specialEffects[specialName] || "A mysterious effect..."}`;
     card.classList.add("special-glow");
@@ -214,7 +187,7 @@ async function performTurn(card, opponents) {
   } else {
     specialInfo.classList.add("hidden");
     specialInfo.innerHTML = "&nbsp;";
-    const target = getLiving(opponents)[Math.floor(Math.random() * opponents.length)];
+    const target = getLiving(opponents)[Math.floor(Math.random() * getLiving(opponents).length)];
     const targetName = target.querySelector(".name-tag").textContent;
     const dmg = randomDamage(card);
 
@@ -234,8 +207,6 @@ async function performTurn(card, opponents) {
 }
 
 async function startBattle() {
-  buildTeams();
-}
   document.getElementById("battle-button").style.display = "none";
 
   let allCards = Array.from(document.querySelectorAll(".card"));
@@ -313,4 +284,3 @@ document.addEventListener('click', function (e) {
     document.querySelectorAll('.card.active').forEach(c => c.classList.remove('active'));
   }
 });
-
