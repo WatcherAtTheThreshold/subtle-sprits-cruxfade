@@ -161,7 +161,7 @@ h1 {
 /* Make enemy and pet name tags white with matching dark backgrounds */
 .card.enemy .name-tag,
 .card.pet.enemy .name-tag {
-  background: 36, 36, 34;
+  background: #242422;
   color: #fff;
 }
 
