@@ -162,8 +162,274 @@ function randomDamage(card) {
   return isPet ? Math.floor(Math.random() * 3) + 3 : Math.floor(Math.random() * (atk - 4)) + 5;
 }
 
+// Add these functions to handle special move effects
+
+// Helper function to get all team members (living and dead)
+function getTeamMembers(card) {
+  const isPlayerCard = card.closest("#player-team") !== null;
+  const teamSelector = isPlayerCard ? "#player-team .card" : "#enemy-team .card";
+  return Array.from(document.querySelectorAll(teamSelector));
+}
+
+// Helper function to get opponent team members
+function getOpponentTeam(card) {
+  const isPlayerCard = card.closest("#player-team") !== null;
+  const teamSelector = isPlayerCard ? "#enemy-team .card" : "#player-team .card";
+  return Array.from(document.querySelectorAll(teamSelector));
+}
+
+// Apply status effects (you might want to track these on cards)
+function addStatusEffect(card, effect, duration = 3) {
+  if (!card.statusEffects) card.statusEffects = {};
+  card.statusEffects[effect] = duration;
+  
+  // Visual indicator
+  card.classList.add(`status-${effect}`);
+}
+
+function removeStatusEffect(card, effect) {
+  if (card.statusEffects) {
+    delete card.statusEffects[effect];
+    card.classList.remove(`status-${effect}`);
+  }
+}
+
+// Execute special move effects
+async function executeSpecialMove(card, specialName, opponents) {
+  const teammates = getTeamMembers(card);
+  const livingTeammates = getLiving(teammates);
+  const livingOpponents = getLiving(opponents);
+  
+  switch (specialName) {
+    case "Plant Blessing":
+      // Heals allies over time
+      livingTeammates.forEach(ally => {
+        if (ally !== card) {
+          const healAmount = 5;
+          setHP(ally, getHP(ally) + healAmount);
+          floatHeal(ally, healAmount);
+        }
+      });
+      break;
+      
+    case "Luminous Veil":
+      // Shields the team from the next hit
+      livingTeammates.forEach(ally => {
+        addStatusEffect(ally, "shield", 1);
+      });
+      break;
+      
+    case "Spark Trick":
+      // Deals extra damage and stuns
+      if (livingOpponents.length > 0) {
+        const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
+        const damage = 15; // Higher damage than normal
+        floatDamage(target, damage);
+        setHP(target, getHP(target) - damage);
+        addStatusEffect(target, "stunned", 2);
+      }
+      break;
+      
+    case "Meowing Chirp": // Simon's move
+      // Boosts morale, raising attack
+      livingTeammates.forEach(ally => {
+        if (ally !== card) {
+          const currentAtk = getATK(ally);
+          ally.querySelector(".atk").textContent = currentAtk + 3;
+          addStatusEffect(ally, "boosted", 3);
+        }
+      });
+      break;
+      
+    case "Skull Bash":
+      // Stuns and damages the target
+      if (livingOpponents.length > 0) {
+        const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
+        const damage = 12;
+        floatDamage(target, damage);
+        setHP(target, getHP(target) - damage);
+        addStatusEffect(target, "stunned", 2);
+      }
+      break;
+      
+    case "Wildfire Curse":
+      // Applies burning damage over time
+      livingOpponents.forEach(enemy => {
+        addStatusEffect(enemy, "burning", 3);
+      });
+      break;
+      
+    case "Panic Injection":
+      // Confuses and weakens
+      if (livingOpponents.length > 0) {
+        const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
+        const currentAtk = getATK(target);
+        target.querySelector(".atk").textContent = Math.max(1, currentAtk - 5);
+        addStatusEffect(target, "confused", 3);
+      }
+      break;
+      
+    case "Void Whisper":
+      // Drains hope and lowers defense (reduces HP)
+      livingOpponents.forEach(enemy => {
+        const drainAmount = 3;
+        setHP(enemy, getHP(enemy) - drainAmount);
+        floatDamage(enemy, drainAmount);
+      });
+      break;
+      
+    case "Horn Sweep":
+      // Hits all enemies in a wide arc
+      livingOpponents.forEach(enemy => {
+        const damage = 8;
+        floatDamage(enemy, damage);
+        setHP(enemy, getHP(enemy) - damage);
+      });
+      break;
+      
+    case "Ebon Fangs":
+      // Pierces armor and causes bleeding
+      if (livingOpponents.length > 0) {
+        const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
+        const damage = 10;
+        floatDamage(target, damage);
+        setHP(target, getHP(target) - damage);
+        addStatusEffect(target, "bleeding", 3);
+      }
+      break;
+      
+    case "Static Shock":
+      // Paralyzes one opponent
+      if (livingOpponents.length > 0) {
+        const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
+        addStatusEffect(target, "paralyzed", 2);
+      }
+      break;
+      
+    case "Tectonic Slam":
+      // Shakes the battlefield - hits all enemies
+      livingOpponents.forEach(enemy => {
+        const damage = 6;
+        floatDamage(enemy, damage);
+        setHP(enemy, getHP(enemy) - damage);
+        addStatusEffect(enemy, "stunned", 1);
+      });
+      break;
+      
+    case "Spark Bomb":
+      // Deals explosive damage
+      livingOpponents.forEach(enemy => {
+        const damage = 12;
+        floatDamage(enemy, damage);
+        setHP(enemy, getHP(enemy) - damage);
+      });
+      break;
+      
+    case "Mirror Flash":
+      // Reflects incoming attacks (defensive buff)
+      addStatusEffect(card, "reflect", 2);
+      break;
+      
+    case "Vanishing Sting":
+      // Hits and vanishes without trace
+      if (livingOpponents.length > 0) {
+        const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
+        const damage = 8;
+        floatDamage(target, damage);
+        setHP(target, getHP(target) - damage);
+        // Card becomes temporarily untargetable
+        addStatusEffect(card, "vanished", 1);
+      }
+      break;
+      
+    case "Haunted Stare":
+      // Haunts a target, lowering focus
+      if (livingOpponents.length > 0) {
+        const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
+        const currentAtk = getATK(target);
+        target.querySelector(".atk").textContent = Math.max(1, currentAtk - 4);
+        addStatusEffect(target, "haunted", 4);
+      }
+      break;
+      
+    case "Flame Coil":
+      // Burns enemies in a ring of fire
+      livingOpponents.forEach(enemy => {
+        const damage = 5;
+        floatDamage(enemy, damage);
+        setHP(enemy, getHP(enemy) - damage);
+        addStatusEffect(enemy, "burning", 2);
+      });
+      break;
+  }
+}
+
+// Add healing animation function
+function floatHeal(card, amt) {
+  const tag = document.createElement("div");
+  tag.className = "float-heal";
+  tag.textContent = `+${amt}`;
+  tag.style.color = "#4CAF50";
+  card.appendChild(tag);
+  
+  setTimeout(() => tag.style.top = '-30px', 50);
+  setTimeout(() => tag.style.opacity = '0', 50);
+  setTimeout(() => tag.remove(), 1000);
+}
+
+// Process status effects at the start of each turn
+function processStatusEffects(card) {
+  if (!card.statusEffects) return;
+  
+  const effects = Object.keys(card.statusEffects);
+  for (const effect of effects) {
+    switch (effect) {
+      case "burning":
+        const burnDamage = 3;
+        floatDamage(card, burnDamage);
+        setHP(card, getHP(card) - burnDamage);
+        break;
+      case "bleeding":
+        const bleedDamage = 2;
+        floatDamage(card, bleedDamage);
+        setHP(card, getHP(card) - bleedDamage);
+        break;
+      case "stunned":
+      case "paralyzed":
+      case "confused":
+        // These prevent actions (handled in performTurn)
+        break;
+    }
+    
+    // Decrease duration
+    card.statusEffects[effect]--;
+    if (card.statusEffects[effect] <= 0) {
+      removeStatusEffect(card, effect);
+    }
+  }
+}
+
+// Check if a card can act (not stunned/paralyzed)
+function canAct(card) {
+  if (!card.statusEffects) return true;
+  return !card.statusEffects.stunned && !card.statusEffects.paralyzed;
+}
+
+// Modified performTurn function (replace the existing one)
 async function performTurn(card, opponents) {
   if (getHP(card) <= 0 || getLiving(opponents).length === 0) return;
+  
+  // Process status effects first
+  processStatusEffects(card);
+  
+  // Check if card can act
+  if (!canAct(card)) {
+    const status = document.getElementById("battle-status");
+    const name = card.querySelector(".name-tag").textContent;
+    status.textContent = `${name} is stunned and cannot act!`;
+    await new Promise(r => setTimeout(r, 1000));
+    return;
+  }
 
   const status = document.getElementById("battle-status");
   const specialInfo = document.getElementById("special-info");
@@ -181,25 +447,45 @@ async function performTurn(card, opponents) {
     card.classList.add("special-glow");
     card.dataset.specialUsed = 'true';
     floatSpecial(card);
-    await new Promise(r => setTimeout(r, 1200));
+    
+    await new Promise(r => setTimeout(r, 800));
+    
+    // Execute the actual special move effect
+    await executeSpecialMove(card, specialName, opponents);
+    
+    await new Promise(r => setTimeout(r, 400));
     card.classList.remove("special-glow");
   } else {
     specialInfo.classList.add("hidden");
     specialInfo.innerHTML = "&nbsp;";
-    const target = getLiving(opponents)[Math.floor(Math.random() * getLiving(opponents).length)];
+    const livingOpponents = getLiving(opponents);
+    if (livingOpponents.length === 0) return;
+    
+    const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
     const targetName = target.querySelector(".name-tag").textContent;
-    const dmg = randomDamage(card);
+    
+    // Check if target has shield
+    let dmg = randomDamage(card);
+    if (target.statusEffects && target.statusEffects.shield) {
+      status.textContent = `${name} attacks ${targetName}, but the shield blocks it!`;
+      removeStatusEffect(target, "shield");
+      await new Promise(r => setTimeout(r, 1000));
+    } else {
+      status.textContent = `${name} targets ${targetName}...`;
+      await new Promise(r => setTimeout(r, 600));
 
-    status.textContent = `${name} targets ${targetName}...`;
-    await new Promise(r => setTimeout(r, 600));
-
-    status.textContent = `${name} hits ${targetName} for ${dmg}`;
-    floatDamage(target, dmg);
-    target.classList.add("damage-glow");
-    setHP(target, getHP(target) - dmg);
-    await new Promise(r => setTimeout(r, 900));
-    target.classList.remove("damage-glow");
+      status.textContent = `${name} hits ${targetName} for ${dmg}`;
+      floatDamage(target, dmg);
+      target.classList.add("damage-glow");
+      setHP(target, getHP(target) - dmg);
+      await new Promise(r => setTimeout(r, 900));
+      target.classList.remove("damage-glow");
+    }
   }
+
+  card.classList.remove("highlight-turn");
+  await new Promise(r => setTimeout(r, 300));
+}
 
   card.classList.remove("highlight-turn");
   await new Promise(r => setTimeout(r, 300));
