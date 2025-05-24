@@ -50,14 +50,38 @@ const specialEffects = {
   "Flame Coil": "Burns enemies in a ring of fire."
 };
 
-function createCard(data, isEnemy) {
-  const div = document.createElement("div");
 
-  let className = "card";
-  if (isEnemy) className += " enemy";
-  if (["Simon", "Thorn", "Morris", "Dragon"].includes(data.name)) {
-    className += " pet";
-  }
+function createCard(data, isEnemy) {
+  const flipContainer = document.createElement("div");
+  flipContainer.className = "card flip-container" + (isEnemy ? " enemy" : "");
+  flipContainer.dataset.name = data.name;
+  flipContainer.dataset.isPet = data.isPet;
+  flipContainer.dataset.specialUsed = "false";
+
+  const inner = document.createElement("div");
+  inner.className = "card-inner";
+
+  const front = document.createElement("div");
+  front.className = "card-front";
+  front.innerHTML = `
+    <div class="bust-container"><img src="${data.img}" alt="${data.name}"></div>
+    <div class="name-tag">${data.name}</div>
+    <div class="stat hp">${data.hp}</div>
+    <div class="stat atk">${data.atk}</div>
+    <div class="description">${data.desc}</div>
+    <div class="special-move">${data.special}</div>
+  `;
+
+  const back = document.createElement("div");
+  back.className = "card-back";
+
+  inner.appendChild(front);
+  inner.appendChild(back);
+  flipContainer.appendChild(inner);
+
+  return flipContainer;
+}
+
 
   div.className = className;
 
