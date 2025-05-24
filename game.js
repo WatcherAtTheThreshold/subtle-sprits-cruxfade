@@ -63,7 +63,8 @@ function createCard(data, isEnemy) {
   const front = document.createElement("div");
   front.className = "card-front";
   front.innerHTML = `
-    <div class="bust-container"><img src="images/${data.image}" alt="${data.name}"></div>
+    <div class="bust-container"><img src="${data.img}" alt="${data.name}">
+</div>
     <div class="name-tag">${data.name}</div>
     <div class="stat hp">${data.hp}</div>
     <div class="stat atk">${data.atk}</div>
