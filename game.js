@@ -48,6 +48,20 @@ const specialEffects = {
   "Flame Coil": "Burns enemies in a ring of fire."
 };
 
+// Mobile-aware utility functions
+function isMobile() {
+  return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+function getViewportInfo() {
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    isMobile: isMobile(),
+    isLandscape: window.innerWidth > window.innerHeight
+  };
+}
+
 function createCard(data, isEnemy) {
   const flipContainer = document.createElement("div");
   flipContainer.className = "card flip-container" + (isEnemy ? " enemy" : "");
@@ -60,12 +74,19 @@ function createCard(data, isEnemy) {
 
   const front = document.createElement("div");
   front.className = "card-front";
+  
+  // Mobile-friendly text truncation
+  const viewport = getViewportInfo();
+  const maxDescLength = viewport.isMobile ? 60 : 100;
+  const truncatedDesc = data.desc.length > maxDescLength ? 
+    data.desc.substring(0, maxDescLength) + "..." : data.desc;
+  
   front.innerHTML = `
-    <div class="bust-container"><img src="${data.img}" alt="${data.name}"></div>
+    <div class="bust-container"><img src="${data.img}" alt="${data.name}" loading="lazy"></div>
     <div class="name-tag">${data.name}</div>
     <div class="stat hp">${data.hp}</div>
     <div class="stat atk">${data.atk}</div>
-    <div class="description">${data.desc}</div>
+    <div class="description">${truncatedDesc}</div>
     <div class="special-move">${data.special}</div>
   `;
 
@@ -87,7 +108,7 @@ function buildTeams() {
 
   const availableMains = enemyMains.filter(e => !defeatedEnemyNames.includes(e.name));
   if (availableMains.length < 3) {
-    alert("All enemy mains defeated! You win the war 🏆");
+    showVictoryMessage("All enemy mains defeated! You win the war 🏆");
     return;
   }
 
@@ -118,62 +139,83 @@ function getLiving(cards) {
   return cards.filter(c => getHP(c) > 0 && !c.classList.contains("defeated"));
 }
 
-function floatDamage(card, amt) {
+// Mobile-safe floating text functions
+function createFloatingText(card, text, className, customStyles = {}) {
   const tag = document.createElement("div");
-  tag.className = "float-damage";
-  tag.textContent = `-${amt}`;
+  tag.className = className;
+  tag.textContent = text;
+  
+  // Ensure floating text stays within card bounds
+  const cardRect = card.getBoundingClientRect();
+  const viewport = getViewportInfo();
+  
+  // Apply custom styles
+  Object.assign(tag.style, {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    fontWeight: "bold",
+    pointerEvents: "none",
+    zIndex: "1000",
+    transition: "all 0.8s ease-out",
+    textShadow: "2px 2px 4px rgba(0, 0, 0, 0.8)",
+    maxWidth: "80%",
+    textAlign: "center",
+    wordBreak: "break-word",
+    ...customStyles
+  });
+  
   card.appendChild(tag);
+  
+  // Mobile-safe animation
+  const moveDistance = viewport.isMobile ? -20 : -30;
+  setTimeout(() => {
+    tag.style.top = `${moveDistance}px`;
+    tag.style.opacity = '0';
+  }, 50);
+  
+  setTimeout(() => {
+    if (tag.parentNode) {
+      tag.remove();
+    }
+  }, 1000);
+  
+  return tag;
+}
+
+function floatDamage(card, amt) {
+  createFloatingText(card, `-${amt}`, "float-damage", {
+    color: "#ff4444",
+    fontSize: "clamp(0.8rem, 2.5vw, 1.5rem)"
+  });
 
   // Add shrink-hit animation
   card.classList.add("shrink-hit");
   setTimeout(() => card.classList.remove("shrink-hit"), 250);
-
-  // Animate the damage text
-  setTimeout(() => tag.style.top = '-30px', 50);
-  setTimeout(() => tag.style.opacity = '0', 50);
-  setTimeout(() => tag.remove(), 1000);
 }
 
 function floatKO(card) {
-  const tag = document.createElement("div");
-  tag.className = "float-ko";
-  tag.textContent = "KO!";
-  card.appendChild(tag);
-  setTimeout(() => tag.style.top = '-30px', 50);
-  setTimeout(() => tag.style.opacity = '0', 50);
-  setTimeout(() => tag.remove(), 1000);
+  createFloatingText(card, "KO!", "float-ko", {
+    color: "#ff0000",
+    fontSize: "clamp(1rem, 3vw, 2rem)"
+  });
 }
 
 function floatSpecial(card) {
-  const tag = document.createElement("div");
-  tag.className = "float-special";
-  tag.textContent = "Special!";
-  card.appendChild(tag);
-  setTimeout(() => tag.style.top = '-40px', 50);
-  setTimeout(() => tag.style.opacity = '0', 50);
-  setTimeout(() => tag.remove(), 1000);
+  createFloatingText(card, "Special!", "float-special", {
+    color: "#ffdd44",
+    fontSize: "clamp(0.7rem, 2.2vw, 1.3rem)",
+    top: "40%"
+  });
 }
 
 function floatHeal(card, amt) {
-  const tag = document.createElement("div");
-  tag.className = "float-heal";
-  tag.textContent = `+${amt}`;
-  tag.style.position = "absolute";
-  tag.style.top = "50%";
-  tag.style.left = "50%";
-  tag.style.transform = "translate(-50%, -50%)";
-  tag.style.color = "#4CAF50";
-  tag.style.fontWeight = "bold";
-  tag.style.fontSize = "18px";
-  tag.style.pointerEvents = "none";
-  tag.style.transition = "all 1s ease-out";
-  tag.style.zIndex = "1000";
-  tag.style.textShadow = "2px 2px 4px rgba(0, 0, 0, 0.8)";
-  card.appendChild(tag);
-  
-  setTimeout(() => tag.style.top = '-30px', 50);
-  setTimeout(() => tag.style.opacity = '0', 50);
-  setTimeout(() => tag.remove(), 1000);
+  createFloatingText(card, `+${amt}`, "float-heal", {
+    color: "#4CAF50",
+    fontSize: "clamp(0.8rem, 2.5vw, 18px)",
+    top: "30%"
+  });
 }
 
 function randomDamage(card) {
@@ -209,6 +251,21 @@ function removeStatusEffect(card, effect) {
   if (card.statusEffects) {
     delete card.statusEffects[effect];
     card.classList.remove(`status-${effect}`);
+  }
+}
+
+// Mobile-friendly status display
+function updateStatusDisplay() {
+  const status = document.getElementById("battle-status");
+  const specialInfo = document.getElementById("special-info");
+  
+  // Ensure text fits on mobile screens
+  const viewport = getViewportInfo();
+  if (viewport.isMobile) {
+    const maxLength = viewport.width < 400 ? 30 : 50;
+    if (status.textContent.length > maxLength) {
+      status.textContent = status.textContent.substring(0, maxLength - 3) + "...";
+    }
   }
 }
 
@@ -436,6 +493,18 @@ function canAct(card) {
   return !card.statusEffects.stunned && !card.statusEffects.paralyzed;
 }
 
+// Mobile-friendly message display
+function showVictoryMessage(message) {
+  const status = document.getElementById("battle-status");
+  const viewport = getViewportInfo();
+  
+  if (viewport.isMobile && message.length > 40) {
+    status.textContent = message.substring(0, 37) + "...";
+  } else {
+    status.textContent = message;
+  }
+}
+
 // Main turn execution function
 async function performTurn(card, opponents) {
   if (getHP(card) <= 0 || getLiving(opponents).length === 0) return;
@@ -447,7 +516,15 @@ async function performTurn(card, opponents) {
   if (!canAct(card)) {
     const status = document.getElementById("battle-status");
     const name = card.querySelector(".name-tag").textContent;
-    status.textContent = `${name} is stunned and cannot act!`;
+    const viewport = getViewportInfo();
+    const message = `${name} is stunned and cannot act!`;
+    
+    if (viewport.isMobile && message.length > 35) {
+      status.textContent = `${name} is stunned!`;
+    } else {
+      status.textContent = message;
+    }
+    
     await new Promise(r => setTimeout(r, 1000));
     return;
   }
@@ -461,10 +538,19 @@ async function performTurn(card, opponents) {
   await new Promise(r => setTimeout(r, 700));
 
   if (useSpecial) {
-    status.textContent = `${name} uses their special!`;
     const specialName = card.querySelector(".special-move").textContent;
+    const viewport = getViewportInfo();
+    
+    // Mobile-friendly status messages
+    if (viewport.isMobile) {
+      status.textContent = `${name} uses special!`;
+      specialInfo.textContent = `${specialName}`;
+    } else {
+      status.textContent = `${name} uses their special!`;
+      specialInfo.textContent = `Special: ${specialName} — ${specialEffects[specialName] || "A mysterious effect..."}`;
+    }
+    
     specialInfo.classList.remove("hidden");
-    specialInfo.textContent = `Special: ${specialName} — ${specialEffects[specialName] || "A mysterious effect..."}`;
     card.classList.add("special-glow");
     card.dataset.specialUsed = 'true';
     floatSpecial(card);
@@ -484,18 +570,29 @@ async function performTurn(card, opponents) {
     
     const target = livingOpponents[Math.floor(Math.random() * livingOpponents.length)];
     const targetName = target.querySelector(".name-tag").textContent;
+    const viewport = getViewportInfo();
     
     // Check if target has shield
     let dmg = randomDamage(card);
     if (target.statusEffects && target.statusEffects.shield) {
-      status.textContent = `${name} attacks ${targetName}, but the shield blocks it!`;
+      const message = viewport.isMobile ? 
+        `${name} vs ${targetName} - Blocked!` :
+        `${name} attacks ${targetName}, but the shield blocks it!`;
+      status.textContent = message;
       removeStatusEffect(target, "shield");
       await new Promise(r => setTimeout(r, 1000));
     } else {
-      status.textContent = `${name} targets ${targetName}...`;
+      // Mobile-friendly combat messages
+      const targetMessage = viewport.isMobile ? 
+        `${name} → ${targetName}...` :
+        `${name} targets ${targetName}...`;
+      status.textContent = targetMessage;
       await new Promise(r => setTimeout(r, 600));
 
-      status.textContent = `${name} hits ${targetName} for ${dmg}`;
+      const hitMessage = viewport.isMobile ?
+        `${name} hits for ${dmg}!` :
+        `${name} hits ${targetName} for ${dmg}`;
+      status.textContent = hitMessage;
       floatDamage(target, dmg);
       target.classList.add("damage-glow");
       setHP(target, getHP(target) - dmg);
@@ -506,6 +603,9 @@ async function performTurn(card, opponents) {
 
   card.classList.remove("highlight-turn");
   await new Promise(r => setTimeout(r, 300));
+  
+  // Update status display for mobile
+  updateStatusDisplay();
 }
 
 async function startBattle() {
@@ -516,8 +616,13 @@ async function startBattle() {
     gameStarted = true;
     battleButton.textContent = "Start Round";
     
-    // Flip all cards
-    document.querySelectorAll('.card').forEach(card => card.classList.add('flipped'));
+    // Flip all cards with a slight delay for better mobile UX
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+      setTimeout(() => {
+        card.classList.add('flipped');
+      }, index * 100); // Stagger the flips
+    });
     return;
   }
   
@@ -552,7 +657,9 @@ function checkVictory(players, enemies) {
   const e = getLiving(enemies).length > 0;
 
   if (!p || !e) {
-    document.getElementById("battle-status").textContent = p ? 'Victory!' : 'Defeat...';
+    const viewport = getViewportInfo();
+    const message = p ? 'Victory!' : 'Defeat...';
+    document.getElementById("battle-status").textContent = message;
     document.getElementById("special-info").textContent = "";
 
     if (p) {
@@ -565,7 +672,7 @@ function checkVictory(players, enemies) {
 
     const btn = document.createElement("button");
     btn.className = "restart-button";
-    btn.textContent = "Restart Game";
+    btn.textContent = viewport.isMobile ? "Restart" : "Restart Game";
     btn.onclick = () => {
       document.getElementById("restart-container").innerHTML = "";
       roundCount = 1;
@@ -584,21 +691,127 @@ function checkVictory(players, enemies) {
   return false;
 }
 
-buildTeams();
+// Enhanced mobile touch handling
+function setupMobileEventListeners() {
+  let touchStartTime = 0;
+  let lastTap = 0;
+  
+  document.addEventListener('touchstart', function(e) {
+    touchStartTime = Date.now();
+  }, { passive: true });
+  
+  document.addEventListener('touchend', function(e) {
+    const touchDuration = Date.now() - touchStartTime;
+    const currentTime = Date.now();
+    const tapDelay = currentTime - lastTap;
+    
+    // Prevent double-tap zoom
+    if (tapDelay < 500 && tapDelay > 0) {
+      e.preventDefault();
+      return false;
+    }
+    
+    lastTap = currentTime;
+    
+    // Handle card selection with touch
+    if (touchDuration < 200) { // Quick tap
+      const card = e.target.closest('.card');
+      if (card) {
+        e.preventDefault();
+        
+        // Remove 'active' from all other cards
+        document.querySelectorAll('.card.active').forEach(c => {
+          if (c !== card) c.classList.remove('active');
+        });
 
-document.addEventListener('click', function (e) {
-  if (e.target.closest('.card')) {
-    const card = e.target.closest('.card');
+        // Toggle active on touched card
+        card.classList.toggle('active');
+      } else {
+        // Touched outside any card — remove all active
+        document.querySelectorAll('.card.active').forEach(c => c.classList.remove('active'));
+      }
+    }
+  }, { passive: false });
+}
 
-    // Remove 'active' from all other cards
-    document.querySelectorAll('.card.active').forEach(c => {
-      if (c !== card) c.classList.remove('active');
-    });
+// Handle orientation changes
+function handleOrientationChange() {
+  // Delay to allow viewport to settle
+  setTimeout(() => {
+    const viewport = getViewportInfo();
+    
+    // Recalculate layout if needed
+    if (viewport.isMobile) {
+      // Ensure all floating elements are cleaned up
+      document.querySelectorAll('.float-damage, .float-ko, .float-special, .float-heal').forEach(el => {
+        if (el.parentNode) {
+          el.remove();
+        }
+      });
+    }
+    
+    // Update button text for new orientation
+    const battleButton = document.getElementById("battle-button");
+    if (battleButton && viewport.isMobile && !gameStarted) {
+      battleButton.textContent = viewport.width < 400 ? "Start" : "Start Game";
+    }
+  }, 100);
+}
 
-    // Toggle active on clicked card
-    card.classList.toggle('active');
+// Initialize the game
+function initializeGame() {
+  buildTeams();
+  
+  // Set up mobile-specific event listeners
+  if (isMobile()) {
+    setupMobileEventListeners();
   } else {
-    // Clicked outside any card — remove all active
-    document.querySelectorAll('.card.active').forEach(c => c.classList.remove('active'));
+    // Desktop click handling
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('.card')) {
+        const card = e.target.closest('.card');
+
+        // Remove 'active' from all other cards
+        document.querySelectorAll('.card.active').forEach(c => {
+          if (c !== card) c.classList.remove('active');
+        });
+
+        // Toggle active on clicked card
+        card.classList.toggle('active');
+      } else {
+        // Clicked outside any card — remove all active
+        document.querySelectorAll('.card.active').forEach(c => c.classList.remove('active'));
+      }
+    });
   }
-});
+  
+  // Handle orientation and resize events
+  window.addEventListener('orientationchange', handleOrientationChange);
+  window.addEventListener('resize', handleOrientationChange);
+  
+  // Prevent context menu on long press for mobile
+  document.addEventListener('contextmenu', function(e) {
+    if (isMobile() && e.target.closest('.card')) {
+      e.preventDefault();
+    }
+  });
+  
+  // Prevent text selection on mobile
+  if (isMobile()) {
+    document.addEventListener('selectstart', function(e) {
+      if (e.target.closest('.card')) {
+        e.preventDefault();
+      }
+    });
+  }
+}
+
+// Start the game when the page loads
+document.addEventListener('DOMContentLoaded', initializeGame);
+
+// Fallback initialization if DOMContentLoaded already fired
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeGame);
+} else {
+  initializeGame();
+}
