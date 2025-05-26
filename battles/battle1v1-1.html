@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subtle Spirits: Cruxfade - Battle 1</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Barlow+Semi+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/battle-shared.css">
+  <link rel="stylesheet" href="../css/battle-1v1.css">
+</head>
+
+<body>
+  <!-- Atmospheric mist background -->
+  <div class="mist-overlay"></div>
+  
+  <!-- Battle title and status -->
+  <h1 id="battle-status">Level 1 - Battle 1</h1>
+  
+  <!-- Special move information display -->
+  <div id="special-info" class="hidden">&nbsp;</div>
+  
+  <!-- Main battle arena -->
+  <main class="board battle-1v1" id="battle-board">
+    
+    <!-- Player team area (hero) -->
+    <section id="player-team" class="team-area" role="region" aria-label="Your Character">
+      <!-- Player character card will be inserted here by JavaScript -->
+    </section>
+    
+    <!-- Enemy team area (villain) -->
+    <section id="enemy-team" class="team-area" role="region" aria-label="Enemy Character">
+      <!-- Enemy character card will be inserted here by JavaScript -->
+    </section>
+    
+  </main>
+  
+  <!-- Battle controls -->
+  <div class="button-controls">
+    <button id="battle-button" class="action-button" onclick="handleBattleClick()">
+      Start Battle
+    </button>
+    
+    <!-- Restart container for post-battle options -->
+    <div id="restart-container"></div>
+  </div>
+
+  <!-- Loading overlay for smooth transitions -->
+  <div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Preparing for battle...</p>
+  </div>
+
+  <!-- Character info modal for mobile -->
+  <div id="character-info-modal" class="character-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-character-name">Character</h3>
+        <button class="modal-close" onclick="closeCharacterModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <img id="modal-character-image" src="" alt="Character">
+        <div class="modal-info">
+          <p id="modal-character-description">Description</p>
+          <div class="modal-stats">
+            <div class="modal-stat">
+              <span class="stat-label">Health:</span>
+              <span id="modal-character-hp" class="stat-value">30</span>
+            </div>
+            <div class="modal-stat">
+              <span class="stat-label">Attack:</span>
+              <span id="modal-character-atk" class="stat-value">10</span>
+            </div>
+            <div class="modal-stat">
+              <span class="stat-label">Special:</span>
+              <span id="modal-character-special" class="stat-value">Special Move</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/battle-shared.js"></script>
+  <script src="../js/battle-1v1.js"></script>
+  
+  <!-- Inline battle initialization and UI handlers -->
+  <script>
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // BATTLE INITIALIZATION AND UI INTEGRATION
+    // ═══════════════════════════════════════════════════════════════════════════════
+    
+    // Global battle management
+    let battleInitialized = false;
+    let currentBattlePhase = 'setup'; // 'setup', 'ready', 'battle', 'ended'
+    
+    // Initialize battle when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Battle 1v1-1 initializing...');
+      
+      // Check for selected character
+      const selectedCharacter = getSelectedCharacterInfo();
+      if (selectedCharacter) {
+        console.log('Selected character found:', selectedCharacter.name);
+        updateBattleTitleWithCharacter(selectedCharacter.name);
+      } else {
+        console.log('No character selected, using fallback');
+      }
+      
+      // Initialize battle system
+      initializeBattle();
+    });
+    
+    // Get selected character info from session storage
+    function getSelectedCharacterInfo() {
+      try {
+        const characterKey = sessionStorage.getItem('selectedCharacter');
+        const characterData = sessionStorage.getItem('characterData');
+        
+        if (characterKey && characterData) {
+          return {
+            key: characterKey,
+            name: JSON.parse(characterData).name || characterKey,
+            data: JSON.parse(characterData)
+          };
+        }
+      } catch (e) {
+        console.warn('Could not load character from session storage:', e);
+      }
+      return null;
+    }
+    
+    // Update battle title with character name
+    function updateBattleTitleWithCharacter(characterName) {
+      const titleElement = document.getElementById('battle-status');
+      if (titleElement) {
+        const viewport = window.BattleShared ? window.BattleShared.DeviceUtils.getViewportInfo() : { isMobile: window.innerWidth <= 768 };
+        if (viewport.isMobile) {
+          titleElement.textContent = `${characterName}'s Battle`;
+        } else {
+          titleElement.textContent = `Level 1 - Battle 1: ${characterName}`;
+        }
+      }
+    }
+    
+    // Initialize the battle system
+    function initializeBattle() {
+      // Wait for battle systems to be ready
+      if (!window.BattleShared || !window.Battle1v1) {
+        console.log('Battle systems not ready, retrying...');
+        setTimeout(initializeBattle, 100);
+        return;
+      }
+      
+      try {
+        // Initialize Battle1v1 system
+        const success = window.Battle1v1.init();
+        
+        if (success) {
+          battleInitialized = true;
+          currentBattlePhase = 'setup';
+          console.log('Battle 1v1-1 initialized successfully');
+          
+          // Set up card interaction handlers
+          setupCardInteractions();
+          
+          // Update initial status
+          const battleStatus = document.getElementById('battle-status');
+          if (battleStatus && !battleStatus.textContent.includes('Battle 1')) {
+            battleStatus.textContent = 'Ready for Battle - Click Start!';
+          }
+          
+        } else {
+          console.error('Failed to initialize battle system');
+          handleBattleError('Failed to initialize battle system');
+        }
+      } catch (error) {
+        console.error('Error initializing battle:', error);
+        handleBattleError('Error starting battle: ' + error.message);
+      }
+    }
+    
+    // Handle battle button clicks
+    function handleBattleClick() {
+      if (!battleInitialized) {
+        console.log('Battle not initialized yet');
+        initializeBattle();
+        return;
+      }
+      
+      try {
+        window.Battle1v1.start();
+      } catch (error) {
+        console.error('Error starting battle:', error);
+        handleBattleError('Error during battle: ' + error.message);
+      }
+    }
+    
+    // Handle battle errors gracefully
+    function handleBattleError(message) {
+      const statusElement = document.getElementById('battle-status');
+      if (statusElement) {
+        statusElement.textContent = message;
+        statusElement.style.color = '#ff6b6b';
+      }
+      
+      // Show retry button
+      const battleButton = document.getElementById('battle-button');
+      if (battleButton) {
+        battleButton.textContent = 'Retry';
+        battleButton.style.display = 'inline-block';
+      }
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // CARD INTERACTION HANDLERS
+    // ═══════════════════════════════════════════════════════════════════════════════
+    
+    // Set up card click/tap interactions
+    function setupCardInteractions() {
+      // Mobile-friendly card interactions
+      document.addEventListener('click', handleCardClick);
+      document.addEventListener('touchend', handleCardTouch, { passive: false });
+      
+      // Prevent context menu on cards
+      document.addEventListener('contextmenu', function(e) {
+        if (e.target.closest('.card')) {
+          e.preventDefault();
+        }
+      });
+    }
+    
+    // Handle card clicks (desktop)
+    function handleCardClick(e) {
+      const card = e.target.closest('.card');
+      if (!card) return;
+      
+      // Show character info
+      showCharacterInfo(card);
+    }
+    
+    // Handle card touches (mobile)
+    function handleCardTouch(e) {
+      const card = e.target.closest('.card');
+      if (!card) return;
+      
+      e.preventDefault();
+      
+      // Show character info modal on mobile
+      if (window.BattleShared && window.BattleShared.DeviceUtils.isMobile()) {
+        showCharacterInfoModal(card);
+      } else {
+        showCharacterInfo(card);
+      }
+    }
+    
+    // Show character information (desktop tooltip-style)
+    function showCharacterInfo(card) {
+      // Remove any existing info displays
+      document.querySelectorAll('.character-info-tooltip').forEach(el => el.remove());
+      
+      const characterName = card.querySelector('.name-tag')?.textContent || 'Unknown';
+      const characterDesc = card.querySelector('.description')?.textContent || 'No description';
+      const characterSpecial = card.querySelector('.special-move')?.textContent || 'No special';
+      const hp = card.querySelector('.hp')?.textContent || '0';
+      const atk = card.querySelector('.atk')?.textContent || '0';
+      
+      // Create tooltip
+      const tooltip = document.createElement('div');
+      tooltip.className = 'character-info-tooltip';
+      tooltip.innerHTML = `
+        <h4>${characterName}</h4>
+        <p>${characterDesc}</p>
+        <div class="tooltip-stats">
+          <span>HP: ${hp}</span>
+          <span>ATK: ${atk}</span>
+        </div>
+        <div class="tooltip-special">Special: ${characterSpecial}</div>
+      `;
+      
+      // Position tooltip
+      const rect = card.getBoundingClientRect();
+      tooltip.style.cssText = `
+        position: fixed;
+        top: ${rect.bottom + 10}px;
+        left: ${rect.left}px;
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        max-width: 300px;
+        z-index: 1000;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        border: 2px solid #ffdd44;
+      `;
+      
+      document.body.appendChild(tooltip);
+      
+      // Auto-remove after 3 seconds
+      setTimeout(() => {
+        if (tooltip.parentNode) {
+          tooltip.remove();
+        }
+      }, 3000);
+    }
+    
+    // Show character info modal (mobile)
+    function showCharacterInfoModal(card) {
+      const modal = document.getElementById('character-info-modal');
+      if (!modal) return;
+      
+      const characterName = card.querySelector('.name-tag')?.textContent || 'Unknown';
+      const characterDesc = card.querySelector('.description')?.textContent || 'No description';
+      const characterSpecial = card.querySelector('.special-move')?.textContent || 'No special';
+      const characterImage = card.querySelector('img')?.src || '';
+      const hp = card.querySelector('.hp')?.textContent || '0';
+      const atk = card.querySelector('.atk')?.textContent || '0';
+      
+      // Update modal content
+      document.getElementById('modal-character-name').textContent = characterName;
+      document.getElementById('modal-character-description').textContent = characterDesc;
+      document.getElementById('modal-character-image').src = characterImage;
+      document.getElementById('modal-character-hp').textContent = hp;
+      document.getElementById('modal-character-atk').textContent = atk;
+      document.getElementById('modal-character-special').textContent = characterSpecial;
+      
+      // Show modal
+      modal.style.display = 'flex';
+    }
+    
+    // Close character info modal
+    function closeCharacterModal() {
+      const modal = document.getElementById('character-info-modal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // UTILITY FUNCTIONS
+    // ═══════════════════════════════════════════════════════════════════════════════
+    
+    // Handle page visibility changes (pause/resume)
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        // Page is hidden - could pause battle if needed
+        console.log('Battle paused (page hidden)');
+      } else {
+        // Page is visible again
+        console.log('Battle resumed (page visible)');
+      }
+    });
+    
+    // Handle back navigation
+    window.addEventListener('beforeunload', function(e) {
+      if (currentBattlePhase === 'battle') {
+        const message = 'You are in the middle of a battle. Are you sure you want to leave?';
+        e.returnValue = message;
+        return message;
+      }
+    });
+    
+    // Navigation helper
+    function goToCharacterSelect() {
+      window.location.href = '../character-select.html';
+    }
+    
+    function goToNextBattle() {
+      // For now, restart this battle - in the future, navigate to battle1v1-2.html
+      window.location.reload();
+    }
+    
+    // Expose global functions for debugging
+    window.BattleDebug = {
+      reinitialize: initializeBattle,
+      getState: () => ({
+        initialized: battleInitialized,
+        phase: currentBattlePhase,
+        selectedCharacter: getSelectedCharacterInfo()
+      }),
+      goToCharacterSelect,
+      goToNextBattle
+    };
+    
+    console.log('Battle 1v1-1 script loaded. Use BattleDebug for testing.');
+  </script>
+
+  <!-- Inline styles for battle-specific UI elements -->
+  <style>
+    /* Loading overlay styles */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .loading-overlay.show {
+      opacity: 1;
+    }
+    
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 221, 68, 0.3);
+      border-top: 4px solid #ffdd44;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .loading-text {
+      color: #fff;
+      font-family: 'Bangers', cursive;
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      margin-top: 1rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Character info modal styles */
+    .character-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+    
+    .modal-content {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      border-radius: 12px;
+      max-width: 90vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      border: 2px solid #ffdd44;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255, 221, 68, 0.3);
+    }
+    
+    .modal-header h3 {
+      font-family: 'Bangers', cursive;
+      font-size: 1.5rem;
+      color: #ffdd44;
+      margin: 0;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: background 0.3s ease;
+    }
+    
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      gap: 1rem;
+      color: #fff;
+    }
+    
+    .modal-body img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      border-radius: 8px;
+      align-self: center;
+    }
+    
+    .modal-info p {
+      line-height: 1.5;
+      margin: 0;
+    }
+    
+    .modal-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .modal-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-stat .stat-label {
+      font-weight: 600;
+      color: #ccc;
+    }
+    
+    .modal-stat .stat-value {
+      font-weight: bold;
+      color: #ffdd44;
+    }
+    
+    /* Character info tooltip styles */
+    .character-info-tooltip h4 {
+      margin: 0 0 0.5rem 0;
+      color: #ffdd44;
+      font-family: 'Bangers', cursive;
+    }
+    
+    .character-info-tooltip p {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.85rem;
+    }
+    
+    .tooltip-stats {
+      display: flex;
+      gap: 1rem;
+      margin: 0.5rem 0;
+      font-weight: bold;
+    }
+    
+    .tooltip-special {
+      font-style: italic;
+      color: #ffdd44;
+      font-size: 0.85rem;
+    }
+    
+    /* Team area labels */
+    .team-area {
+      position: relative;
+    }
+    
+    .team-area::before {
+      content: attr(aria-label);
+      position: absolute;
+      top: -2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Bangers', cursive;
+      font-size: clamp(0.8rem, 2vw, 1.2rem);
+      color: rgba(255, 221, 68, 0.8);
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+    }
+    
+    @media (max-width: 768px) {
+      .team-area::before {
+        font-size: clamp(0.7rem, 3vw, 1rem);
+        top: -1.5rem;
+      }
+    }
+  </style>
+</body>
+</html>
