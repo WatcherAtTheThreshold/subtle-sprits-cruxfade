@@ -371,12 +371,18 @@
       });
     });
 
-    // Start game function - replace with your actual navigation
-    function startGame() {
-      // For now, just show an alert. Replace with actual navigation to your game
-      // window.location.href = 'game.html'; // Uncomment and adjust path as needed
-      alert('Starting game... (Replace this function with navigation to your main game)');
-    }
+    // Start game function - navigate to battle page
+function startGame() {
+  // Add a subtle visual feedback before navigation
+  const button = document.querySelector('.start-button');
+  button.style.transform = 'scale(0.95)';
+  button.style.opacity = '0.8';
+  
+  // Small delay for visual feedback, then navigate
+  setTimeout(() => {
+    window.location.href = 'battle1.html';
+  }, 200);
+}
 
     // Prevent context menu on mobile
     document.addEventListener('contextmenu', function(e) {
