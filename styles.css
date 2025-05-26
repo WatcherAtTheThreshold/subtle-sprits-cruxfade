@@ -387,7 +387,7 @@ grid-area: controls;
 }
 
 .card.shrink-hit {
-  animation: shrinkHit 0.25s ease-out;
+  animation: shrinkHit 0.15s ease-out;
 }
 
 @keyframes shrinkHit {
