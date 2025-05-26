@@ -91,131 +91,139 @@
   
   <!-- Inline battle initialization and UI handlers -->
   <script>
-    // ═══════════════════════════════════════════════════════════════════════════════
-    // BATTLE INITIALIZATION AND UI INTEGRATION
-    // ═══════════════════════════════════════════════════════════════════════════════
+ // ═══════════════════════════════════════════════════════════════════════════════
+// BATTLE INITIALIZATION AND UI INTEGRATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Global battle management
+let battleInitialized = false;
+let currentBattlePhase = 'setup'; // 'setup', 'ready', 'battle', 'ended'
+let initRetryCount = 0; // Add retry counter
+
+// Initialize battle when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Battle 1v1-1 initializing...');
+  
+  // Check for selected character
+  const selectedCharacter = getSelectedCharacterInfo();
+  if (selectedCharacter) {
+    console.log('Selected character found:', selectedCharacter.name);
+    updateBattleTitleWithCharacter(selectedCharacter.name);
+  } else {
+    console.log('No character selected, using fallback');
+  }
+  
+  // Initialize battle system
+  initializeBattle();
+});
+
+// Get selected character info from session storage
+function getSelectedCharacterInfo() {
+  try {
+    const characterKey = sessionStorage.getItem('selectedCharacter');
+    const characterData = sessionStorage.getItem('characterData');
     
-    // Global battle management
-    let battleInitialized = false;
-    let currentBattlePhase = 'setup'; // 'setup', 'ready', 'battle', 'ended'
-    
-    // Initialize battle when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Battle 1v1-1 initializing...');
-      
-      // Check for selected character
-      const selectedCharacter = getSelectedCharacterInfo();
-      if (selectedCharacter) {
-        console.log('Selected character found:', selectedCharacter.name);
-        updateBattleTitleWithCharacter(selectedCharacter.name);
-      } else {
-        console.log('No character selected, using fallback');
-      }
-      
-      // Initialize battle system
-      initializeBattle();
-    });
-    
-    // Get selected character info from session storage
-    function getSelectedCharacterInfo() {
-      try {
-        const characterKey = sessionStorage.getItem('selectedCharacter');
-        const characterData = sessionStorage.getItem('characterData');
-        
-        if (characterKey && characterData) {
-          return {
-            key: characterKey,
-            name: JSON.parse(characterData).name || characterKey,
-            data: JSON.parse(characterData)
-          };
-        }
-      } catch (e) {
-        console.warn('Could not load character from session storage:', e);
-      }
-      return null;
+    if (characterKey && characterData) {
+      return {
+        key: characterKey,
+        name: JSON.parse(characterData).name || characterKey,
+        data: JSON.parse(characterData)
+      };
     }
-    
-    // Update battle title with character name
-    function updateBattleTitleWithCharacter(characterName) {
-      const titleElement = document.getElementById('battle-status');
-      if (titleElement) {
-        const viewport = window.BattleShared ? window.BattleShared.DeviceUtils.getViewportInfo() : { isMobile: window.innerWidth <= 768 };
-        if (viewport.isMobile) {
-          titleElement.textContent = `${characterName}'s Battle`;
-        } else {
-          titleElement.textContent = `Level 1 - Battle 1: ${characterName}`;
-        }
-      }
+  } catch (e) {
+    console.warn('Could not load character from session storage:', e);
+  }
+  return null;
+}
+
+// Update battle title with character name
+function updateBattleTitleWithCharacter(characterName) {
+  const titleElement = document.getElementById('battle-status');
+  if (titleElement) {
+    const viewport = window.BattleShared ? window.BattleShared.DeviceUtils.getViewportInfo() : { isMobile: window.innerWidth <= 768 };
+    if (viewport.isMobile) {
+      titleElement.textContent = `${characterName}'s Battle`;
+    } else {
+      titleElement.textContent = `Level 1 - Battle 1: ${characterName}`;
     }
+  }
+}
+
+// Initialize the battle system
+function initializeBattle() {
+  // Wait for battle systems to be ready
+  if (!window.BattleShared || !window.Battle1v1) {
+    initRetryCount++;
+    if (initRetryCount < 10) {
+      console.log(`Battle systems not ready, retrying... (${initRetryCount}/10)`);
+      setTimeout(initializeBattle, 500);
+      return;
+    } else {
+      console.error('Failed to initialize after 10 attempts');
+      handleBattleError('Failed to load battle system');
+      return;
+    }
+  }
+  
+  try {
+    // Initialize Battle1v1 system
+    const success = window.Battle1v1.init();
     
-    // Initialize the battle system
-    function initializeBattle() {
-      // Wait for battle systems to be ready
-      if (!window.BattleShared || !window.Battle1v1) {
-        console.log('Battle systems not ready, retrying...');
-        setTimeout(initializeBattle, 100);
-        return;
-      }
+    if (success) {
+      battleInitialized = true;
+      currentBattlePhase = 'setup';
+      console.log('Battle 1v1-1 initialized successfully');
       
-      try {
-        // Initialize Battle1v1 system
-        const success = window.Battle1v1.init();
-        
-        if (success) {
-          battleInitialized = true;
-          currentBattlePhase = 'setup';
-          console.log('Battle 1v1-1 initialized successfully');
-          
-          // Set up card interaction handlers
-          setupCardInteractions();
-          
-          // Update initial status
-          const battleStatus = document.getElementById('battle-status');
-          if (battleStatus && !battleStatus.textContent.includes('Battle 1')) {
-            battleStatus.textContent = 'Ready for Battle - Click Start!';
-          }
-          
-        } else {
-          console.error('Failed to initialize battle system');
-          handleBattleError('Failed to initialize battle system');
-        }
-      } catch (error) {
-        console.error('Error initializing battle:', error);
-        handleBattleError('Error starting battle: ' + error.message);
-      }
-    }
-    
-    // Handle battle button clicks
-    function handleBattleClick() {
-      if (!battleInitialized) {
-        console.log('Battle not initialized yet');
-        initializeBattle();
-        return;
+      // Set up card interaction handlers
+      setupCardInteractions();
+      
+      // Update initial status
+      const battleStatus = document.getElementById('battle-status');
+      if (battleStatus && !battleStatus.textContent.includes('Battle 1')) {
+        battleStatus.textContent = 'Ready for Battle - Click Start!';
       }
       
-      try {
-        window.Battle1v1.start();
-      } catch (error) {
-        console.error('Error starting battle:', error);
-        handleBattleError('Error during battle: ' + error.message);
-      }
+    } else {
+      console.error('Failed to initialize battle system');
+      handleBattleError('Failed to initialize battle system');
     }
-    
-    // Handle battle errors gracefully
-    function handleBattleError(message) {
-      const statusElement = document.getElementById('battle-status');
-      if (statusElement) {
-        statusElement.textContent = message;
-        statusElement.style.color = '#ff6b6b';
-      }
-      
-      // Show retry button
-      const battleButton = document.getElementById('battle-button');
-      if (battleButton) {
-        battleButton.textContent = 'Retry';
-        battleButton.style.display = 'inline-block';
-      }
-    }
+  } catch (error) {
+    console.error('Error initializing battle:', error);
+    handleBattleError('Error starting battle: ' + error.message);
+  }
+}
+
+// Handle battle button clicks
+function handleBattleClick() {
+  if (!battleInitialized) {
+    console.log('Battle not initialized yet');
+    initializeBattle();
+    return;
+  }
+  
+  try {
+    window.Battle1v1.start();
+  } catch (error) {
+    console.error('Error starting battle:', error);
+    handleBattleError('Error during battle: ' + error.message);
+  }
+}
+
+// Handle battle errors gracefully
+function handleBattleError(message) {
+  const statusElement = document.getElementById('battle-status');
+  if (statusElement) {
+    statusElement.textContent = message;
+    statusElement.style.color = '#ff6b6b';
+  }
+  
+  // Show retry button
+  const battleButton = document.getElementById('battle-button');
+  if (battleButton) {
+    battleButton.textContent = 'Retry';
+    battleButton.style.display = 'inline-block';
+  }
+}
     
     // ═══════════════════════════════════════════════════════════════════════════════
     // CARD INTERACTION HANDLERS
