@@ -659,7 +659,9 @@ function checkVictory(players, enemies) {
   if (!p || !e) {
     const viewport = getViewportInfo();
     const message = p ? 'Victory!' : 'Defeat...';
-    document.getElementById("battle-status").textContent = message;
+    const statusElement = document.getElementById("battle-status");
+    statusElement.textContent = message;
+    statusElement.classList.add("victory-defeat");
     document.getElementById("special-info").textContent = "";
 
     if (p) {
