@@ -680,7 +680,9 @@ function checkVictory(players, enemies) {
       roundCount = 1;
       gameStarted = false;
       buildTeams();
-      document.getElementById("battle-status").textContent = "Round 1";
+      const battleStatus = document.getElementById("battle-status");
+      battleStatus.textContent = "Round 1";
+      battleStatus.classList.remove("victory-defeat");
       document.getElementById("special-info").textContent = "&nbsp;";
       document.getElementById("special-info").classList.add("hidden");
       const battleButton = document.getElementById("battle-button");
