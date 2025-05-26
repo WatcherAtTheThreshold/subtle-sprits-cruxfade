@@ -1,0 +1,517 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   BATTLE 1V1 - Specific styling for one-on-one battles (Level 1)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   1V1 ARENA LAYOUT - Dramatic face-off positioning
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Main battle container for 1v1 */
+.board.battle-1v1 {
+  grid-area: game;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(2rem, 6vh, 4rem);
+  padding: clamp(1rem, 3vh, 2rem);
+  min-height: 0;
+  overflow: visible;
+  position: relative;
+}
+
+/* Landscape: side-by-side dramatic face-off */
+@media (orientation: landscape) and (min-width: 768px) {
+  .board.battle-1v1 {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: clamp(3rem, 8vw, 8rem);
+    padding: clamp(1rem, 4vh, 3rem) clamp(2rem, 6vw, 4rem);
+  }
+}
+
+/* Battle arena visual effects */
+.board.battle-1v1::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(90vw, 800px);
+  height: min(70vh, 600px);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 221, 68, 0.1) 0%,
+    rgba(255, 221, 68, 0.05) 30%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  z-index: -1;
+  animation: arenaGlow 4s ease-in-out infinite;
+}
+
+@keyframes arenaGlow {
+  0%, 100% { 
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+/* VS indicator in the center */
+.board.battle-1v1::after {
+  content: "⚔️";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(2rem, 6vw, 4rem);
+  opacity: 0.3;
+  z-index: 1;
+  animation: vsFloat 3s ease-in-out infinite;
+  text-shadow: 0 0 clamp(10px, 3vw, 20px) rgba(255, 221, 68, 0.5);
+}
+
+@keyframes vsFloat {
+  0%, 100% { 
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    opacity: 0.3;
+  }
+  50% { 
+    transform: translate(-50%, -50%) rotate(5deg) scale(1.1);
+    opacity: 0.5;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   1V1 TEAM AREAS - Player and enemy positioning
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Team containers for 1v1 */
+#player-team,
+#enemy-team {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* Player area (left side or bottom) */
+#player-team {
+  order: 1;
+}
+
+/* Enemy area (right side or top) */
+#enemy-team {
+  order: 2;
+}
+
+@media (orientation: landscape) and (min-width: 768px) {
+  #player-team {
+    order: 1;
+    justify-content: flex-end;
+  }
+  
+  #enemy-team {
+    order: 2;
+    justify-content: flex-start;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   1V1 CARD SIZING - Larger, more dramatic character presentation
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* 1v1 cards are larger and more prominent */
+.battle-1v1 .card {
+  width: clamp(180px, 25vw, 320px);
+  height: clamp(240px, 35vw, 450px);
+  font-size: clamp(0.7rem, 2vw, 1.2rem);
+  border-width: clamp(2px, 0.5vw, 4px);
+  box-shadow: 
+    0 clamp(6px, 2vw, 12px) clamp(12px, 4vw, 25px) rgba(0, 0, 0, 0.5),
+    inset 0 clamp(2px, 0.5vw, 4px) 0 rgba(255, 255, 255, 0.15),
+    0 0 clamp(20px, 5vw, 40px) rgba(255, 221, 68, 0.1);
+}
+
+/* Pet cards in 1v1 are still smaller but more prominent than in team battles */
+.battle-1v1 .card[data-is-pet="true"] {
+  width: clamp(150px, 20vw, 280px);
+  height: clamp(200px, 28vw, 380px);
+}
+
+/* Card content scaling for 1v1 */
+.battle-1v1 .card img {
+  width: clamp(100px, 18vw, 160px);
+  height: clamp(100px, 18vw, 160px);
+}
+
+.battle-1v1 .card[data-is-pet="true"] img {
+  width: clamp(80px, 15vw, 130px);
+  height: clamp(80px, 15vw, 130px);
+}
+
+.battle-1v1 .name-tag {
+  font-size: clamp(1.2rem, 3.5vw, 2.2rem);
+  padding: clamp(0.3rem, 1vw, 0.6rem) clamp(0.5rem, 1.5vw, 1rem);
+  margin: clamp(0.4rem, 1.2vw, 0.8rem) 0;
+}
+
+.battle-1v1 .description,
+.battle-1v1 .special-move {
+  font-size: clamp(0.8rem, 2.2vw, 1.4rem);
+  padding: clamp(0.3rem, 0.8vw, 0.5rem) clamp(0.4rem, 1.2vw, 0.8rem);
+  margin: clamp(0.2rem, 0.6vw, 0.4rem) 0;
+  -webkit-line-clamp: 3;
+}
+
+.battle-1v1 .card[data-is-pet="true"] .description,
+.battle-1v1 .card[data-is-pet="true"] .special-move {
+  -webkit-line-clamp: 2;
+}
+
+/* Stats are larger and more prominent in 1v1 */
+.battle-1v1 .stat {
+  font-size: clamp(1.3rem, 3vw, 2.5rem);
+  padding: clamp(0.2rem, 0.7vw, 0.4rem) clamp(0.5rem, 1.3vw, 1rem);
+  min-width: clamp(40px, 8vw, 60px);
+  border-width: clamp(2px, 0.5vw, 3px);
+}
+
+.battle-1v1 .hp {
+  top: clamp(10px, 2.5vw, 20px);
+  left: clamp(10px, 2.5vw, 20px);
+}
+
+.battle-1v1 .atk {
+  top: clamp(55px, 12vw, 90px);
+  left: clamp(10px, 2.5vw, 20px);
+}
+
+.battle-1v1 .card[data-is-pet="true"] .atk {
+  top: clamp(45px, 10vw, 75px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   1V1 PLAYER VS ENEMY VISUAL DISTINCTION
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Player character (hero) styling */
+.battle-1v1 #player-team .card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+  border-color: #2196f3;
+  box-shadow: 
+    0 clamp(6px, 2vw, 12px) clamp(12px, 4vw, 25px) rgba(33, 150, 243, 0.3),
+    inset 0 clamp(2px, 0.5vw, 4px) 0 rgba(255, 255, 255, 0.2),
+    0 0 clamp(15px, 4vw, 30px) rgba(33, 150, 243, 0.2);
+  position: relative;
+}
+
+/* Player hero glow effect */
+.battle-1v1 #player-team .card::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: linear-gradient(45deg, #2196f3, #21cbf3, #2196f3);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.3;
+  animation: heroGlow 3s ease-in-out infinite;
+}
+
+@keyframes heroGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.5; }
+}
+
+/* Enemy character (villain) styling */
+.battle-1v1 #enemy-team .card {
+  background: linear-gradient(135deg, #424242 0%, #212121 100%);
+  border-color: #f44336;
+  box-shadow: 
+    0 clamp(6px, 2vw, 12px) clamp(12px, 4vw, 25px) rgba(244, 67, 54, 0.4),
+    inset 0 clamp(2px, 0.5vw, 4px) 0 rgba(255, 255, 255, 0.1),
+    0 0 clamp(15px, 4vw, 30px) rgba(244, 67, 54, 0.3);
+  position: relative;
+}
+
+/* Enemy villain glow effect */
+.battle-1v1 #enemy-team .card::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: linear-gradient(45deg, #f44336, #ff9800, #f44336);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.4;
+  animation: villainGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes villainGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.6; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   1V1 ENHANCED ANIMATIONS - More dramatic effects for single combat
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Enhanced turn highlighting for 1v1 */
+.battle-1v1 .card.highlight-turn {
+  transform: scale(clamp(1.08, 1.12, 1.15));
+  box-shadow: 
+    0 0 clamp(25px, 6vw, 50px) rgba(255, 221, 68, 0.9),
+    0 clamp(8px, 2.5vw, 15px) clamp(16px, 5vw, 30px) rgba(0, 0, 0, 0.4),
+    inset 0 0 clamp(20px, 5vw, 40px) rgba(255, 221, 68, 0.2);
+  z-index: 10;
+}
+
+/* Enhanced special move effects for 1v1 */
+.battle-1v1 .card.special-glow {
+  animation: special1v1Pulse 0.8s ease-in-out 4;
+  box-shadow: 
+    0 0 clamp(30px, 7vw, 60px) rgba(255, 102, 68, 1),
+    0 clamp(10px, 3vw, 20px) clamp(20px, 6vw, 40px) rgba(0, 0, 0, 0.5),
+    inset 0 0 clamp(25px, 6vw, 50px) rgba(255, 102, 68, 0.3);
+}
+
+@keyframes special1v1Pulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: brightness(1) saturate(1);
+  }
+  50% { 
+    transform: scale(clamp(1.05, 1.08, 1.12));
+    filter: brightness(1.3) saturate(1.5);
+  }
+}
+
+/* Enhanced damage effects for 1v1 */
+.battle-1v1 .card.damage-glow {
+  animation: damage1v1Shake 0.6s ease-out;
+  box-shadow: 
+    0 0 clamp(20px, 5vw, 40px) rgba(255, 68, 68, 0.9),
+    0 clamp(5px, 1.5vw, 10px) clamp(10px, 3vw, 20px) rgba(244, 67, 54, 0.6);
+}
+
+@keyframes damage1v1Shake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  20% { transform: translateX(clamp(-4px, -1vw, -8px)) rotate(-1deg); }
+  40% { transform: translateX(clamp(4px, 1vw, 8px)) rotate(1deg); }
+  60% { transform: translateX(clamp(-3px, -0.8vw, -6px)) rotate(-0.5deg); }
+  80% { transform: translateX(clamp(2px, 0.5vw, 4px)) rotate(0.5deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   1V1 FLOATING TEXT ENHANCEMENTS - Larger, more dramatic text effects
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Enhanced floating text for 1v1 battles */
+.battle-1v1 .float-damage {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-weight: 900;
+  animation: float1v1Damage 1s ease-out forwards;
+}
+
+.battle-1v1 .float-heal {
+  font-size: clamp(1.3rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  animation: float1v1Heal 1s ease-out forwards;
+}
+
+.battle-1v1 .float-ko {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 900;
+  animation: ko1v1Animation 1.5s ease-out forwards;
+  text-shadow: 
+    4px 4px 8px rgba(0, 0, 0, 0.9),
+    0 0 clamp(15px, 4vw, 30px) rgba(255, 0, 0, 0.8);
+}
+
+.battle-1v1 .float-special {
+  font-size: clamp(1.2rem, 3.5vw, 2.2rem);
+  font-weight: 800;
+  animation: special1v1Float 1.2s ease-out forwards;
+}
+
+@keyframes float1v1Damage {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5) rotate(-5deg);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-50%, -80%) scale(1.3) rotate(2deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -200%) scale(1.1) rotate(0deg);
+  }
+}
+
+@keyframes float1v1Heal {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  40% {
+    opacity: 1;
+    transform: translate(-50%, -90%) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -180%) scale(1);
+  }
+}
+
+@keyframes ko1v1Animation {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.3) rotate(-15deg);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.5) rotate(10deg);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2) rotate(-5deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes special1v1Float {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(-50%, -60%) scale(1.3);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -150%) scale(0.8);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   1V1 MOBILE OPTIMIZATIONS - Touch-first design for single combat
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Mobile portrait: stack vertically with drama */
+@media (max-width: 768px) and (orientation: portrait) {
+  .board.battle-1v1 {
+    gap: clamp(1.5rem, 4vh, 3rem);
+    padding: clamp(0.5rem, 2vh, 1.5rem);
+  }
+  
+  .battle-1v1 .card {
+    width: clamp(140px, 35vw, 250px);
+    height: clamp(190px, 45vw, 350px);
+  }
+  
+  .battle-1v1 .card[data-is-pet="true"] {
+    width: clamp(120px, 30vw, 220px);
+    height: clamp(160px, 40vw, 300px);
+  }
+}
+
+/* Mobile landscape: side-by-side with reduced spacing */
+@media (max-width: 768px) and (orientation: landscape) {
+  .board.battle-1v1 {
+    flex-direction: row;
+    gap: clamp(1rem, 4vw, 2rem);
+    padding: clamp(0.5rem, 2vh, 1rem) clamp(1rem, 3vw, 2rem);
+  }
+  
+  .battle-1v1 .card {
+    width: clamp(120px, 25vw, 200px);
+    height: clamp(160px, 35vw, 280px);
+  }
+}
+
+/* Very small screens: compact but still dramatic */
+@media (max-width: 480px) {
+  .board.battle-1v1 {
+    gap: clamp(1rem, 3vh, 2rem);
+  }
+  
+  .battle-1v1 .card {
+    width: clamp(110px, 40vw, 180px);
+    height: clamp(150px, 50vw, 250px);
+  }
+  
+  .battle-1v1 .name-tag {
+    font-size: clamp(0.9rem, 4vw, 1.4rem);
+  }
+  
+  .battle-1v1 .stat {
+    font-size: clamp(1rem, 4vw, 1.8rem);
+  }
+  
+  .battle-1v1 .float-damage,
+  .battle-1v1 .float-heal,
+  .battle-1v1 .float-special {
+    font-size: clamp(1rem, 5vw, 1.8rem);
+  }
+  
+  .battle-1v1 .float-ko {
+    font-size: clamp(1.8rem, 8vw, 3rem);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   1V1 ACCESSIBILITY ENHANCEMENTS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Reduced motion for 1v1 battles */
+@media (prefers-reduced-motion: reduce) {
+  .board.battle-1v1::before,
+  .board.battle-1v1::after,
+  .battle-1v1 .card::before {
+    animation: none;
+  }
+  
+  .battle-1v1 .card.highlight-turn {
+    transform: scale(1.02);
+  }
+  
+  .battle-1v1 .card.special-glow {
+    animation: none;
+    filter: brightness(1.2);
+  }
+}
+
+/* High contrast mode for 1v1 */
+@media (prefers-contrast: high) {
+  .battle-1v1 .card {
+    border-width: clamp(3px, 0.8vw, 5px);
+  }
+  
+  .battle-1v1 #player-team .card {
+    border-color: #0066cc;
+  }
+  
+  .battle-1v1 #enemy-team .card {
+    border-color: #cc0000;
+  }
+}
