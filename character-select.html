@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,33 +5,126 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Subtle Spirits: Cruxfade – Character Select</title>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Barlow+Semi+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/character-select-styles.css">
-  <script src="js/character-select.js" defer></script>
 </head>
 <body>
+  <!-- Atmospheric background overlay -->
   <div class="mist-overlay"></div>
-  <div class="start-container">
-    <h1 class="game-title">Subtle Spirits</h1>
-    <h2 class="game-subtitle">Cruxfade</h2>
+  
+  <!-- Main container -->
+  <div class="character-select-container">
+    
+    <!-- Game title section -->
+    <header class="game-header">
+      <h1 class="game-title">Subtle Spirits</h1>
+      <h2 class="game-subtitle">Cruxfade</h2>
+      <p class="game-tagline">Choose Your Champion</p>
+    </header>
 
-    <p class="game-description">Select your champion to begin a 1v1 battle.</p>
+    <!-- Main character showcase area -->
+    <main class="character-showcase">
+      
+      <!-- Large character display -->
+      <section class="character-display">
+        <div class="character-portrait">
+          <img id="main-character-image" 
+               src="images/Magdaline.png" 
+               alt="Selected Character" 
+               loading="eager">
+          <div class="character-glow"></div>
+        </div>
+        
+        <!-- Character information panel -->
+        <div class="character-info">
+          <h3 id="character-name" class="selected-name">Magdaline</h3>
+          <p id="character-description" class="character-desc">
+            Gentle healer. Touched by glimmering light. Special: Luminous Veil - Shields the team from the next hit.
+          </p>
+          <div class="character-stats">
+            <div class="stat-item">
+              <span class="stat-label">Type:</span>
+              <span id="character-type" class="stat-value">Healer</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Ability:</span>
+              <span id="character-ability" class="stat-value">Luminous Veil</span>
+            </div>
+          </div>
+          <div class="ready-indicator">
+            <span class="ready-text">Ready for Battle</span>
+          </div>
+        </div>
+      </section>
 
-    <div class="character-column">
-      <div class="character-option" data-name="Timothy">
-        <img src="images/Timothy-01.png" alt="Timothy">
-        <h3 class="character-name">Timothy</h3>
-      </div>
-      <div class="character-option" data-name="Magdaline">
-        <img src="images/Magdaline-01.png" alt="Magdaline">
-        <h3 class="character-name">Magdaline</h3>
-      </div>
-      <div class="character-option" data-name="Fizzwick">
-        <img src="images/Fizzwick-01.png" alt="Fizzwick">
-        <h3 class="character-name">Fizzwick</h3>
-      </div>
-    </div>
+      <!-- Character selection thumbnails -->
+      <section class="character-selection">
+        <h4 class="selection-title">Select Your Fighter</h4>
+        <div class="character-thumbnails">
+          
+          <div class="character-thumb selected" 
+               data-character="magdaline"
+               data-name="Magdaline"
+               data-type="Healer"
+               data-ability="Luminous Veil"
+               data-description="Gentle healer. Touched by glimmering light. Special: Luminous Veil - Shields the team from the next hit."
+               tabindex="0"
+               role="button"
+               aria-label="Select Magdaline">
+            <img src="images/Magdaline-01.png" alt="Magdaline" loading="lazy">
+            <span class="thumb-name">Magdaline</span>
+            <div class="selection-border"></div>
+          </div>
 
-    <button class="start-button" id="start-button" disabled>Choose a character</button>
+          <div class="character-thumb" 
+               data-character="fizzwick"
+               data-name="Fizzwick"
+               data-type="Striker"
+               data-ability="Spark Trick"
+               data-description="Fast, clever, and full of sparks. Special: Spark Trick - Deals extra damage and stuns."
+               tabindex="0"
+               role="button"
+               aria-label="Select Fizzwick">
+            <img src="images/Fizzwick-01.png" alt="Fizzwick" loading="lazy">
+            <span class="thumb-name">Fizzwick</span>
+            <div class="selection-border"></div>
+          </div>
+
+          <div class="character-thumb" 
+               data-character="timothy"
+               data-name="Timothy"
+               data-type="Support"
+               data-ability="Plant Blessing"
+               data-description="Brave and kind. Searches for sprouting light. Special: Plant Blessing - Heals allies over time."
+               tabindex="0"
+               role="button"
+               aria-label="Select Timothy">
+            <img src="images/Timothy-01.png" alt="Timothy" loading="lazy">
+            <span class="thumb-name">Timothy</span>
+            <div class="selection-border"></div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Battle start section -->
+    <footer class="battle-controls">
+      <button id="start-battle-btn" class="start-battle-button" disabled>
+        <span class="button-text">Select a Character</span>
+        <div class="button-glow"></div>
+      </button>
+      
+      <div class="control-hints">
+        <p class="hint-text">Click characters to preview • Press Enter to battle</p>
+      </div>
+    </footer>
+
   </div>
+
+  <!-- Loading indicator for character transitions -->
+  <div class="loading-overlay" id="loading-overlay" style="display: none;">
+    <div class="loading-spinner"></div>
+  </div>
+
 </body>
 </html>
