@@ -14,24 +14,24 @@ class CharacterSelect {
         type: 'Healer',
         ability: 'Luminous Veil',
         description: 'Gentle healer. Touched by glimmering light. Special: Luminous Veil - Shields the team from the next hit.',
-        fullImage: '../images/Magdaline.png',
-        thumbImage: '../images/Magdaline-01.png'
+        fullImage: 'images/Magdaline-01.png',
+        thumbImage: 'images/Magdaline.png'
       },
       fizzwick: {
         name: 'Fizzwick',
         type: 'Striker',
         ability: 'Spark Trick',
         description: 'Fast, clever, and full of sparks. Special: Spark Trick - Deals extra damage and stuns.',
-        fullImage: '../images/Fizzwick.png',
-        thumbImage: '../images/Fizzwick-01.png'
+        fullImage: 'images/Fizzwick-01.png',
+        thumbImage: 'images/Fizzwick.png'
       },
       timothy: {
         name: 'Timothy',
         type: 'Support',
         ability: 'Plant Blessing',
         description: 'Brave and kind. Searches for sprouting light. Special: Plant Blessing - Heals allies over time.',
-        fullImage: '../images/Timothy.png',
-        thumbImage: '../images/Timothy-01.png'
+        fullImage: 'images/Timothy-01.png',
+        thumbImage: 'images/Timothy.png'
       }
     };
 
