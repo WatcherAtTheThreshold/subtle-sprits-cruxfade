@@ -368,7 +368,7 @@ grid-area: controls;
 
 .card.special-glow {
   box-shadow: 0 0 clamp(15px, 4vw, 30px) #ff6644;
-  animation: specialPulse 0.5s ease-in-out 3;
+  animation: specialPulse 0.5s ease-in-out 2;
 }
 
 @keyframes specialPulse {
