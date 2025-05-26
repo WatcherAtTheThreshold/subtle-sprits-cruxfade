@@ -39,6 +39,10 @@ font-size: clamp(2rem, 6vw, 4rem); /* Increased from 1.5rem, 4vw, 2.8rem */
   line-height: 1.6;
 }
 
+h1.victory-defeat {
+  font-size: clamp(4rem, 12vw, 8rem); /* 2x larger than current */
+}
+
 #special-info {
 grid-area: special;
   text-align: center;
