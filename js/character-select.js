@@ -316,7 +316,7 @@ class CharacterSelect {
     this.showLoading();
     
     setTimeout(() => {
-      window.location.href = 'battle1v1-1.html';
+      window.location.href = 'battles/battle1v1-1.html';
     }, 800);
   }
 
