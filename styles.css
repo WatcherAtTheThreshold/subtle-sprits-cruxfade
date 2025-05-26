@@ -378,7 +378,7 @@ grid-area: controls;
 
 .card.damage-glow {
   box-shadow: 0 0 clamp(8px, 2vw, 15px) #ff4444;
-  animation: damagePulse 0.3s ease-in-out 2;
+  animation: damagePulse 0.3s ease-in-out 3;
 }
 
 @keyframes damagePulse {
@@ -393,7 +393,7 @@ grid-area: controls;
 @keyframes shrinkHit {
   0% { transform: scale(1); }
   50% { transform: scale(0.93); }
-  100% { transform: scale(1); }
+  /* 100% { transform: scale(1); } */
 }
 
 .card.defeated {
