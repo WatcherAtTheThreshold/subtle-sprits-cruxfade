@@ -141,7 +141,7 @@
 
 .card-back {
   transform: rotateY(0deg);
-  background: url('images/card-back.webp') center/cover no-repeat;
+  background: url('../images/card-back.webp') center/cover no-repeat;
 }
 
 .card.enemy .card-front {
