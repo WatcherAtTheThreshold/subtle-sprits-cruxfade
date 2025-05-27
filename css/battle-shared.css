@@ -1,23 +1,29 @@
 /* ═══════════════════════════════════════════════════════════════════════════════
-   BATTLE SHARED - Common styling for all battle types (1v1, 2v2, 4v4)
+   BATTLE SHARED CSS - Clean, Unified Styling for All Battle Types
+   Complete rewrite with no conflicts or duplications
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   BASE CARD STYLING - Core card appearance and layout
+   BASE CARD STYLING
+   Core appearance and layout for all character cards
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 .card {
   position: relative;
   border-radius: clamp(8px, 2vw, 16px);
-  border: clamp(1px, 0.3vw, 3px) solid #999;
+  border: clamp(2px, 0.4vw, 3px) solid #999;
   box-shadow: 
-    0 clamp(3px, 1vw, 6px) clamp(6px, 2vw, 12px) rgba(0, 0, 0, 0.4),
+    0 clamp(4px, 1.2vw, 8px) clamp(8px, 2.5vw, 15px) rgba(0, 0, 0, 0.4),
     inset 0 clamp(1px, 0.3vw, 2px) 0 rgba(255, 255, 255, 0.1);
   font-size: clamp(0.5rem, 1.5vw, 0.8rem);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  overflow: visible; /* Important for floating text */
   max-width: 100%;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  
+  /* Card sizing */
+  width: clamp(140px, 18vw, 240px);
+  height: clamp(180px, 24vw, 320px);
 }
 
 .card.enemy {
@@ -26,20 +32,14 @@
   color: #fff;
 }
 
-/* Card sizing responsive system */
-.card {
-  width: clamp(140px, 18vw, 240px);
-  height: clamp(180px, 24vw, 320px);
-}
-
-/* Pet cards are smaller */
 .card[data-is-pet="true"] {
   width: clamp(110px, 15vw, 200px);
   height: clamp(150px, 20vw, 270px);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   FLIP CARD SYSTEM - 3D card flipping mechanics
+   CARD FLIP SYSTEM
+   3D flipping mechanics for card reveals
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 .card.flip-container {
@@ -53,6 +53,7 @@
   transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
   border-radius: inherit;
+  overflow: visible; /* Important for floating text */
 }
 
 .card.flipped .card-inner {
@@ -66,7 +67,7 @@
   height: 100%;
   backface-visibility: hidden;
   border-radius: inherit;
-  overflow: hidden;
+  overflow: visible; /* Important for floating text */
 }
 
 .card-front {
@@ -95,7 +96,8 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   CARD CONTENT LAYOUT - Character images, names, stats, descriptions
+   CARD CONTENT LAYOUT
+   Character images, names, descriptions, and stats
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 .bust-container {
@@ -131,7 +133,11 @@
   transform: scale(1.05);
 }
 
-/* Character name styling */
+/* ═══════════════════════════════════════════════════════════════════════════════
+   CHARACTER NAME STYLING
+   Name tags with proper contrast and visibility
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
 .name-tag {
   text-align: center;
   font-family: 'Bangers', cursive;
@@ -158,7 +164,11 @@
   font-size: clamp(0.8rem, 2.2vw, 1.3rem);
 }
 
-/* Description and special move text */
+/* ═══════════════════════════════════════════════════════════════════════════════
+   DESCRIPTION AND SPECIAL MOVE TEXT
+   Character descriptions and special abilities
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
 .description,
 .special-move {
   font-size: clamp(0.65rem, 1.8vw, 1rem);
@@ -203,7 +213,8 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   STAT DISPLAY - HP and Attack positioning and styling
+   STAT DISPLAY SYSTEM
+   HP and Attack stats positioning and styling
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 .stat {
@@ -226,7 +237,7 @@
   min-width: clamp(25px, 5vw, 35px);
 }
 
-/* HP Stat - Top left, red coloring */
+/* HP Stat - Top left, red styling */
 .hp {
   top: clamp(6px, 1.5vw, 12px);
   left: clamp(6px, 1.5vw, 12px);
@@ -237,7 +248,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-/* ATK Stat - Top left, below HP, blue coloring */
+/* ATK Stat - Below HP, blue styling */
 .atk {
   top: clamp(35px, 8vw, 60px);
   left: clamp(6px, 1.5vw, 12px);
@@ -252,66 +263,74 @@
   top: clamp(28px, 6vw, 45px);
 }
 
-/* Stat hover effects */
 .stat:hover {
   transform: scale(1.1);
   z-index: 10;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   CARD ANIMATION EFFECTS - Battle states and visual feedback
+   BATTLE ANIMATION EFFECTS
+   Turn highlights, damage effects, and visual feedback
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 /* Active turn highlighting */
 .card.highlight-turn {
-  transform: scale(clamp(1.03, 1.05, 1.08));
+  transform: scale(clamp(1.05, 1.08, 1.12));
   box-shadow: 
-    0 0 clamp(15px, 4vw, 30px) rgba(255, 221, 68, 0.8),
-    0 clamp(5px, 1.5vw, 10px) clamp(10px, 3vw, 20px) rgba(0, 0, 0, 0.3);
+    0 0 clamp(20px, 5vw, 40px) rgba(255, 221, 68, 0.9),
+    0 clamp(6px, 2vw, 12px) clamp(12px, 4vw, 25px) rgba(0, 0, 0, 0.4);
   border-color: #ffdd44;
-  z-index: 5;
+  z-index: 10;
+  transition: all 0.4s ease;
 }
 
 /* Special move glow effect */
 .card.special-glow {
-  animation: specialPulse 0.6s ease-in-out 3;
+  animation: specialPulse 1.2s ease-in-out;
   box-shadow: 
-    0 0 clamp(20px, 5vw, 40px) rgba(255, 102, 68, 0.9),
-    0 clamp(5px, 1.5vw, 10px) clamp(15px, 4vw, 30px) rgba(0, 0, 0, 0.4);
+    0 0 clamp(30px, 7vw, 60px) rgba(255, 221, 68, 1),
+    0 clamp(8px, 2.5vw, 15px) clamp(16px, 5vw, 30px) rgba(0, 0, 0, 0.5);
+  z-index: 8;
 }
 
 @keyframes specialPulse {
   0%, 100% { 
     transform: scale(1);
-    filter: brightness(1);
+    filter: brightness(1) saturate(1);
   }
   50% { 
-    transform: scale(clamp(1.02, 1.03, 1.05));
-    filter: brightness(1.2);
+    transform: scale(clamp(1.04, 1.06, 1.08));
+    filter: brightness(1.3) saturate(1.5);
   }
 }
 
 /* Damage received effect */
 .card.damage-glow {
-  animation: damageShake 0.4s ease-out;
-  box-shadow: 0 0 clamp(12px, 3vw, 25px) rgba(255, 68, 68, 0.8);
+  animation: damageShake 0.8s ease-out;
+  box-shadow: 0 0 clamp(25px, 6vw, 50px) rgba(255, 68, 68, 0.9);
 }
 
 @keyframes damageShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-clamp(2px, 0.5vw, 4px)); }
-  75% { transform: translateX(clamp(2px, 0.5vw, 4px)); }
-}
-
-/* Hit impact effect */
-.card.shrink-hit {
-  animation: shrinkHit 0.25s ease-out;
-}
-
-@keyframes shrinkHit {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.95); }
-  100% { transform: scale(1); }
+  0%, 100% { 
+    transform: scale(1) translateX(0px);
+    filter: brightness(1);
+  }
+  20% { 
+    transform: scale(0.96) translateX(-4px);
+    filter: brightness(1.3);
+  }
+  40% { 
+    transform: scale(0.96) translateX(4px);
+    filter: brightness(1.3);
+  }
+  60% { 
+    transform: scale(0.98) translateX(-2px);
+    filter: brightness(1.2);
+  }
+  80% { 
+    transform: scale(0.99) translateX(1px);
+    filter: brightness(1.1);
+  }
 }
 
 /* Defeated state */
@@ -342,12 +361,10 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   UNIFIED FLOATING TEXT SYSTEM - Replace the conflicting sections
+   FLOATING TEXT SYSTEM
+   Unified, clean floating text for all battle effects
    ═══════════════════════════════════════════════════════════════════════════════ */
 
-/* Remove ALL existing floating text CSS and replace with this clean version */
-
-/* Core floating text base - works on all devices */
 .floating-text-enhanced,
 .float-damage, 
 .float-heal, 
@@ -360,19 +377,16 @@
   z-index: 9999 !important;
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9) !important;
   user-select: none !important;
-  -webkit-user-select: none !important;
   text-align: center !important;
   white-space: nowrap !important;
   
-  /* SLOWER transition - 3.5 seconds */
-  transition: all 3.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  /* Smooth, readable animations */
+  transition: all 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
   
-  /* Force hardware acceleration */
+  /* Hardware acceleration for smooth performance */
   will-change: transform, opacity !important;
   backface-visibility: hidden !important;
-  -webkit-backface-visibility: hidden !important;
   transform-style: preserve-3d !important;
-  -webkit-transform-style: preserve-3d !important;
   
   /* Ensure visibility */
   display: block !important;
@@ -380,7 +394,7 @@
   opacity: 1 !important;
 }
 
-/* Specific floating text types */
+/* Damage text - Red, prominent */
 .float-damage {
   color: #ff4444 !important;
   font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
@@ -390,6 +404,7 @@
     0 0 12px rgba(255, 68, 68, 0.8) !important;
 }
 
+/* Heal text - Green, positive */
 .float-heal {
   color: #4CAF50 !important;
   font-size: clamp(1.3rem, 4vw, 2.2rem) !important;
@@ -399,6 +414,7 @@
     0 0 12px rgba(76, 175, 80, 0.8) !important;
 }
 
+/* KO text - Large, dramatic */
 .float-ko {
   color: #ff0000 !important;
   font-size: clamp(2.5rem, 8vw, 4.5rem) !important;
@@ -408,6 +424,7 @@
     0 0 20px rgba(255, 0, 0, 0.9) !important;
 }
 
+/* Special text - Gold, magical */
 .float-special {
   color: #ffdd44 !important;
   font-size: clamp(1.4rem, 5vw, 2.8rem) !important;
@@ -417,76 +434,19 @@
     0 0 15px rgba(255, 221, 68, 0.8) !important;
 }
 
-/* Ensure cards support floating text */
-.card {
-  position: relative !important;
-  overflow: visible !important;
-  transform-style: preserve-3d !important;
-}
-
-.card .card-inner,
-.card .card-front,
-.card .card-back {
-  overflow: visible !important;
-}
-
-/* Enhanced damage animation that works consistently */
-.card.damage-glow {
-  animation: unifiedDamageShake 0.8s ease-out !important;
-  box-shadow: 0 0 clamp(25px, 6vw, 50px) rgba(255, 68, 68, 0.9) !important;
-}
-
-@keyframes unifiedDamageShake {
-  0%, 100% { 
-    transform: scale(1) translateX(0px);
-    filter: brightness(1);
-  }
-  20% { 
-    transform: scale(0.96) translateX(-4px);
-    filter: brightness(1.3);
-  }
-  40% { 
-    transform: scale(0.96) translateX(4px);
-    filter: brightness(1.3);
-  }
-  60% { 
-    transform: scale(0.98) translateX(-2px);
-    filter: brightness(1.2);
-  }
-  80% { 
-    transform: scale(0.99) translateX(1px);
-    filter: brightness(1.1);
-  }
-}
-
-/* Enhanced special glow that works consistently */
-.card.special-glow {
-  animation: unifiedSpecialPulse 1.2s ease-in-out !important;
-  box-shadow: 0 0 clamp(35px, 8vw, 70px) rgba(255, 221, 68, 1) !important;
-}
-
-@keyframes unifiedSpecialPulse {
-  0%, 100% { 
-    transform: scale(1);
-    filter: brightness(1) saturate(1);
-  }
-  50% { 
-    transform: scale(1.06);
-    filter: brightness(1.4) saturate(1.6);
-  }
-}
-
-/* Enhanced turn highlighting */
-.card.highlight-turn {
-  transform: scale(1.08) !important;
-  box-shadow: 0 0 clamp(30px, 7vw, 60px) rgba(255, 221, 68, 0.9) !important;
-  border-color: #ffdd44 !important;
-  z-index: 10 !important;
-  transition: all 0.4s ease !important;
-}
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE DESIGN
+   Mobile, tablet, and desktop optimizations
+   ═══════════════════════════════════════════════════════════════════════════════ */
 
 /* Mobile optimizations */
 @media (max-width: 768px) {
+  .card {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .floating-text-enhanced,
   .float-damage,
   .float-heal,
   .float-special {
@@ -495,199 +455,6 @@
   
   .float-ko {
     font-size: clamp(2rem, 8vw, 3.5rem) !important;
-  }
-}
-
-/* Desktop-specific fixes */
-@media (min-width: 769px) {
-  .floating-text-enhanced,
-  .float-damage, 
-  .float-heal, 
-  .float-ko, 
-  .float-special {
-    /* Extra desktop stability */
-    backface-visibility: hidden !important;
-    -webkit-backface-visibility: hidden !important;
-    -moz-backface-visibility: hidden !important;
-    transform: translateZ(0) !important;
-    -webkit-transform: translateZ(0) !important;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .floating-text-enhanced,
-  .float-damage,
-  .float-heal,
-  .float-ko,
-  .float-special {
-    transition: opacity 0.5s ease !important;
-  }
-  
-  .card.damage-glow,
-  .card.special-glow {
-    animation: none !important;
-    transition: all 0.3s ease !important;
-  }
-}
-
-/* High contrast accessibility */
-@media (prefers-contrast: high) {
-  .float-damage {
-    color: #ff0000 !important;
-    text-shadow: 4px 4px 0px #000 !important;
-  }
-  
-  .float-heal {
-    color: #00ff00 !important;
-    text-shadow: 4px 4px 0px #000 !important;
-  }
-  
-  .float-special {
-    color: #ffff00 !important;
-    text-shadow: 4px 4px 0px #000 !important;
-  }
-  
-  .float-ko {
-    color: #ff0000 !important;
-    text-shadow: 5px 5px 0px #000 !important;
-  }
-}
-/* ═══════════════════════════════════════════════════════════════════════════════
-   STATUS EFFECT VISUAL INDICATORS - Buffs, debuffs, conditions
-   ═══════════════════════════════════════════════════════════════════════════════ */
-
-/* Burning effect */
-.card.status-burning {
-  box-shadow: 
-    0 0 clamp(8px, 2vw, 15px) rgba(255, 69, 0, 0.8),
-    inset 0 0 clamp(15px, 4vw, 30px) rgba(255, 69, 0, 0.2);
-  border-color: #ff4500;
-  animation: burningFlicker 1.5s infinite;
-}
-
-@keyframes burningFlicker {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.2) hue-rotate(10deg); }
-}
-
-/* Bleeding effect */
-.card.status-bleeding {
-  box-shadow: 
-    0 0 clamp(6px, 1.5vw, 12px) rgba(139, 0, 0, 0.7),
-    inset 0 0 clamp(10px, 2.5vw, 20px) rgba(139, 0, 0, 0.1);
-  border-color: #8b0000;
-  animation: bleedPulse 2s infinite;
-}
-
-@keyframes bleedPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
-}
-
-/* Stunned/Paralyzed effects */
-.card.status-stunned,
-.card.status-paralyzed {
-  box-shadow: 
-    0 0 clamp(10px, 2.5vw, 20px) rgba(255, 255, 0, 0.8),
-    inset 0 0 clamp(15px, 4vw, 30px) rgba(255, 255, 0, 0.1);
-  border-color: #ffd700;
-  opacity: 0.7;
-  animation: stunnedShake 0.5s infinite;
-}
-
-@keyframes stunnedShake {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(0.5deg); }
-  75% { transform: rotate(-0.5deg); }
-}
-
-/* Shield effect */
-.card.status-shield {
-  box-shadow: 
-    0 0 clamp(12px, 3vw, 25px) rgba(0, 191, 255, 0.9),
-    inset 0 0 clamp(20px, 5vw, 40px) rgba(0, 191, 255, 0.2);
-  border-color: #00bfff;
-  animation: shieldShimmer 2s infinite;
-}
-
-@keyframes shieldShimmer {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.3) saturate(1.2); }
-}
-
-/* Boosted/Enhanced effect */
-.card.status-boosted {
-  box-shadow: 
-    0 0 clamp(10px, 2.5vw, 20px) rgba(0, 255, 0, 0.8),
-    inset 0 0 clamp(15px, 4vw, 30px) rgba(0, 255, 0, 0.1);
-  border-color: #32cd32;
-  animation: boostedGlow 1.5s infinite;
-}
-
-@keyframes boostedGlow {
-  0%, 100% { filter: brightness(1) saturate(1); }
-  50% { filter: brightness(1.15) saturate(1.3); }
-}
-
-/* Confused/Haunted effects */
-.card.status-confused,
-.card.status-haunted {
-  box-shadow: 
-    0 0 clamp(8px, 2vw, 15px) rgba(128, 0, 128, 0.7),
-    inset 0 0 clamp(12px, 3vw, 25px) rgba(128, 0, 128, 0.1);
-  border-color: #800080;
-  animation: confusedWaver 3s infinite;
-}
-
-@keyframes confusedWaver {
-  0%, 100% { filter: hue-rotate(0deg); }
-  33% { filter: hue-rotate(10deg); }
-  66% { filter: hue-rotate(-10deg); }
-}
-
-/* Reflect effect */
-.card.status-reflect {
-  box-shadow: 
-    0 0 clamp(12px, 3vw, 25px) rgba(192, 192, 192, 0.8),
-    inset 0 0 clamp(20px, 5vw, 40px) rgba(255, 255, 255, 0.2);
-  border-color: #c0c0c0;
-  animation: reflectShimmer 1s infinite;
-}
-
-@keyframes reflectShimmer {
-  0%, 100% { 
-    box-shadow: 
-      0 0 clamp(12px, 3vw, 25px) rgba(192, 192, 192, 0.8),
-      inset 0 0 clamp(20px, 5vw, 40px) rgba(255, 255, 255, 0.2);
-  }
-  50% { 
-    box-shadow: 
-      0 0 clamp(20px, 5vw, 40px) rgba(255, 255, 255, 1),
-      inset 0 0 clamp(30px, 7vw, 60px) rgba(255, 255, 255, 0.4);
-  }
-}
-
-/* Vanished effect */
-.card.status-vanished {
-  opacity: 0.3;
-  animation: vanishFlicker 1s infinite;
-}
-
-@keyframes vanishFlicker {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.1; }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════════
-   MOBILE OPTIMIZATIONS - Touch handling and responsive adjustments
-   ═══════════════════════════════════════════════════════════════════════════════ */
-
-/* Prevent zoom on double-tap for iOS */
-@media (max-width: 768px) {
-  .card {
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -702,9 +469,72 @@
     width: clamp(100px, 35vw, 170px);
     height: clamp(130px, 45vw, 230px);
   }
+}
+
+/* Desktop-specific enhancements */
+@media (min-width: 769px) {
+  .floating-text-enhanced,
+  .float-damage, 
+  .float-heal, 
+  .float-ko, 
+  .float-special {
+    /* Extra stability for desktop browsers */
+    transform: translateZ(0) !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   ACCESSIBILITY FEATURES
+   Support for reduced motion and high contrast
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card *,
+  .floating-text-enhanced,
+  .float-damage,
+  .float-heal,
+  .float-ko,
+  .float-special {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.3s !important;
+  }
   
-  .floating-text-base {
-    font-size: clamp(0.8rem, 4vw, 1.2rem);
+  .card:hover {
+    transform: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card {
+    border-width: clamp(3px, 0.8vw, 5px);
+  }
+  
+  .stat {
+    border-width: clamp(2px, 0.5vw, 3px);
+    text-shadow: none;
+  }
+  
+  .name-tag {
+    border: 2px solid currentColor;
+  }
+  
+  .float-damage {
+    color: #ff0000 !important;
+    text-shadow: 4px 4px 0px #000 !important;
+  }
+  
+  .float-heal {
+    color: #00ff00 !important;
+    text-shadow: 4px 4px 0px #000 !important;
+  }
+  
+  .float-special {
+    color: #ffff00 !important;
+    text-shadow: 4px 4px 0px #000 !important;
   }
 }
 
@@ -717,416 +547,5 @@
   
   .stat {
     text-rendering: optimizeLegibility;
-  }
-}
-
-/* Reduced motion accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .card,
-  .card *,
-  .floating-text-base {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  
-  .card:hover {
-    transform: none;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .card {
-    border-width: clamp(2px, 0.5vw, 4px);
-  }
-  
-  .stat {
-    border-width: clamp(2px, 0.5vw, 3px);
-    text-shadow: none;
-  }
-  
-  .name-tag {
-    border: 2px solid currentColor;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════════
-   Battle Floating text
-   ═══════════════════════════════════════════════════════════════════════════════ */
-
-/* Enhanced floating text effects for 1v1 battles */
-
-.float-damage, 
-.float-heal, 
-.float-ko, 
-.float-special {
-  position: absolute !important;
-  font-family: 'Bangers', cursive !important;
-  font-weight: bold !important;
-  pointer-events: none !important;
-  z-index: 1000 !important;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8) !important;
-  transition: all 0.8s ease-out !important;
-  text-align: center !important;
-  white-space: nowrap !important;
-}
-
-.float-damage {
-  color: #ff4444 !important;
-  font-size: clamp(1.2rem, 4vw, 2rem) !important;
-  animation: floatUpDamage 0.8s ease-out forwards;
-}
-
-.float-heal {
-  color: #4CAF50 !important;
-  font-size: clamp(1rem, 3vw, 1.8rem) !important;
-  animation: floatUpHeal 0.8s ease-out forwards;
-}
-
-.float-ko {
-  color: #ff0000 !important;
-  font-size: clamp(2rem, 6vw, 4rem) !important;
-  font-weight: 900 !important;
-  animation: koShake 1s ease-out forwards;
-  text-shadow: 
-    3px 3px 6px rgba(0, 0, 0, 0.9),
-    0 0 15px rgba(255, 0, 0, 0.7) !important;
-}
-
-.float-special {
-  color: #ffdd44 !important;
-  font-size: clamp(1.2rem, 4vw, 2.2rem) !important;
-  animation: specialGlow 1s ease-out forwards;
-  text-shadow: 
-    2px 2px 4px rgba(0, 0, 0, 0.8),
-    0 0 10px rgba(255, 221, 68, 0.6) !important;
-}
-
-/* Enhanced floating text that works on ALL devices - add this to your CSS */
-
-/* Force floating text to work on desktop and mobile */
-.floating-text-enhanced {
-  position: absolute !important;
-  z-index: 9999 !important;
-  pointer-events: none !important;
-  font-family: 'Bangers', cursive !important;
-  font-weight: bold !important;
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9) !important;
-  user-select: none !important;
-  -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
-  
-  /* Force hardware acceleration */
-  will-change: transform, opacity !important;
-  backface-visibility: hidden !important;
-  -webkit-backface-visibility: hidden !important;
-  transform-style: preserve-3d !important;
-  -webkit-transform-style: preserve-3d !important;
-}
-
-/* Ensure cards allow floating text overflow */
-.card {
-  position: relative !important;
-  overflow: visible !important;
-}
-
-.card .card-inner {
-  overflow: visible !important;
-}
-
-.card .card-front {
-  overflow: visible !important;
-}
-
-/* Enhanced damage glow animation that works everywhere */
-.card.damage-glow {
-  animation: damageShakeEnhanced 0.6s ease-out !important;
-  box-shadow: 0 0 clamp(20px, 5vw, 40px) rgba(255, 68, 68, 0.9) !important;
-}
-
-@keyframes damageShakeEnhanced {
-  0%, 100% { 
-    transform: scale(1) translateX(0px);
-    filter: brightness(1);
-  }
-  15% { 
-    transform: scale(0.95) translateX(-3px);
-    filter: brightness(1.3);
-  }
-  30% { 
-    transform: scale(0.95) translateX(3px);
-    filter: brightness(1.3);
-  }
-  45% { 
-    transform: scale(0.95) translateX(-2px);
-    filter: brightness(1.2);
-  }
-  60% { 
-    transform: scale(0.95) translateX(2px);
-    filter: brightness(1.2);
-  }
-  75% { 
-    transform: scale(0.98) translateX(-1px);
-    filter: brightness(1.1);
-  }
-}
-
-/* Floating text color classes with !important to override everything */
-.float-damage {
-  color: #ff4444 !important;
-  font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
-}
-
-.float-heal {
-  color: #4CAF50 !important;
-  font-size: clamp(1.3rem, 4vw, 2.2rem) !important;
-}
-
-.float-ko {
-  color: #ff0000 !important;
-  font-size: clamp(2.5rem, 8vw, 4.5rem) !important;
-}
-
-.float-special {
-  color: #ffdd44 !important;
-  font-size: clamp(1.4rem, 5vw, 2.8rem) !important;
-}
-
-/* Debug helper - remove after testing */
-.floating-text-enhanced {
-  border: 1px solid rgba(255, 0, 0, 0.3); /* Temporary red border to see if text appears */
-}
-
-/* Desktop-specific fixes */
-@media (min-width: 769px) {
-  .floating-text-enhanced {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-  
-  .card {
-    transform-style: preserve-3d !important;
-  }
-}
-
-/* Mobile-specific optimizations */
-@media (max-width: 768px) {
-  .floating-text-enhanced {
-    font-size: clamp(1.2rem, 6vw, 2rem) !important;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .float-damage {
-    color: #ff0000 !important;
-    text-shadow: 4px 4px 0px #000 !important;
-  }
-  
-  .float-heal {
-    color: #00ff00 !important;
-    text-shadow: 4px 4px 0px #000 !important;
-  }
-  
-  .float-special {
-    color: #ffff00 !important;
-    text-shadow: 4px 4px 0px #000 !important;
-  }
-}
-
-/* Remove debug border after confirming it works */
-/* 
-.floating-text-enhanced {
-  border: none !important;
-}
-*/
-
-/* Floating animations */
-@keyframes floatUpDamage {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -120%) scale(1.2);
-  }
-}
-
-@keyframes floatUpHeal {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.7);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -110%) scale(1.1);
-  }
-}
-
-@keyframes koShake {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.5) rotate(-5deg);
-  }
-  30% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.3) rotate(3deg);
-  }
-  70% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.1) rotate(-2deg);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1) rotate(0deg);
-  }
-}
-
-@keyframes specialGlow {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.6);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -70%) scale(1.2);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -130%) scale(0.9);
-  }
-}
-
-/* Enhanced card glow effects for battle */
-.card.damage-glow {
-  animation: damageFlash 0.6s ease-out;
-  box-shadow: 0 0 clamp(20px, 5vw, 40px) rgba(255, 68, 68, 0.9) !important;
-}
-
-@keyframes damageFlash {
-  0%, 100% { 
-    transform: scale(1);
-    filter: brightness(1);
-  }
-  25% { 
-    transform: scale(0.95) translateX(-2px);
-    filter: brightness(1.2);
-  }
-  75% { 
-    transform: scale(0.95) translateX(2px);
-    filter: brightness(1.2);
-  }
-}
-
-.card.special-glow {
-  animation: specialPulse 0.8s ease-in-out;
-  box-shadow: 0 0 clamp(30px, 7vw, 60px) rgba(255, 221, 68, 1) !important;
-}
-
-@keyframes specialPulse {
-  0%, 100% { 
-    transform: scale(1);
-    filter: brightness(1) saturate(1);
-  }
-  50% { 
-    transform: scale(1.05);
-    filter: brightness(1.3) saturate(1.5);
-  }
-}
-
-.card.highlight-turn {
-  transform: scale(1.08) !important;
-  box-shadow: 0 0 clamp(25px, 6vw, 50px) rgba(255, 221, 68, 0.9) !important;
-  border-color: #ffdd44 !important;
-  z-index: 10 !important;
-  transition: all 0.3s ease !important;
-}
-
-/* Defeated state styling */
-.card.defeated {
-  opacity: 0.4 !important;
-  filter: grayscale(100%) brightness(0.7) !important;
-  transform: scale(0.9) !important;
-  transition: all 0.8s ease-out !important;
-}
-
-/* Enhanced restart button styling */
-.restart-button {
-  font-family: 'Bangers', cursive !important;
-  font-size: clamp(1rem, 3vw, 1.5rem) !important;
-  padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem) !important;
-  background: linear-gradient(to bottom, #f5a623, #e0951c) !important;
-  color: #2a5b94 !important;
-  border: clamp(1px, 0.3vw, 2px) solid #d4881f !important;
-  border-radius: clamp(4px, 1vw, 8px) !important;
-  cursor: pointer !important;
-  margin-top: 1rem !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 
-    inset 0 1px 0 #fff5cc, 
-    0 2px 6px rgba(0, 0, 0, 0.2) !important;
-}
-
-.restart-button:hover {
-  background: #c29d4d !important;
-  box-shadow: 0 0 12px #d4b15f !important;
-  transform: scale(1.02) !important;
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-  .float-damage,
-  .float-heal,
-  .float-special {
-    font-size: clamp(1rem, 5vw, 1.8rem) !important;
-  }
-  
-  .float-ko {
-    font-size: clamp(1.5rem, 7vw, 3rem) !important;
-  }
-  
-  .restart-button {
-    font-size: clamp(0.9rem, 4vw, 1.2rem) !important;
-    padding: clamp(0.4rem, 2vw, 0.8rem) clamp(0.8rem, 3vw, 1.5rem) !important;
-  }
-}
-
-/* High contrast accessibility */
-@media (prefers-contrast: high) {
-  .float-damage {
-    color: #ff0000 !important;
-    text-shadow: 3px 3px 0px #000 !important;
-  }
-  
-  .float-heal {
-    color: #00ff00 !important;
-    text-shadow: 3px 3px 0px #000 !important;
-  }
-  
-  .float-special {
-    color: #ffff00 !important;
-    text-shadow: 3px 3px 0px #000 !important;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .float-damage,
-  .float-heal,
-  .float-ko,
-  .float-special {
-    animation: none !important;
-    transition: opacity 0.3s ease !important;
-  }
-  
-  .card.damage-glow,
-  .card.special-glow,
-  .card.highlight-turn {
-    animation: none !important;
-    transition: all 0.2s ease !important;
   }
 }
