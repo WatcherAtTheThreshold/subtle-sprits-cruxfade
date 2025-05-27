@@ -510,18 +510,15 @@ const RosterUtils = {
     return petRoster[Math.floor(Math.random() * petRoster.length)];
   },
 
-  // Create a fresh copy of character data (for battle instances)
-  createCharacterInstance(characterData) {
-    return {
-      ...characterData,
-      // Reset any battle-specific properties
-      currentHP: characterData.hp,
-      currentATK: characterData.atk,
-      statusEffects: {},
-      specialUsed: false
-    };
-  }
-};
+// Create a fresh copy of character data (for battle instances)
+createCharacterInstance(characterData) {
+  return {
+    ...characterData,
+    // Reset any battle-specific properties
+    statusEffects: {},
+    specialUsed: false
+  };
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS AND INITIALIZATION
