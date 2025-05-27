@@ -81,13 +81,31 @@ const Battle1v1System = {
     return card;
   },
   
-  start() {
-    console.log("Starting battle...");
-    // For now, just flip the cards
-    document.querySelectorAll('.card').forEach(card => {
-      card.classList.add('flipped');
-    });
+start() {
+  console.log("Starting battle...");
+  
+  // Flip the cards
+  document.querySelectorAll('.card').forEach(card => {
+    card.classList.add('flipped');
+  });
+  
+  // Update button text and make it functional
+  const battleButton = document.getElementById('battle-button');
+  if (battleButton) {
+    battleButton.textContent = 'Battle Complete!';
+    battleButton.onclick = () => {
+      window.location.href = '../character-select.html';
+    };
   }
+  
+  // Update status
+  const status = document.getElementById('battle-status');
+  if (status) {
+    status.textContent = 'Cards flipped! Battle system coming soon...';
+  }
+  
+  console.log("Battle start complete!");
+}
 };
 
 // Export to window
