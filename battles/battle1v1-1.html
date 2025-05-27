@@ -64,10 +64,14 @@ let battleInitialized = false;
 let initRetries = 0;
 const maxRetries = 10;
 
-// Debug logging
+// Clean debug logging - only show important stuff
+const DEBUG = false; // Set to true for detailed logs
 function log(message, type = 'info') {
-  const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
-  console.log(`[${timestamp}] [BATTLE-1V1] ${message}`);
+  if (!DEBUG && type === 'info') return;
+  if (type === 'error') console.error(`🔥 ${message}`);
+  else if (type === 'success') console.log(`✅ ${message}`);
+  else if (type === 'warn') console.warn(`⚠️  ${message}`);
+  else if (DEBUG) console.log(`🔧 ${message}`);
 }
 
 // Check if required systems are loaded
@@ -226,22 +230,49 @@ window.addEventListener('load', () => {
   }
 });
 
-// Export for debugging
+// Export for debugging - CLEAN VERSION
 window.BattleDebug = {
-  reinit: () => {
+  // Quick status check
+  status: () => {
+    const systems = checkSystemsReady();
+    const char = getSelectedCharacter();
+    console.log(`
+🎮 BATTLE STATUS:
+  ✅ Initialized: ${battleInitialized}
+  🔄 Retries: ${initRetries}/${maxRetries}
+  📦 Systems: ${systems.allReady ? '✅ Ready' : '❌ Missing'}
+  👤 Character: ${char ? char.name : '❌ None'}
+    `);
+    return { initialized: battleInitialized, systems, character: char };
+  },
+  
+  // Force restart
+  restart: () => {
+    console.log('🔄 Restarting battle system...');
     initRetries = 0;
     battleInitialized = false;
     initializeBattle();
   },
-  status: () => ({
-    initialized: battleInitialized,
-    retries: initRetries,
-    systems: checkSystemsReady(),
-    character: getSelectedCharacter()
-  })
+  
+  // Toggle verbose logging
+  verbose: () => {
+    window.DEBUG = !window.DEBUG;
+    console.log(`🔧 Debug logging: ${window.DEBUG ? 'ON' : 'OFF'}`);
+  },
+  
+  // Quick test
+  test: () => {
+    console.log('🧪 Testing battle systems...');
+    const systems = checkSystemsReady();
+    Object.keys(systems).forEach(key => {
+      if (key !== 'allReady') {
+        console.log(`  ${key}: ${systems[key] ? '✅' : '❌'}`);
+      }
+    });
+  }
 };
 
-log('Battle initialization script loaded');
+log('Battle system ready! Use BattleDebug.status() for info', 'success');
   </script>
 
   <!-- Minimal inline styles for essential UI -->
