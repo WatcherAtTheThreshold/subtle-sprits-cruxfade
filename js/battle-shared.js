@@ -1,3 +1,5 @@
+console.log("=== BATTLE SHARED LOADING START ===");
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // BATTLE SHARED - Common utilities, character data, mechanics across all battle types
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -558,3 +560,5 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('BattleShared initialized');
   console.log('Selected character:', window.battleState.selectedPlayerCharacter);
 });
+
+console.log("=== BATTLE SHARED LOADING END ===");
