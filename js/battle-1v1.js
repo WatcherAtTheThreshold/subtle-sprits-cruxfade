@@ -1,15 +1,22 @@
-console.log("=== BATTLE 1V1 ENHANCED SYSTEM LOADING ===");
+// ═══════════════════════════════════════════════════════════════════════════════
+// TURN-BASED BATTLE SYSTEM WITH PLAYER CONTROL
+// Enhanced version with click-to-proceed mechanics
+// ═══════════════════════════════════════════════════════════════════════════════
 
-// Enhanced 1v1 Battle System with actual combat mechanics
+console.log("=== TURN-BASED BATTLE 1V1 SYSTEM LOADING ===");
+
+// Enhanced Battle System with Turn Control
 const Battle1v1System = {
   playerCard: null,
   enemyCard: null,
   battleInProgress: false,
   gameStarted: false,
   currentRound: 1,
+  currentTurn: 'waiting', // 'waiting', 'player', 'enemy', 'ended'
+  turnInProgress: false,
   
   init() {
-    console.log("Initializing enhanced 1v1 battle...");
+    console.log("Initializing turn-based 1v1 battle...");
     
     if (!window.BattleShared) {
       console.error("BattleShared not found!");
@@ -33,7 +40,7 @@ const Battle1v1System = {
     // Create cards and add to page
     this.createBattleCards(playerCharacter, enemyCharacter);
     
-    console.log("Battle initialized successfully!");
+    console.log("Turn-based battle initialized successfully!");
     return true;
   },
   
@@ -181,7 +188,141 @@ const Battle1v1System = {
     return Math.floor(Math.random() * (atk - 4)) + 5; // 5 to (ATK-1)
   },
   
-  // Special move effects
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // TURN-BASED BATTLE CONTROL SYSTEM
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
+  // Update battle button based on current state
+  updateBattleButton() {
+    const battleButton = document.getElementById('battle-button');
+    if (!battleButton) return;
+    
+    const viewport = window.innerWidth <= 768;
+    
+    switch (this.currentTurn) {
+      case 'waiting':
+        if (!this.gameStarted) {
+          battleButton.textContent = viewport ? "Start" : "Start Battle";
+          battleButton.style.display = 'inline-block';
+        } else {
+          battleButton.textContent = viewport ? "Begin!" : "Begin Combat!";
+          battleButton.style.display = 'inline-block';
+        }
+        break;
+        
+      case 'player':
+        battleButton.textContent = viewport ? "Attack!" : "Your Attack!";
+        battleButton.style.display = 'inline-block';
+        break;
+        
+      case 'enemy':
+        battleButton.textContent = viewport ? "Enemy Turn" : "Enemy's Turn";
+        battleButton.style.display = 'inline-block';
+        break;
+        
+      case 'ended':
+        battleButton.style.display = 'none';
+        break;
+        
+      default:
+        battleButton.textContent = viewport ? "Continue" : "Continue Battle";
+        battleButton.style.display = 'inline-block';
+    }
+    
+    // Disable button if turn is in progress
+    battleButton.disabled = this.turnInProgress;
+  },
+  
+  // Start the next turn phase
+  async startNextTurn() {
+    if (this.turnInProgress) return;
+    
+    // Check for battle end
+    if (this.checkBattleEnd()) return;
+    
+    this.turnInProgress = true;
+    
+    if (this.currentTurn === 'player') {
+      await this.executePlayerTurn();
+    } else if (this.currentTurn === 'enemy') {
+      await this.executeEnemyTurn();
+    }
+    
+    this.turnInProgress = false;
+    this.updateBattleButton();
+  },
+  
+  // Execute player's turn
+  async executePlayerTurn() {
+    const playerName = this.playerCard.querySelector(".name-tag").textContent;
+    
+    // Highlight player card
+    this.playerCard.classList.add("highlight-turn");
+    this.updateStatus(`${playerName}'s turn - preparing attack...`);
+    await this.sleep(800);
+    
+    // Decide between normal attack and special (30% chance for special)
+    const useSpecial = this.playerCard.dataset.specialUsed === 'false' && Math.random() < 0.3;
+    
+    if (useSpecial) {
+      await this.executeSpecialMove(this.playerCard, this.enemyCard);
+    } else {
+      await this.executeNormalAttack(this.playerCard, this.enemyCard);
+    }
+    
+    this.playerCard.classList.remove("highlight-turn");
+    
+    // Switch to enemy turn or end battle
+    if (this.getHP(this.enemyCard) > 0) {
+      this.currentTurn = 'enemy';
+      this.updateStatus(`${playerName} finished! Click for enemy turn.`);
+    }
+  },
+  
+  // Execute enemy's turn
+  async executeEnemyTurn() {
+    const enemyName = this.enemyCard.querySelector(".name-tag").textContent;
+    
+    // Highlight enemy card
+    this.enemyCard.classList.add("highlight-turn");
+    this.updateStatus(`${enemyName}'s turn - preparing attack...`);
+    await this.sleep(800);
+    
+    // Decide between normal attack and special (25% chance for special)
+    const useSpecial = this.enemyCard.dataset.specialUsed === 'false' && Math.random() < 0.25;
+    
+    if (useSpecial) {
+      await this.executeSpecialMove(this.enemyCard, this.playerCard);
+    } else {
+      await this.executeNormalAttack(this.enemyCard, this.playerCard);
+    }
+    
+    this.enemyCard.classList.remove("highlight-turn");
+    
+    // Switch to player turn or end battle
+    if (this.getHP(this.playerCard) > 0) {
+      this.currentRound++;
+      this.currentTurn = 'player';
+      this.updateStatus(`Round ${this.currentRound} - Your turn!`);
+    }
+  },
+  
+  // Execute normal attack
+  async executeNormalAttack(attacker, target) {
+    const attackerName = attacker.querySelector(".name-tag").textContent;
+    const targetName = target.querySelector(".name-tag").textContent;
+    const damage = this.randomDamage(attacker);
+    
+    this.updateStatus(`${attackerName} attacks ${targetName}!`);
+    await this.sleep(600);
+    
+    this.setHP(target, this.getHP(target) - damage);
+    this.floatDamage(target, damage);
+    this.updateStatus(`${attackerName} deals ${damage} damage!`);
+    await this.sleep(1000);
+  },
+  
+  // Special move effects (enhanced from previous version)
   async executeSpecialMove(attacker, target) {
     const specialName = attacker.querySelector(".special-move").textContent;
     const attackerName = attacker.querySelector(".name-tag").textContent;
@@ -194,100 +335,57 @@ const Battle1v1System = {
     
     switch (specialName) {
       case "Luminous Veil":
-        // Heal self for 8 HP
         const healAmount = 8;
         this.setHP(attacker, this.getHP(attacker) + healAmount);
         this.floatHeal(attacker, healAmount);
-        this.updateStatus(`${attackerName} heals for ${healAmount} HP!`);
+        this.updateStatus(`${attackerName} heals for ${healAmount} HP with divine light!`);
         break;
         
       case "Spark Trick":
-        // Deal extra damage (15) and small chance to stun next turn
         const sparkDamage = 15;
         this.setHP(target, this.getHP(target) - sparkDamage);
         this.floatDamage(target, sparkDamage);
-        this.updateStatus(`${attackerName} deals ${sparkDamage} electric damage!`);
+        this.updateStatus(`${attackerName} unleashes crackling energy for ${sparkDamage} damage!`);
         break;
         
       case "Plant Blessing":
-        // Heal self for 10 HP
         const plantHeal = 10;
         this.setHP(attacker, this.getHP(attacker) + plantHeal);
         this.floatHeal(attacker, plantHeal);
-        this.updateStatus(`${attackerName} heals for ${plantHeal} HP with nature's blessing!`);
+        this.updateStatus(`${attackerName} channels nature's power, healing ${plantHeal} HP!`);
         break;
         
       case "Skull Bash":
-        // Heavy damage (12) 
         const bashDamage = 12;
         this.setHP(target, this.getHP(target) - bashDamage);
         this.floatDamage(target, bashDamage);
-        this.updateStatus(`${attackerName} delivers a crushing blow for ${bashDamage} damage!`);
+        this.updateStatus(`${attackerName} delivers a bone-crushing blow for ${bashDamage} damage!`);
         break;
         
       case "Wildfire Curse":
-        // Fire damage (10) with burning effect
         const fireDamage = 10;
         this.setHP(target, this.getHP(target) - fireDamage);
         this.floatDamage(target, fireDamage);
-        this.updateStatus(`${attackerName} burns ${target.querySelector(".name-tag").textContent} for ${fireDamage} fire damage!`);
+        this.updateStatus(`${attackerName} engulfs ${target.querySelector(".name-tag").textContent} in flames for ${fireDamage} damage!`);
         break;
         
       case "Panic Injection":
-        // Moderate damage (8) with confusion
         const panicDamage = 8;
         this.setHP(target, this.getHP(target) - panicDamage);
         this.floatDamage(target, panicDamage);
-        this.updateStatus(`${attackerName} induces panic, dealing ${panicDamage} damage!`);
+        this.updateStatus(`${attackerName} injects terror, dealing ${panicDamage} psychic damage!`);
         break;
         
       default:
-        // Generic special attack
         const genericDamage = 12;
         this.setHP(target, this.getHP(target) - genericDamage);
         this.floatDamage(target, genericDamage);
-        this.updateStatus(`${attackerName} uses a powerful special attack for ${genericDamage} damage!`);
+        this.updateStatus(`${attackerName} unleashes a devastating special attack for ${genericDamage} damage!`);
     }
     
     attacker.classList.remove("special-glow");
     attacker.dataset.specialUsed = 'true';
-    await this.sleep(1000);
-  },
-  
-  // Perform a single attack turn
-  async performAttack(attacker, target) {
-    const attackerName = attacker.querySelector(".name-tag").textContent;
-    const targetName = target.querySelector(".name-tag").textContent;
-    
-    // Check if attacker is defeated
-    if (this.getHP(attacker) <= 0) return false;
-    
-    // Highlight attacker
-    attacker.classList.add("highlight-turn");
-    this.updateStatus(`${attackerName}'s turn...`);
-    await this.sleep(800);
-    
-    // Decide between normal attack and special (25% chance for special)
-    const useSpecial = attacker.dataset.specialUsed === 'false' && Math.random() < 0.25;
-    
-    if (useSpecial) {
-      await this.executeSpecialMove(attacker, target);
-    } else {
-      // Normal attack
-      const damage = this.randomDamage(attacker);
-      this.updateStatus(`${attackerName} attacks ${targetName}!`);
-      await this.sleep(600);
-      
-      this.setHP(target, this.getHP(target) - damage);
-      this.floatDamage(target, damage);
-      this.updateStatus(`${attackerName} deals ${damage} damage!`);
-      await this.sleep(800);
-    }
-    
-    attacker.classList.remove("highlight-turn");
-    
-    // Check if target is defeated
-    return this.getHP(target) > 0;
+    await this.sleep(1200);
   },
   
   // Check for battle end
@@ -297,6 +395,7 @@ const Battle1v1System = {
     
     if (!playerAlive || !enemyAlive) {
       this.battleInProgress = false;
+      this.currentTurn = 'ended';
       
       if (playerAlive) {
         this.updateStatus("🏆 VICTORY! 🏆");
@@ -306,41 +405,11 @@ const Battle1v1System = {
         this.showRestartButton("Defeat! Try Again?");
       }
       
+      this.updateBattleButton();
       return true;
     }
     
     return false;
-  },
-  
-  // Main battle loop
-  async executeBattle() {
-    if (this.battleInProgress) return;
-    
-    this.battleInProgress = true;
-    this.updateStatus(`Round ${this.currentRound} - BATTLE!`);
-    
-    await this.sleep(1000);
-    
-    while (this.battleInProgress) {
-      // Player turn
-      const enemyAlive = await this.performAttack(this.playerCard, this.enemyCard);
-      if (this.checkBattleEnd()) break;
-      
-      if (enemyAlive) {
-        await this.sleep(500); // Brief pause between turns
-        
-        // Enemy turn
-        const playerAlive = await this.performAttack(this.enemyCard, this.playerCard);
-        if (this.checkBattleEnd()) break;
-        
-        if (playerAlive) {
-          await this.sleep(500);
-          this.currentRound++;
-          this.updateStatus(`Round ${this.currentRound}`);
-          await this.sleep(800);
-        }
-      }
-    }
   },
   
   // Update battle status text
@@ -377,45 +446,47 @@ const Battle1v1System = {
     return new Promise(resolve => setTimeout(resolve, ms));
   },
   
-  // Main start function
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // MAIN BATTLE CONTROL FUNCTIONS
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
+  // Main start function - handles different battle states
   start() {
-    console.log("Starting enhanced 1v1 battle...");
+    console.log("Starting turn-based 1v1 battle...");
     
     if (!this.gameStarted) {
       // First click - flip the cards
       this.gameStarted = true;
+      this.currentTurn = 'waiting';
       
-      // Flip the cards
+      // Flip the cards with stagger
       document.querySelectorAll('.card').forEach((card, index) => {
         setTimeout(() => {
           card.classList.add('flipped');
         }, index * 200);
       });
       
-      // Update button
-      const battleButton = document.getElementById('battle-button');
-      if (battleButton) {
-        battleButton.textContent = 'Begin Combat!';
-      }
+      this.updateStatus("Cards revealed! Ready for combat!");
       
-      this.updateStatus("Cards revealed! Click again to fight!");
-      
-    } else {
+    } else if (this.currentTurn === 'waiting') {
       // Second click - start actual battle
-      const battleButton = document.getElementById('battle-button');
-      if (battleButton) {
-        battleButton.style.display = 'none';
-      }
+      this.battleInProgress = true;
+      this.currentTurn = 'player';
+      this.currentRound = 1;
       
-      // Start the battle sequence
-      this.executeBattle();
+      this.updateStatus(`Round ${this.currentRound} - Your turn! Click to attack!`);
+      
+    } else if (this.battleInProgress && !this.turnInProgress) {
+      // During battle - execute next turn
+      this.startNextTurn();
     }
     
-    console.log("Battle start sequence initiated!");
+    this.updateBattleButton();
+    console.log(`Battle state: ${this.currentTurn}, In Progress: ${this.battleInProgress}`);
   }
 };
 
 // Export to window
 window.Battle1v1 = Battle1v1System;
 
-console.log("Enhanced Battle1v1 system loaded successfully!");
+console.log("Turn-based Battle1v1 system loaded successfully!");
