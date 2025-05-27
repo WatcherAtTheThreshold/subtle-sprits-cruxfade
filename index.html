@@ -63,32 +63,35 @@
   <button id="start-button" onclick="handleStart()">Start Game</button>
   <audio id="intro-music" src="music/ChosenOne.mp3" preload="auto"></audio>
 
-  <script>
-    let hasStartedMusic = false;
+ <script>
+  let clickCount = 0;
 
-    function handleStart() {
-      const audio = document.getElementById("intro-music");
-      const button = document.getElementById("start-button");
+  function handleStart() {
+    const audio = document.getElementById("intro-music");
+    const button = document.getElementById("start-button");
 
-      if (!hasStartedMusic) {
-        audio.play();
-        hasStartedMusic = true;
-        button.textContent = "Begin Journey";
-      } else {
-        // Fade out music and go to character select
-        audio.volume = 1;
-        const fadeOut = setInterval(() => {
-          if (audio.volume > 0.05) {
-            audio.volume -= 0.05;
-          } else {
-            clearInterval(fadeOut);
-            audio.pause();
-            window.location.href = "character-select.html";
-          }
-        }, 100);
-      }
+    clickCount++;
+
+    if (clickCount === 1) {
+      // First click: play music and change button text
+      audio.play();
+      button.textContent = "Begin Journey";
+    } else if (clickCount === 2) {
+      // Second click: fade music and redirect
+      audio.volume = 1;
+      const fadeOut = setInterval(() => {
+        if (audio.volume > 0.05) {
+          audio.volume -= 0.05;
+        } else {
+          clearInterval(fadeOut);
+          audio.pause();
+          window.location.href = "character-select.html";
+        }
+      }, 100);
     }
-  </script>
+  }
+</script>
+
 
 </body>
 </html>
