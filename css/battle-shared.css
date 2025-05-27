@@ -342,101 +342,217 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   FLOATING TEXT EFFECTS - Damage, healing, special moves
+   UNIFIED FLOATING TEXT SYSTEM - Replace the conflicting sections
    ═══════════════════════════════════════════════════════════════════════════════ */
 
-.floating-text-base {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Bangers', cursive;
-  font-weight: bold;
-  pointer-events: none;
-  z-index: 100;
-  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-  max-width: 80%;
-  text-align: center;
-  white-space: nowrap;
+/* Remove ALL existing floating text CSS and replace with this clean version */
+
+/* Core floating text base - works on all devices */
+.floating-text-enhanced,
+.float-damage, 
+.float-heal, 
+.float-ko, 
+.float-special {
+  position: absolute !important;
+  font-family: 'Bangers', cursive !important;
+  font-weight: bold !important;
+  pointer-events: none !important;
+  z-index: 9999 !important;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9) !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  
+  /* SLOWER transition - 3.5 seconds */
+  transition: all 3.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  
+  /* Force hardware acceleration */
+  will-change: transform, opacity !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  transform-style: preserve-3d !important;
+  -webkit-transform-style: preserve-3d !important;
+  
+  /* Ensure visibility */
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
+/* Specific floating text types */
 .float-damage {
-  @extend .floating-text-base;
-  color: #ff4444;
-  font-size: clamp(1rem, 3vw, 2rem);
-  animation: floatUp 0.8s ease-out forwards;
+  color: #ff4444 !important;
+  font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
+  font-weight: 900 !important;
+  text-shadow: 
+    3px 3px 6px rgba(0, 0, 0, 0.9),
+    0 0 12px rgba(255, 68, 68, 0.8) !important;
 }
 
 .float-heal {
-  @extend .floating-text-base;
-  color: #4CAF50;
-  font-size: clamp(0.9rem, 2.5vw, 1.8rem);
-  animation: floatUp 0.8s ease-out forwards;
+  color: #4CAF50 !important;
+  font-size: clamp(1.3rem, 4vw, 2.2rem) !important;
+  font-weight: 800 !important;
+  text-shadow: 
+    3px 3px 6px rgba(0, 0, 0, 0.9),
+    0 0 12px rgba(76, 175, 80, 0.8) !important;
 }
 
 .float-ko {
-  @extend .floating-text-base;
-  color: #ff0000;
-  font-size: clamp(1.5rem, 4vw, 3rem);
-  font-weight: 900;
-  animation: koAnimation 1s ease-out forwards;
+  color: #ff0000 !important;
+  font-size: clamp(2.5rem, 8vw, 4.5rem) !important;
+  font-weight: 900 !important;
   text-shadow: 
-    3px 3px 6px rgba(0, 0, 0, 0.9),
-    0 0 10px rgba(255, 0, 0, 0.5);
+    4px 4px 8px rgba(0, 0, 0, 0.9),
+    0 0 20px rgba(255, 0, 0, 0.9) !important;
 }
 
 .float-special {
-  @extend .floating-text-base;
-  color: #ffdd44;
-  font-size: clamp(0.8rem, 2.5vw, 1.5rem);
-  animation: specialFloat 1s ease-out forwards;
+  color: #ffdd44 !important;
+  font-size: clamp(1.4rem, 5vw, 2.8rem) !important;
+  font-weight: 800 !important;
   text-shadow: 
-    2px 2px 4px rgba(0, 0, 0, 0.8),
-    0 0 8px rgba(255, 221, 68, 0.6);
+    3px 3px 6px rgba(0, 0, 0, 0.9),
+    0 0 15px rgba(255, 221, 68, 0.8) !important;
 }
 
-@keyframes floatUp {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.8);
+/* Ensure cards support floating text */
+.card {
+  position: relative !important;
+  overflow: visible !important;
+  transform-style: preserve-3d !important;
+}
+
+.card .card-inner,
+.card .card-front,
+.card .card-back {
+  overflow: visible !important;
+}
+
+/* Enhanced damage animation that works consistently */
+.card.damage-glow {
+  animation: unifiedDamageShake 0.8s ease-out !important;
+  box-shadow: 0 0 clamp(25px, 6vw, 50px) rgba(255, 68, 68, 0.9) !important;
+}
+
+@keyframes unifiedDamageShake {
+  0%, 100% { 
+    transform: scale(1) translateX(0px);
+    filter: brightness(1);
   }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -150%) scale(1.2);
+  20% { 
+    transform: scale(0.96) translateX(-4px);
+    filter: brightness(1.3);
+  }
+  40% { 
+    transform: scale(0.96) translateX(4px);
+    filter: brightness(1.3);
+  }
+  60% { 
+    transform: scale(0.98) translateX(-2px);
+    filter: brightness(1.2);
+  }
+  80% { 
+    transform: scale(0.99) translateX(1px);
+    filter: brightness(1.1);
   }
 }
 
-@keyframes koAnimation {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.5) rotate(-10deg);
+/* Enhanced special glow that works consistently */
+.card.special-glow {
+  animation: unifiedSpecialPulse 1.2s ease-in-out !important;
+  box-shadow: 0 0 clamp(35px, 8vw, 70px) rgba(255, 221, 68, 1) !important;
+}
+
+@keyframes unifiedSpecialPulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: brightness(1) saturate(1);
   }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.3) rotate(5deg);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  50% { 
+    transform: scale(1.06);
+    filter: brightness(1.4) saturate(1.6);
   }
 }
 
-@keyframes specialFloat {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.7);
+/* Enhanced turn highlighting */
+.card.highlight-turn {
+  transform: scale(1.08) !important;
+  box-shadow: 0 0 clamp(30px, 7vw, 60px) rgba(255, 221, 68, 0.9) !important;
+  border-color: #ffdd44 !important;
+  z-index: 10 !important;
+  transition: all 0.4s ease !important;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .float-damage,
+  .float-heal,
+  .float-special {
+    font-size: clamp(1.2rem, 6vw, 2rem) !important;
   }
-  30% {
-    opacity: 1;
-    transform: translate(-50%, -60%) scale(1.1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -120%) scale(0.9);
+  
+  .float-ko {
+    font-size: clamp(2rem, 8vw, 3.5rem) !important;
   }
 }
 
+/* Desktop-specific fixes */
+@media (min-width: 769px) {
+  .floating-text-enhanced,
+  .float-damage, 
+  .float-heal, 
+  .float-ko, 
+  .float-special {
+    /* Extra desktop stability */
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+    -moz-backface-visibility: hidden !important;
+    transform: translateZ(0) !important;
+    -webkit-transform: translateZ(0) !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .floating-text-enhanced,
+  .float-damage,
+  .float-heal,
+  .float-ko,
+  .float-special {
+    transition: opacity 0.5s ease !important;
+  }
+  
+  .card.damage-glow,
+  .card.special-glow {
+    animation: none !important;
+    transition: all 0.3s ease !important;
+  }
+}
+
+/* High contrast accessibility */
+@media (prefers-contrast: high) {
+  .float-damage {
+    color: #ff0000 !important;
+    text-shadow: 4px 4px 0px #000 !important;
+  }
+  
+  .float-heal {
+    color: #00ff00 !important;
+    text-shadow: 4px 4px 0px #000 !important;
+  }
+  
+  .float-special {
+    color: #ffff00 !important;
+    text-shadow: 4px 4px 0px #000 !important;
+  }
+  
+  .float-ko {
+    color: #ff0000 !important;
+    text-shadow: 5px 5px 0px #000 !important;
+  }
+}
 /* ═══════════════════════════════════════════════════════════════════════════════
    STATUS EFFECT VISUAL INDICATORS - Buffs, debuffs, conditions
    ═══════════════════════════════════════════════════════════════════════════════ */
