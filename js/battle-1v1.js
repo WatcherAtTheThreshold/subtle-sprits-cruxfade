@@ -602,31 +602,18 @@ const Battle1v1 = {
 // EXPORTS AND INITIALIZATION
 // ═══════════════════════════════════════════════════════════════════════════════
 
-// Create global 1v1 battle manager
-window.battle1v1 = new Battle1v1Manager();
+// Create global 1v1 battle manager instance
+if (!window.battle1v1) {
+  window.battle1v1 = new Battle1v1Manager();
+}
 
-// Export 1v1 battle system
+// Export 1v1 battle system to window
 window.Battle1v1 = {
-  // Core functions
   init: Battle1v1.init,
   start: Battle1v1.start,
   restart: Battle1v1.restart,
-  
-  // Components
   Board: Board1v1,
-  Turn: Turn1v1,
-  Manager: window.battle1v1,
-  
-  // Utilities
-  battleLoop: Battle1v1.battleLoop
+  Turn: Turn1v1
 };
 
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-  // Wait for BattleShared to be ready
-  if (window.BattleShared) {
-    console.log('Battle1v1 initialized');
-  } else {
-    console.warn('BattleShared not found - some features may not work');
-  }
-});
+console.log('Battle1v1 system loaded successfully');
