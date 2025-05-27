@@ -35,10 +35,11 @@
       color: #ccc;
     }
 
-    .start-button {
+    .start-button, .music-toggle {
       font-family: 'Bangers', cursive;
-      font-size: 1.8rem;
-      padding: 0.75em 2em;
+      font-size: 1.5rem;
+      padding: 0.5em 1.5em;
+      margin: 0.5em;
       background-color: #444;
       color: #fff;
       border: 2px solid #fff;
@@ -47,19 +48,82 @@
       transition: background-color 0.3s ease;
     }
 
-    .start-button:hover {
+    .start-button:hover, .music-toggle:hover {
       background-color: #666;
+    }
+
+    audio {
+      display: none;
     }
   </style>
 </head>
 <body>
   <h1>Subtle Spirits: Cruxfade</h1>
   <p class="subtitle">A Battle of Spirits and Shadows</p>
-  <button class="start-button" onclick="beginJourney()">Begin Your Journey</button>
+  <button class="start-button" onclick="handleStart()">Begin Your Journey</button>
+  <button class="music-toggle" onclick="toggleMusic()">Mute Music</button>
+
+  <audio id="bg-music" loop>
+    <source src="music/start-theme.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
 
   <script>
-    function beginJourney() {
-      window.location.href = "character-select.html";
+    const music = document.getElementById("bg-music");
+    let musicStarted = false;
+    let musicFading = false;
+
+    // Fade-in music on load
+    window.onload = () => {
+      music.volume = 0;
+      music.play().then(() => {
+        let vol = 0;
+        const fadeIn = setInterval(() => {
+          if (vol < 1 && !musicFading) {
+            vol += 0.02;
+            music.volume = Math.min(vol, 1);
+          } else {
+            clearInterval(fadeIn);
+          }
+        }, 100);
+        musicStarted = true;
+      }).catch(e => {
+        console.warn("Autoplay blocked. User must interact first.");
+      });
+    };
+
+    function toggleMusic() {
+      if (music.paused) {
+        music.play();
+        document.querySelector('.music-toggle').textContent = "Mute Music";
+      } else {
+        music.pause();
+        document.querySelector('.music-toggle').textContent = "Unmute Music";
+      }
+    }
+
+    function handleStart() {
+      if (!musicFading) {
+        musicFading = true;
+        document.querySelector('.start-button').textContent = "Continue to Character Select";
+        fadeOutMusic(() => {
+          window.location.href = "character-select.html";
+        });
+      }
+    }
+
+    function fadeOutMusic(callback) {
+      let vol = music.volume;
+      const fadeOut = setInterval(() => {
+        if (vol > 0) {
+          vol -= 0.02;
+          music.volume = Math.max(0, vol);
+        } else {
+          clearInterval(fadeOut);
+          music.pause();
+          callback();
+        }
+      }, 100);
     }
   </script>
 </body>
