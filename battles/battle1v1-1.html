@@ -91,33 +91,198 @@
   
   <!-- Inline battle initialization and UI handlers -->
   <script>
- // ═══════════════════════════════════════════════════════════════════════════════
-// BATTLE INITIALIZATION AND UI INTEGRATION
+// ═══════════════════════════════════════════════════════════════════════════════
+// ROBUST BATTLE INITIALIZATION SYSTEM
+// Handles both local and remote loading scenarios
 // ═══════════════════════════════════════════════════════════════════════════════
 
-// Global battle management
-let battleInitialized = false;
-let currentBattlePhase = 'setup'; // 'setup', 'ready', 'battle', 'ended'
-let initRetryCount = 0; // Add retry counter
+// Global initialization state
+window.BattleInitialization = {
+  maxRetries: 20, // Increased from 10
+  retryDelay: 250, // 250ms between retries
+  currentRetries: 0,
+  isInitialized: false,
+  requiredSystems: ['BattleShared', 'Battle1v1'],
+  debugMode: true
+};
 
-// Initialize battle when page loads
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('Battle 1v1-1 initializing...');
+// Enhanced logging
+function battleLog(message, type = 'info') {
+  if (!window.BattleInitialization.debugMode) return;
   
-  // Check for selected character
-  const selectedCharacter = getSelectedCharacterInfo();
-  if (selectedCharacter) {
-    console.log('Selected character found:', selectedCharacter.name);
-    updateBattleTitleWithCharacter(selectedCharacter.name);
-  } else {
-    console.log('No character selected, using fallback');
+  const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+  const prefix = `[${timestamp}] [BATTLE]`;
+  
+  switch(type) {
+    case 'error':
+      console.error(`${prefix} ERROR:`, message);
+      break;
+    case 'warn':
+      console.warn(`${prefix} WARN:`, message);
+      break;
+    case 'success':
+      console.log(`${prefix} ✓`, message);
+      break;
+    default:
+      console.log(`${prefix}`, message);
+  }
+}
+
+// Check if all required systems are loaded
+function checkSystemsReady() {
+  const status = {};
+  let allReady = true;
+  
+  window.BattleInitialization.requiredSystems.forEach(system => {
+    const isReady = window[system] && typeof window[system] === 'object';
+    status[system] = isReady;
+    if (!isReady) allReady = false;
+  });
+  
+  // Additional checks for system functionality
+  if (status.BattleShared && !window.BattleShared.RosterUtils) {
+    status.BattleShared = false;
+    allReady = false;
   }
   
-  // Initialize battle system
-  initializeBattle();
-});
+  if (status.Battle1v1 && typeof window.Battle1v1.init !== 'function') {
+    status.Battle1v1 = false;
+    allReady = false;
+  }
+  
+  return { allReady, status };
+}
 
-// Get selected character info from session storage
+// Enhanced initialization with better error handling
+async function initializeBattleSystem() {
+  if (window.BattleInitialization.isInitialized) {
+    battleLog("Battle system already initialized", 'warn');
+    return true;
+  }
+  
+  const { allReady, status } = checkSystemsReady();
+  
+  battleLog(`Initialization attempt ${window.BattleInitialization.currentRetries + 1}/${window.BattleInitialization.maxRetries}`);
+  battleLog(`System status: ${JSON.stringify(status)}`);
+  
+  if (allReady) {
+    try {
+      // Initialize Battle1v1 system
+      battleLog("All systems ready, initializing Battle1v1...");
+      const success = window.Battle1v1.init();
+      
+      if (success) {
+        window.BattleInitialization.isInitialized = true;
+        battleLog("Battle system initialized successfully!", 'success');
+        
+        // Set up UI and initial state
+        setupBattleUI();
+        return true;
+      } else {
+        throw new Error("Battle1v1.init() returned false");
+      }
+    } catch (error) {
+      battleLog(`Initialization failed: ${error.message}`, 'error');
+      showBattleError(`Initialization error: ${error.message}`);
+      return false;
+    }
+  } else {
+    // Systems not ready, retry if we haven't exceeded max attempts
+    window.BattleInitialization.currentRetries++;
+    
+    if (window.BattleInitialization.currentRetries < window.BattleInitialization.maxRetries) {
+      battleLog(`Systems not ready, retrying in ${window.BattleInitialization.retryDelay}ms...`);
+      
+      setTimeout(() => {
+        initializeBattleSystem();
+      }, window.BattleInitialization.retryDelay);
+      
+      return false;
+    } else {
+      // Max retries exceeded
+      const missingSystem = Object.keys(status).find(key => !status[key]) || 'unknown';
+      const errorMsg = `Failed to load required systems after ${window.BattleInitialization.maxRetries} attempts. Missing: ${missingSystem}`;
+      
+      battleLog(errorMsg, 'error');
+      showBattleError(errorMsg);
+      return false;
+    }
+  }
+}
+
+// Set up initial battle UI state
+function setupBattleUI() {
+  try {
+    // Get selected character info
+    const selectedCharacter = getSelectedCharacterInfo();
+    if (selectedCharacter) {
+      battleLog(`Selected character: ${selectedCharacter.name}`, 'success');
+      updateBattleTitleWithCharacter(selectedCharacter.name);
+    }
+    
+    // Set up card interactions
+    setupCardInteractions();
+    
+    // Update initial status
+    const battleStatus = document.getElementById('battle-status');
+    if (battleStatus) {
+      const currentText = battleStatus.textContent;
+      if (!currentText.includes('Battle 1') && !currentText.includes('Ready')) {
+        battleStatus.textContent = 'Ready for Battle - Click Start!';
+      }
+    }
+    
+    // Show cards immediately (fix for the original issue)
+    showCardsImmediately();
+    
+    battleLog("Battle UI setup complete", 'success');
+  } catch (error) {
+    battleLog(`UI setup error: ${error.message}`, 'error');
+  }
+}
+
+// Fix the card visibility issue - show cards immediately
+function showCardsImmediately() {
+  const cards = document.querySelectorAll('.card');
+  if (cards.length === 0) {
+    battleLog("No cards found, system may not be initialized", 'warn');
+    return;
+  }
+  
+  // Ensure cards are visible
+  cards.forEach(card => {
+    card.style.opacity = '1';
+    card.style.visibility = 'visible';
+    card.style.display = 'block';
+  });
+  
+  battleLog(`${cards.length} cards made visible`, 'success');
+}
+
+// Enhanced error display
+function showBattleError(message) {
+  const statusElement = document.getElementById('battle-status');
+  if (statusElement) {
+    statusElement.textContent = `Error: ${message}`;
+    statusElement.style.color = '#ff6b6b';
+  }
+  
+  // Show retry button
+  const battleButton = document.getElementById('battle-button');
+  if (battleButton) {
+    battleButton.textContent = 'Retry Initialization';
+    battleButton.style.display = 'inline-block';
+    battleButton.onclick = () => {
+      // Reset retry counter and try again
+      window.BattleInitialization.currentRetries = 0;
+      window.BattleInitialization.isInitialized = false;
+      statusElement.style.color = '';
+      initializeBattleSystem();
+    };
+  }
+}
+
+// Get selected character info (reused from your code)
 function getSelectedCharacterInfo() {
   try {
     const characterKey = sessionStorage.getItem('selectedCharacter');
@@ -131,17 +296,17 @@ function getSelectedCharacterInfo() {
       };
     }
   } catch (e) {
-    console.warn('Could not load character from session storage:', e);
+    battleLog('Could not load character from session storage: ' + e.message, 'warn');
   }
   return null;
 }
 
-// Update battle title with character name
+// Update battle title (reused from your code)
 function updateBattleTitleWithCharacter(characterName) {
   const titleElement = document.getElementById('battle-status');
   if (titleElement) {
-    const viewport = window.BattleShared ? window.BattleShared.DeviceUtils.getViewportInfo() : { isMobile: window.innerWidth <= 768 };
-    if (viewport.isMobile) {
+    const viewport = window.innerWidth <= 768;
+    if (viewport) {
       titleElement.textContent = `${characterName}'s Battle`;
     } else {
       titleElement.textContent = `Level 1 - Battle 1: ${characterName}`;
@@ -149,104 +314,120 @@ function updateBattleTitleWithCharacter(characterName) {
   }
 }
 
-// Initialize the battle system
-function initializeBattle() {
-// Wait for battle systems to be ready - check each one individually
-if (!window.BattleShared) {
-  initRetryCount++;
-  if (initRetryCount < 10) {
-    console.log(`BattleShared not ready, retrying... (${initRetryCount}/10)`);
-    setTimeout(initializeBattle, 500);
-    return;
-  } else {
-    console.error('BattleShared failed to load after 10 attempts');
-    handleBattleError('BattleShared system missing');
-    return;
-  }
-}
-
-if (!window.Battle1v1) {
-  initRetryCount++;
-  if (initRetryCount < 10) {
-    console.log(`Battle1v1 not ready, retrying... (${initRetryCount}/10)`);
-    setTimeout(initializeBattle, 500);
-    return;
-  } else {
-    console.error('Battle1v1 failed to load after 10 attempts');
-    handleBattleError('Battle1v1 system missing');
-    return;
-  }
-}
-
-// Extra check - make sure BattleShared is actually accessible
-if (!window.BattleShared || !window.BattleShared.RosterUtils) {
-  initRetryCount++;
-  if (initRetryCount < 10) {
-    console.log(`BattleShared components not ready, retrying... (${initRetryCount}/10)`);
-    setTimeout(initializeBattle, 500);
-    return;
-  }
-}
+// Card interaction setup (simplified version)
+function setupCardInteractions() {
+  // Remove existing listeners
+  document.removeEventListener('click', handleCardClick);
+  document.removeEventListener('touchend', handleCardTouch);
   
-  try {
-    // Initialize Battle1v1 system
-    const success = window.Battle1v1.init();
-    
-    if (success) {
-      battleInitialized = true;
-      currentBattlePhase = 'setup';
-      console.log('Battle 1v1-1 initialized successfully');
-      
-      // Set up card interaction handlers
-      setupCardInteractions();
-      
-      // Update initial status
-      const battleStatus = document.getElementById('battle-status');
-      if (battleStatus && !battleStatus.textContent.includes('Battle 1')) {
-        battleStatus.textContent = 'Ready for Battle - Click Start!';
-      }
-      
-    } else {
-      console.error('Failed to initialize battle system');
-      handleBattleError('Failed to initialize battle system');
-    }
-  } catch (error) {
-    console.error('Error initializing battle:', error);
-    handleBattleError('Error starting battle: ' + error.message);
-  }
+  // Add new listeners
+  document.addEventListener('click', handleCardClick);
+  document.addEventListener('touchend', handleCardTouch, { passive: false });
 }
 
-// Handle battle button clicks
+function handleCardClick(e) {
+  const card = e.target.closest('.card');
+  if (!card) return;
+  
+  // Simple card interaction feedback
+  card.classList.toggle('active');
+  battleLog(`Card clicked: ${card.dataset.name || 'unknown'}`);
+}
+
+function handleCardTouch(e) {
+  const card = e.target.closest('.card');
+  if (!card) return;
+  
+  e.preventDefault();
+  card.classList.toggle('active');
+  battleLog(`Card touched: ${card.dataset.name || 'unknown'}`);
+}
+
+// Enhanced battle button handler
 function handleBattleClick() {
-  if (!battleInitialized) {
-    console.log('Battle not initialized yet');
-    initializeBattle();
+  if (!window.BattleInitialization.isInitialized) {
+    battleLog('Battle not initialized, attempting initialization...', 'warn');
+    initializeBattleSystem();
     return;
   }
   
   try {
+    battleLog('Starting battle...');
     window.Battle1v1.start();
   } catch (error) {
-    console.error('Error starting battle:', error);
-    handleBattleError('Error during battle: ' + error.message);
+    battleLog(`Battle start error: ${error.message}`, 'error');
+    showBattleError('Error during battle: ' + error.message);
   }
 }
 
-// Handle battle errors gracefully
-function handleBattleError(message) {
-  const statusElement = document.getElementById('battle-status');
-  if (statusElement) {
-    statusElement.textContent = message;
-    statusElement.style.color = '#ff6b6b';
-  }
+// Multiple initialization triggers for maximum compatibility
+function startInitializationProcess() {
+  battleLog("=== BATTLE INITIALIZATION STARTING ===");
+  battleLog(`Window loaded: ${document.readyState}`);
+  battleLog(`Inner width: ${window.innerWidth}`);
   
-  // Show retry button
-  const battleButton = document.getElementById('battle-button');
-  if (battleButton) {
-    battleButton.textContent = 'Retry';
-    battleButton.style.display = 'inline-block';
-  }
+  // Start the robust initialization
+  initializeBattleSystem();
 }
+
+// DOM Content Loaded handler
+document.addEventListener('DOMContentLoaded', function() {
+  battleLog("DOMContentLoaded event fired");
+  startInitializationProcess();
+});
+
+// Fallback for if DOMContentLoaded already fired
+if (document.readyState === 'loading') {
+  battleLog("Document still loading, waiting for DOMContentLoaded");
+} else {
+  battleLog("Document already loaded, initializing immediately");
+  startInitializationProcess();
+}
+
+// Additional fallback for window load
+window.addEventListener('load', function() {
+  battleLog("Window load event fired");
+  
+  // If still not initialized after window load, force initialization
+  if (!window.BattleInitialization.isInitialized) {
+    battleLog("Forcing initialization on window load", 'warn');
+    setTimeout(startInitializationProcess, 100);
+  }
+});
+
+// Page visibility change handler (for when users switch tabs)
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden && !window.BattleInitialization.isInitialized) {
+    battleLog("Page became visible, checking initialization");
+    setTimeout(startInitializationProcess, 200);
+  }
+});
+
+// Export for debugging
+window.BattleDebug = {
+  ...window.BattleDebug,
+  forceReinit: () => {
+    window.BattleInitialization.currentRetries = 0;
+    window.BattleInitialization.isInitialized = false;
+    startInitializationProcess();
+  },
+  getStatus: () => {
+    const { allReady, status } = checkSystemsReady();
+    return {
+      initialized: window.BattleInitialization.isInitialized,
+      retries: window.BattleInitialization.currentRetries,
+      systemsReady: allReady,
+      systemStatus: status,
+      selectedCharacter: getSelectedCharacterInfo()
+    };
+  },
+  toggleDebug: () => {
+    window.BattleInitialization.debugMode = !window.BattleInitialization.debugMode;
+    battleLog(`Debug mode: ${window.BattleInitialization.debugMode ? 'ON' : 'OFF'}`);
+  }
+};
+
+battleLog("Robust initialization system loaded");
     
     // ═══════════════════════════════════════════════════════════════════════════════
     // CARD INTERACTION HANDLERS
