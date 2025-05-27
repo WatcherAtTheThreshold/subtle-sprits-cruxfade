@@ -1,81 +1,104 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// TURN-BASED BATTLE SYSTEM WITH PLAYER CONTROL
-// Enhanced version with click-to-proceed mechanics
+// BATTLE 1V1 SYSTEM - Complete Turn-Based Combat
+// Enhanced version with proper scope handling and clean organization
 // ═══════════════════════════════════════════════════════════════════════════════
 
-console.log("=== TURN-BASED BATTLE 1V1 SYSTEM LOADING ===");
+console.log("=== LOADING BATTLE 1V1 SYSTEM ===");
 
-// Enhanced Battle System with Turn Control
+// ═══════════════════════════════════════════════════════════════════════════════
+// MAIN BATTLE SYSTEM OBJECT
+// Core battle state and initialization
+// ═══════════════════════════════════════════════════════════════════════════════
+
 const Battle1v1System = {
+  // Battle state variables
   playerCard: null,
   enemyCard: null,
   battleInProgress: false,
   gameStarted: false,
   currentRound: 1,
-  currentTurn: 'waiting', // 'waiting', 'player', 'enemy', 'ended'
+  currentTurn: 'waiting', // 'waiting', 'round', 'ended'
   turnInProgress: false,
+  
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // INITIALIZATION SYSTEM
+  // Set up battle arena and load characters
+  // ═══════════════════════════════════════════════════════════════════════════════
   
   init() {
     console.log("Initializing turn-based 1v1 battle...");
     
+    // Check for required dependencies
     if (!window.BattleShared) {
       console.error("BattleShared not found!");
       return false;
     }
     
-    // Get player character
+    // Get player character from session storage
     const playerCharacter = window.battleState.getPlayerCharacterData();
     if (!playerCharacter) {
       console.error("No player character found!");
       return false;
     }
     
-    // Get random enemy
+    // Get random enemy for battle
     const enemyCharacter = window.BattleShared.RosterUtils.getRandomEnemy();
     if (!enemyCharacter) {
       console.error("No enemy found!");
       return false;
     }
     
-    // Create cards and add to page
+    // Create battle cards and display them
     this.createBattleCards(playerCharacter, enemyCharacter);
     
     console.log("Turn-based battle initialized successfully!");
     return true;
   },
   
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // CARD CREATION SYSTEM
+  // Build character cards for battle display
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   createBattleCards(playerData, enemyData) {
     const playerArea = document.getElementById("player-team");
     const enemyArea = document.getElementById("enemy-team");
     
+    // Validate battle areas exist
     if (!playerArea || !enemyArea) {
       console.error("Battle areas not found!");
       return;
     }
     
-    // Clear areas
+    // Clear any existing cards
     playerArea.innerHTML = '';
     enemyArea.innerHTML = '';
     
-    // Create player card
-    this.playerCard = this.createSimpleCard(playerData, false);
+    // Create and add player card
+    this.playerCard = this.createCard(playerData, false);
     this.playerCard.dataset.specialUsed = 'false';
     playerArea.appendChild(this.playerCard);
     
-    // Create enemy card  
-    this.enemyCard = this.createSimpleCard(enemyData, true);
+    // Create and add enemy card
+    this.enemyCard = this.createCard(enemyData, true);
     this.enemyCard.dataset.specialUsed = 'false';
     enemyArea.appendChild(this.enemyCard);
     
-    console.log(`Battle: ${playerData.name} vs ${enemyData.name}`);
+    console.log(`Battle setup: ${playerData.name} vs ${enemyData.name}`);
   },
   
-  createSimpleCard(data, isEnemy) {
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // INDIVIDUAL CARD BUILDER
+  // Construct HTML structure for character cards
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
+  createCard(data, isEnemy) {
     const card = document.createElement("div");
     card.className = `card flip-container${isEnemy ? ' enemy' : ''}`;
     card.dataset.name = data.name;
     card.dataset.isPet = data.isPet || 'false';
     
+    // Build card HTML structure
     card.innerHTML = `
       <div class="card-inner">
         <div class="card-front">
@@ -95,7 +118,11 @@ const Battle1v1System = {
     return card;
   },
   
-  // Utility functions for battle mechanics
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // BATTLE STAT UTILITIES
+  // Get and set HP/ATK values with validation
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   getHP(card) {
     return parseInt(card.querySelector(".hp").textContent);
   },
@@ -104,6 +131,7 @@ const Battle1v1System = {
     const newHP = Math.max(0, value);
     card.querySelector(".hp").textContent = newHP;
     
+    // Handle knockout when HP reaches 0
     if (newHP <= 0 && !card.classList.contains("defeated")) {
       this.floatKO(card);
       card.classList.add("defeated");
@@ -114,123 +142,130 @@ const Battle1v1System = {
     return parseInt(card.querySelector(".atk").textContent);
   },
   
-// Replace the floating text functions in battle-1v1.js with these slower versions:
-
-createFloatingText(card, text, className, styles = {}) {
-  const tag = document.createElement("div");
-  tag.className = `${className} floating-text-enhanced`;
-  tag.textContent = text;
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // DAMAGE CALCULATION SYSTEM
+  // Calculate random damage based on attack stats
+  // ═══════════════════════════════════════════════════════════════════════════════
   
-  // Much slower, more readable floating text
-  Object.assign(tag.style, {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    fontFamily: "'Bangers', cursive",
-    fontWeight: "bold",
-    pointerEvents: "none",
-    zIndex: "9999",
-    textShadow: "3px 3px 6px rgba(0, 0, 0, 0.9)",
-    transition: "all 4s cubic-bezier(0.25, 0.46, 0.45, 0.94)", // Much slower: 4 seconds
-    opacity: "1",
-    display: "block",
-    visibility: "visible",
-    userSelect: "none",
-    willChange: "transform, opacity",
-    backfaceVisibility: "hidden",
-    ...styles
-  });
+  randomDamage(card) {
+    const atk = this.getATK(card);
+    return Math.floor(Math.random() * (atk - 4)) + 5; // Range: 5 to (ATK-1)
+  },
   
-  // Ensure card supports floating text
-  card.style.position = "relative";
-  card.style.overflow = "visible";
-  card.appendChild(tag);
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // FLOATING TEXT SYSTEM
+  // Create and animate floating battle text
+  // ═══════════════════════════════════════════════════════════════════════════════
   
-  console.log(`Created floating text: "${text}" with class: ${className}`);
-  
-  // MUCH slower animation - very readable
-  setTimeout(() => {
-    tag.style.top = "-150px"; // Float higher
-    tag.style.opacity = "0";
-    tag.style.transform = "translate(-50%, -50%) scale(1.4)"; // Bigger scale
+  createFloatingText(card, text, className, styles = {}) {
+    const tag = document.createElement("div");
+    tag.className = `${className} floating-text-enhanced`;
+    tag.textContent = text;
     
-    console.log(`Animating floating text: "${text}"`);
-  }, 300); // Longer delay so it's clearly visible first
-  
-  setTimeout(() => {
-    if (tag && tag.parentNode) {
-      tag.remove();
-      console.log(`Removed floating text: "${text}"`);
-    }
-  }, 4500); // Much longer lifespan - 4.5 seconds total
-},
-
-// Enhanced floating functions with slower speeds
-floatDamage(card, amount) {
-  console.log(`Floating damage: ${amount} on card:`, card.dataset.name);
-  
-  this.createFloatingText(card, `-${amount}`, "float-damage", {
-    color: "#ff4444",
-    fontSize: "clamp(1.5rem, 5vw, 2.5rem)",
-    fontWeight: "900"
-  });
-  
-  // Enhanced visual feedback
-  card.classList.add("damage-glow");
-  setTimeout(() => card.classList.remove("damage-glow"), 800);
-},
-
-floatHeal(card, amount) {
-  console.log(`Floating heal: ${amount} on card:`, card.dataset.name);
-  
-  this.createFloatingText(card, `+${amount}`, "float-heal", {
-    color: "#4CAF50",
-    fontSize: "clamp(1.3rem, 4vw, 2.2rem)",
-    fontWeight: "800"
-  });
-},
-
-floatKO(card) {
-  console.log(`Floating KO on card:`, card.dataset.name);
-  
-  this.createFloatingText(card, "KO!", "float-ko", {
-    color: "#ff0000",
-    fontSize: "clamp(2.5rem, 8vw, 4.5rem)",
-    fontWeight: "900"
-  });
-},
-
-floatSpecial(card) {
-  console.log(`Floating special on card:`, card.dataset.name);
-  
-  this.createFloatingText(card, "SPECIAL!", "float-special", {
-    color: "#ffdd44",
-    fontSize: "clamp(1.4rem, 5vw, 2.8rem)",
-    fontWeight: "800"
-  });
-},
+    // Apply base floating text styles
+    Object.assign(tag.style, {
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      fontFamily: "'Bangers', cursive",
+      fontWeight: "bold",
+      pointerEvents: "none",
+      zIndex: "9999",
+      textShadow: "3px 3px 6px rgba(0, 0, 0, 0.9)",
+      transition: "all 4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+      opacity: "1",
+      display: "block",
+      visibility: "visible",
+      userSelect: "none",
+      willChange: "transform, opacity",
+      backfaceVisibility: "hidden",
+      ...styles
+    });
+    
+    // Ensure card supports floating text
+    card.style.position = "relative";
+    card.style.overflow = "visible";
+    card.appendChild(tag);
+    
+    console.log(`Created floating text: "${text}"`);
+    
+    // Animate the floating text
+    setTimeout(() => {
+      tag.style.top = "-150px";
+      tag.style.opacity = "0";
+      tag.style.transform = "translate(-50%, -50%) scale(1.4)";
+    }, 300);
+    
+    // Remove after animation completes
+    setTimeout(() => {
+      if (tag && tag.parentNode) {
+        tag.remove();
+      }
+    }, 4500);
+  },
   
   // ═══════════════════════════════════════════════════════════════════════════════
-  // TURN-BASED BATTLE CONTROL SYSTEM
+  // SPECIFIC FLOATING TEXT TYPES
+  // Damage, healing, KO, and special move indicators
   // ═══════════════════════════════════════════════════════════════════════════════
   
-  // Update battle button based on current state
+  floatDamage(card, amount) {
+    this.createFloatingText(card, `-${amount}`, "float-damage", {
+      color: "#ff4444",
+      fontSize: "clamp(1.5rem, 5vw, 2.5rem)",
+      fontWeight: "900"
+    });
+    
+    // Add damage visual feedback
+    card.classList.add("damage-glow");
+    setTimeout(() => card.classList.remove("damage-glow"), 800);
+  },
+  
+  floatHeal(card, amount) {
+    this.createFloatingText(card, `+${amount}`, "float-heal", {
+      color: "#4CAF50",
+      fontSize: "clamp(1.3rem, 4vw, 2.2rem)",
+      fontWeight: "800"
+    });
+  },
+  
+  floatKO(card) {
+    this.createFloatingText(card, "KO!", "float-ko", {
+      color: "#ff0000",
+      fontSize: "clamp(2.5rem, 8vw, 4.5rem)",
+      fontWeight: "900"
+    });
+  },
+  
+  floatSpecial(card) {
+    this.createFloatingText(card, "SPECIAL!", "float-special", {
+      color: "#ffdd44",
+      fontSize: "clamp(1.4rem, 5vw, 2.8rem)",
+      fontWeight: "800"
+    });
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // BATTLE BUTTON MANAGEMENT
+  // Update button text and state based on battle phase
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   updateBattleButton() {
     const battleButton = document.getElementById('battle-button');
     if (!battleButton) return;
     
     const viewport = window.innerWidth <= 768;
     
+    // Update button text based on current battle state
     switch (this.currentTurn) {
       case 'waiting':
         if (!this.gameStarted) {
           battleButton.textContent = viewport ? "Start" : "Start Battle";
-          battleButton.style.display = 'inline-block';
         } else {
           battleButton.textContent = viewport ? "Begin!" : "Begin Combat!";
-          battleButton.style.display = 'inline-block';
         }
+        battleButton.style.display = 'inline-block';
         break;
         
       case 'round':
@@ -247,41 +282,67 @@ floatSpecial(card) {
         battleButton.style.display = 'inline-block';
     }
     
-    // Disable button if turn is in progress
+    // Disable button during turn animations
     battleButton.disabled = this.turnInProgress;
   },
   
-  // Start the next turn phase
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // BATTLE STATUS DISPLAY
+  // Update the main battle status text
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
+  updateStatus(message) {
+    const status = document.getElementById("battle-status");
+    if (status) {
+      // Make text mobile-friendly
+      const viewport = window.innerWidth;
+      if (viewport <= 768 && message.length > 40) {
+        status.textContent = message.substring(0, 37) + "...";
+      } else {
+        status.textContent = message;
+      }
+    }
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // TURN EXECUTION SYSTEM
+  // Execute complete battle rounds with proper timing
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   async startNextTurn() {
     if (this.turnInProgress) return;
     
-    // Check for battle end
+    // Check if battle has ended
     if (this.checkBattleEnd()) return;
     
     this.turnInProgress = true;
     
-    // Execute full round (player + enemy)
+    // Execute complete round (player + enemy)
     await this.executeFullRound();
     
     this.turnInProgress = false;
     this.updateBattleButton();
   },
   
-  // Execute full round (player turn + enemy turn)
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // FULL ROUND EXECUTION
+  // Player turn followed by enemy turn
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   async executeFullRound() {
-    // Execute player turn
+    // Execute player's turn
     await this.executePlayerTurn();
     
-    // Check if battle ended after player turn
+    // Check if battle ended after player's attack
     if (this.checkBattleEnd()) return;
     
-    // Pause between player and enemy turn
+    // Pause between turns for dramatic effect
     await this.sleep(1500);
     
-    // Execute enemy turn automatically
+    // Execute enemy's turn automatically
     await this.executeEnemyTurn();
     
-    // Check if battle ended after enemy turn
+    // Check if battle ended after enemy's attack
     if (this.checkBattleEnd()) return;
     
     // Prepare for next round
@@ -289,16 +350,20 @@ floatSpecial(card) {
     this.updateStatus(`Round ${this.currentRound} complete - Click for next round!`);
   },
   
-  // Execute player's turn
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // PLAYER TURN EXECUTION
+  // Handle player character's attack phase
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   async executePlayerTurn() {
     const playerName = this.playerCard.querySelector(".name-tag").textContent;
     
-    // Highlight player card
+    // Highlight player card and show status
     this.playerCard.classList.add("highlight-turn");
     this.updateStatus(`${playerName}'s turn - preparing attack...`);
-    await this.sleep(1200); // Slower buildup
+    await this.sleep(1200);
     
-    // Decide between normal attack and special (30% chance for special)
+    // Determine attack type (30% chance for special)
     const useSpecial = this.playerCard.dataset.specialUsed === 'false' && Math.random() < 0.3;
     
     if (useSpecial) {
@@ -307,20 +372,25 @@ floatSpecial(card) {
       await this.executeNormalAttack(this.playerCard, this.enemyCard);
     }
     
+    // Remove highlight and pause
     this.playerCard.classList.remove("highlight-turn");
-    await this.sleep(1000); // Pause after player action
+    await this.sleep(1000);
   },
   
-  // Execute enemy's turn
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // ENEMY TURN EXECUTION  
+  // Handle enemy character's attack phase
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   async executeEnemyTurn() {
     const enemyName = this.enemyCard.querySelector(".name-tag").textContent;
     
-    // Highlight enemy card
+    // Highlight enemy card and show status
     this.enemyCard.classList.add("highlight-turn");
     this.updateStatus(`${enemyName}'s turn - preparing counter-attack...`);
-    await this.sleep(1200); // Slower buildup
+    await this.sleep(1200);
     
-    // Decide between normal attack and special (25% chance for special)
+    // Determine attack type (25% chance for special)
     const useSpecial = this.enemyCard.dataset.specialUsed === 'false' && Math.random() < 0.25;
     
     if (useSpecial) {
@@ -329,36 +399,52 @@ floatSpecial(card) {
       await this.executeNormalAttack(this.enemyCard, this.playerCard);
     }
     
+    // Remove highlight and pause
     this.enemyCard.classList.remove("highlight-turn");
-    await this.sleep(1000); // Pause after enemy action
+    await this.sleep(1000);
   },
   
-  // Execute normal attack
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // NORMAL ATTACK EXECUTION
+  // Standard damage-dealing attacks
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   async executeNormalAttack(attacker, target) {
     const attackerName = attacker.querySelector(".name-tag").textContent;
     const targetName = target.querySelector(".name-tag").textContent;
     const damage = this.randomDamage(attacker);
     
+    // Show attack message
     this.updateStatus(`${attackerName} attacks ${targetName}!`);
-    await this.sleep(1000); // Longer pause to read
+    await this.sleep(1000);
     
+    // Apply damage and show floating text
     this.setHP(target, this.getHP(target) - damage);
     this.floatDamage(target, damage);
     this.updateStatus(`${attackerName} deals ${damage} damage to ${targetName}!`);
-    await this.sleep(1500); // Longer pause to see damage
+    await this.sleep(1500);
   },
   
-  // Special move effects (enhanced from previous version)
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // SPECIAL MOVE EXECUTION
+  // Character-specific special abilities
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   async executeSpecialMove(attacker, target) {
     const specialName = attacker.querySelector(".special-move").textContent;
     const attackerName = attacker.querySelector(".name-tag").textContent;
     
+    // Build up suspense for special move
+    this.updateStatus(`${attackerName} charges up their special move...`);
+    await this.sleep(1000);
+    
+    // Announce and execute special move
     this.updateStatus(`${attackerName} uses ${specialName}!`);
     this.floatSpecial(attacker);
     attacker.classList.add("special-glow");
+    await this.sleep(1200);
     
-    await this.sleep(800);
-    
+    // Execute specific special move effects
     switch (specialName) {
       case "Luminous Veil":
         const healAmount = 8;
@@ -392,7 +478,7 @@ floatSpecial(card) {
         const fireDamage = 10;
         this.setHP(target, this.getHP(target) - fireDamage);
         this.floatDamage(target, fireDamage);
-        this.updateStatus(`${attackerName} engulfs ${target.querySelector(".name-tag").textContent} in flames for ${fireDamage} damage!`);
+        this.updateStatus(`${attackerName} engulfs ${target.querySelector(".name-tag").textContent} in flames!`);
         break;
         
       case "Panic Injection":
@@ -406,19 +492,25 @@ floatSpecial(card) {
         const genericDamage = 12;
         this.setHP(target, this.getHP(target) - genericDamage);
         this.floatDamage(target, genericDamage);
-        this.updateStatus(`${attackerName} unleashes a devastating special attack for ${genericDamage} damage!`);
+        this.updateStatus(`${attackerName} unleashes a devastating special attack!`);
     }
     
+    // Clean up special move effects
     attacker.classList.remove("special-glow");
     attacker.dataset.specialUsed = 'true';
-    await this.sleep(1200);
+    await this.sleep(1800);
   },
   
-  // Check for battle end
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // BATTLE END DETECTION
+  // Check for victory/defeat conditions
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   checkBattleEnd() {
     const playerAlive = this.getHP(this.playerCard) > 0;
     const enemyAlive = this.getHP(this.enemyCard) > 0;
     
+    // Check if either character is defeated
     if (!playerAlive || !enemyAlive) {
       this.battleInProgress = false;
       this.currentTurn = 'ended';
@@ -438,21 +530,11 @@ floatSpecial(card) {
     return false;
   },
   
-  // Update battle status text
-  updateStatus(message) {
-    const status = document.getElementById("battle-status");
-    if (status) {
-      // Make text mobile-friendly
-      const viewport = window.innerWidth;
-      if (viewport <= 768 && message.length > 40) {
-        status.textContent = message.substring(0, 37) + "...";
-      } else {
-        status.textContent = message;
-      }
-    }
-  },
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // RESTART BUTTON SYSTEM
+  // Display options after battle completion
+  // ═══════════════════════════════════════════════════════════════════════════════
   
-  // Show restart button
   showRestartButton(text) {
     const restartContainer = document.getElementById("restart-container");
     if (restartContainer) {
@@ -467,25 +549,29 @@ floatSpecial(card) {
     }
   },
   
-  // Utility sleep function
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // UTILITY FUNCTIONS
+  // Helper functions for timing and delays
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   },
   
   // ═══════════════════════════════════════════════════════════════════════════════
-  // MAIN BATTLE CONTROL FUNCTIONS
+  // MAIN BATTLE CONTROL
+  // Primary entry point for battle actions
   // ═══════════════════════════════════════════════════════════════════════════════
   
-  // Main start function - handles different battle states
   start() {
     console.log("Starting turn-based 1v1 battle...");
     
     if (!this.gameStarted) {
-      // First click - flip the cards
+      // First click: Flip cards and prepare for battle
       this.gameStarted = true;
       this.currentTurn = 'waiting';
       
-      // Flip the cards with stagger
+      // Animate card flipping with stagger
       document.querySelectorAll('.card').forEach((card, index) => {
         setTimeout(() => {
           card.classList.add('flipped');
@@ -495,7 +581,7 @@ floatSpecial(card) {
       this.updateStatus("Cards revealed! Ready for combat!");
       
     } else if (this.currentTurn === 'waiting') {
-      // Second click - start actual battle
+      // Second click: Start actual battle
       this.battleInProgress = true;
       this.currentTurn = 'round';
       this.currentRound = 1;
@@ -503,16 +589,22 @@ floatSpecial(card) {
       this.updateStatus(`Round ${this.currentRound} - Click to fight!`);
       
     } else if (this.battleInProgress && !this.turnInProgress) {
-      // During battle - execute next round
+      // During battle: Execute next round
       this.startNextTurn();
     }
     
+    // Update button state
     this.updateBattleButton();
     console.log(`Battle state: ${this.currentTurn}, In Progress: ${this.battleInProgress}`);
   }
 };
 
-// Export to window
+// ═══════════════════════════════════════════════════════════════════════════════
+// EXPORT SYSTEM
+// Make battle system available globally
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Export to window for external access
 window.Battle1v1 = Battle1v1System;
 
-console.log("Turn-based Battle1v1 system loaded successfully!");
+console.log("=== BATTLE 1V1 SYSTEM LOADED SUCCESSFULLY ===");
