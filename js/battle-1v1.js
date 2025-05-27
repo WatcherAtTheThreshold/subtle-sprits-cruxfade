@@ -6,6 +6,9 @@
 // 1V1 BATTLE STATE MANAGER
 // ═══════════════════════════════════════════════════════════════════════════════
 
+
+console.log("=== BATTLE 1V1 JS FILE LOADING ===");
+
 class Battle1v1Manager {
   constructor() {
     this.playerCard = null;
