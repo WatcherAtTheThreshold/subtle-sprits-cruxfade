@@ -151,19 +151,42 @@ function updateBattleTitleWithCharacter(characterName) {
 
 // Initialize the battle system
 function initializeBattle() {
-  // Wait for battle systems to be ready
-  if (!window.BattleShared || !window.Battle1v1) {
-    initRetryCount++;
-    if (initRetryCount < 10) {
-      console.log(`Battle systems not ready, retrying... (${initRetryCount}/10)`);
-      setTimeout(initializeBattle, 500);
-      return;
-    } else {
-      console.error('Failed to initialize after 10 attempts');
-      handleBattleError('Failed to load battle system');
-      return;
-    }
+// Wait for battle systems to be ready - check each one individually
+if (!window.BattleShared) {
+  initRetryCount++;
+  if (initRetryCount < 10) {
+    console.log(`BattleShared not ready, retrying... (${initRetryCount}/10)`);
+    setTimeout(initializeBattle, 500);
+    return;
+  } else {
+    console.error('BattleShared failed to load after 10 attempts');
+    handleBattleError('BattleShared system missing');
+    return;
   }
+}
+
+if (!window.Battle1v1) {
+  initRetryCount++;
+  if (initRetryCount < 10) {
+    console.log(`Battle1v1 not ready, retrying... (${initRetryCount}/10)`);
+    setTimeout(initializeBattle, 500);
+    return;
+  } else {
+    console.error('Battle1v1 failed to load after 10 attempts');
+    handleBattleError('Battle1v1 system missing');
+    return;
+  }
+}
+
+// Extra check - make sure BattleShared is actually accessible
+if (!window.BattleShared || !window.BattleShared.RosterUtils) {
+  initRetryCount++;
+  if (initRetryCount < 10) {
+    console.log(`BattleShared components not ready, retrying... (${initRetryCount}/10)`);
+    setTimeout(initializeBattle, 500);
+    return;
+  }
+}
   
   try {
     // Initialize Battle1v1 system
