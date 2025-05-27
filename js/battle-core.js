@@ -602,3 +602,10 @@ window.BattleCore = {
   executeBattleRound,
   startBattle
 };
+
+  // Add missing exports
+window.BattleCore = {
+  ...window.BattleCore,
+  getViewportInfo, // Export this function
+  isMobile        // Export this function
+};
