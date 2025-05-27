@@ -163,23 +163,24 @@ const Battle1v1System = {
       pointerEvents: "none",
       zIndex: "1000",
       textShadow: "2px 2px 4px rgba(0, 0, 0, 0.8)",
-      transition: "all 0.8s ease-out",
+      transition: "all 1.5s ease-out", // Longer animation
       ...styles
     });
     
     card.appendChild(tag);
     
-    // Animate
+    // Animate with more dramatic movement
     setTimeout(() => {
-      tag.style.top = "-30px";
+      tag.style.top = "-80px"; // Float up much higher
       tag.style.opacity = '0';
-    }, 50);
+      tag.style.transform = "translate(-50%, -50%) scale(1.2)"; // Scale up as it fades
+    }, 100); // Slight delay so it's visible first
     
     setTimeout(() => {
       if (tag.parentNode) {
         tag.remove();
       }
-    }, 1000);
+    }, 1700); // Stays on screen longer
   },
   
   // Calculate random damage
@@ -210,13 +211,8 @@ const Battle1v1System = {
         }
         break;
         
-      case 'player':
-        battleButton.textContent = viewport ? "Attack!" : "Your Attack!";
-        battleButton.style.display = 'inline-block';
-        break;
-        
-      case 'enemy':
-        battleButton.textContent = viewport ? "Enemy Turn" : "Enemy's Turn";
+      case 'round':
+        battleButton.textContent = viewport ? "Fight!" : "Fight Round!";
         battleButton.style.display = 'inline-block';
         break;
         
@@ -242,14 +238,33 @@ const Battle1v1System = {
     
     this.turnInProgress = true;
     
-    if (this.currentTurn === 'player') {
-      await this.executePlayerTurn();
-    } else if (this.currentTurn === 'enemy') {
-      await this.executeEnemyTurn();
-    }
+    // Execute full round (player + enemy)
+    await this.executeFullRound();
     
     this.turnInProgress = false;
     this.updateBattleButton();
+  },
+  
+  // Execute full round (player turn + enemy turn)
+  async executeFullRound() {
+    // Execute player turn
+    await this.executePlayerTurn();
+    
+    // Check if battle ended after player turn
+    if (this.checkBattleEnd()) return;
+    
+    // Pause between player and enemy turn
+    await this.sleep(1500);
+    
+    // Execute enemy turn automatically
+    await this.executeEnemyTurn();
+    
+    // Check if battle ended after enemy turn
+    if (this.checkBattleEnd()) return;
+    
+    // Prepare for next round
+    this.currentRound++;
+    this.updateStatus(`Round ${this.currentRound} complete - Click for next round!`);
   },
   
   // Execute player's turn
@@ -259,7 +274,7 @@ const Battle1v1System = {
     // Highlight player card
     this.playerCard.classList.add("highlight-turn");
     this.updateStatus(`${playerName}'s turn - preparing attack...`);
-    await this.sleep(800);
+    await this.sleep(1200); // Slower buildup
     
     // Decide between normal attack and special (30% chance for special)
     const useSpecial = this.playerCard.dataset.specialUsed === 'false' && Math.random() < 0.3;
@@ -271,12 +286,7 @@ const Battle1v1System = {
     }
     
     this.playerCard.classList.remove("highlight-turn");
-    
-    // Switch to enemy turn or end battle
-    if (this.getHP(this.enemyCard) > 0) {
-      this.currentTurn = 'enemy';
-      this.updateStatus(`${playerName} finished! Click for enemy turn.`);
-    }
+    await this.sleep(1000); // Pause after player action
   },
   
   // Execute enemy's turn
@@ -285,8 +295,8 @@ const Battle1v1System = {
     
     // Highlight enemy card
     this.enemyCard.classList.add("highlight-turn");
-    this.updateStatus(`${enemyName}'s turn - preparing attack...`);
-    await this.sleep(800);
+    this.updateStatus(`${enemyName}'s turn - preparing counter-attack...`);
+    await this.sleep(1200); // Slower buildup
     
     // Decide between normal attack and special (25% chance for special)
     const useSpecial = this.enemyCard.dataset.specialUsed === 'false' && Math.random() < 0.25;
@@ -298,13 +308,7 @@ const Battle1v1System = {
     }
     
     this.enemyCard.classList.remove("highlight-turn");
-    
-    // Switch to player turn or end battle
-    if (this.getHP(this.playerCard) > 0) {
-      this.currentRound++;
-      this.currentTurn = 'player';
-      this.updateStatus(`Round ${this.currentRound} - Your turn!`);
-    }
+    await this.sleep(1000); // Pause after enemy action
   },
   
   // Execute normal attack
@@ -314,12 +318,12 @@ const Battle1v1System = {
     const damage = this.randomDamage(attacker);
     
     this.updateStatus(`${attackerName} attacks ${targetName}!`);
-    await this.sleep(600);
+    await this.sleep(1000); // Longer pause to read
     
     this.setHP(target, this.getHP(target) - damage);
     this.floatDamage(target, damage);
-    this.updateStatus(`${attackerName} deals ${damage} damage!`);
-    await this.sleep(1000);
+    this.updateStatus(`${attackerName} deals ${damage} damage to ${targetName}!`);
+    await this.sleep(1500); // Longer pause to see damage
   },
   
   // Special move effects (enhanced from previous version)
@@ -471,13 +475,13 @@ const Battle1v1System = {
     } else if (this.currentTurn === 'waiting') {
       // Second click - start actual battle
       this.battleInProgress = true;
-      this.currentTurn = 'player';
+      this.currentTurn = 'round';
       this.currentRound = 1;
       
-      this.updateStatus(`Round ${this.currentRound} - Your turn! Click to attack!`);
+      this.updateStatus(`Round ${this.currentRound} - Click to fight!`);
       
     } else if (this.battleInProgress && !this.turnInProgress) {
-      // During battle - execute next turn
+      // During battle - execute next round
       this.startNextTurn();
     }
     
