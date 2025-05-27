@@ -114,74 +114,121 @@ const Battle1v1System = {
     return parseInt(card.querySelector(".atk").textContent);
   },
   
-  // Floating text effects
-  floatDamage(card, amount) {
-    this.createFloatingText(card, `-${amount}`, "float-damage", {
-      color: "#ff4444",
-      fontSize: "clamp(1.2rem, 4vw, 2rem)"
-    });
-    
-    // Add visual feedback
-    card.classList.add("damage-glow");
-    setTimeout(() => card.classList.remove("damage-glow"), 600);
-  },
+// Enhanced floating text system that works on both desktop and mobile
+// with slower, more readable animations
+
+// Replace the createFloatingText function in your battle-1v1.js with this version:
+
+createFloatingText(card, text, className, styles = {}) {
+  const tag = document.createElement("div");
+  tag.className = `${className} floating-text-enhanced`;
+  tag.textContent = text;
   
-  floatHeal(card, amount) {
-    this.createFloatingText(card, `+${amount}`, "float-heal", {
-      color: "#4CAF50",
-      fontSize: "clamp(1rem, 3vw, 1.8rem)"
-    });
-  },
+  // Force positioning and styling to work on all devices
+  Object.assign(tag.style, {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    fontFamily: "'Bangers', cursive",
+    fontWeight: "bold",
+    pointerEvents: "none",
+    zIndex: "9999", // Much higher z-index
+    textShadow: "3px 3px 6px rgba(0, 0, 0, 0.9)",
+    transition: "all 2.5s ease-out", // Much slower: 2.5 seconds
+    opacity: "1",
+    display: "block",
+    visibility: "visible",
+    userSelect: "none",
+    // Force hardware acceleration
+    willChange: "transform, opacity",
+    backfaceVisibility: "hidden",
+    ...styles
+  });
   
-  floatKO(card) {
-    this.createFloatingText(card, "KO!", "float-ko", {
-      color: "#ff0000",
-      fontSize: "clamp(2rem, 6vw, 4rem)",
-      fontWeight: "900"
-    });
-  },
+  // Ensure the card container allows overflow for floating text
+  const cardRect = card.getBoundingClientRect();
+  card.style.position = "relative";
+  card.style.overflow = "visible";
   
-  floatSpecial(card) {
-    this.createFloatingText(card, "SPECIAL!", "float-special", {
-      color: "#ffdd44",
-      fontSize: "clamp(1.2rem, 4vw, 2.2rem)"
-    });
-  },
+  card.appendChild(tag);
   
-  createFloatingText(card, text, className, styles = {}) {
-    const tag = document.createElement("div");
-    tag.className = className;
-    tag.textContent = text;
+  console.log(`Created floating text: "${text}" with class: ${className}`);
+  
+  // Slower, more readable animation
+  setTimeout(() => {
+    // Move up much slower and higher
+    tag.style.top = "-120px"; // Even higher float
+    tag.style.opacity = "0";
+    tag.style.transform = "translate(-50%, -50%) scale(1.3)"; // Bigger scale
     
-    Object.assign(tag.style, {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      fontFamily: "'Bangers', cursive",
-      fontWeight: "bold",
-      pointerEvents: "none",
-      zIndex: "1000",
-      textShadow: "2px 2px 4px rgba(0, 0, 0, 0.8)",
-      transition: "all 1.5s ease-out", // Longer animation
-      ...styles
-    });
-    
-    card.appendChild(tag);
-    
-    // Animate with more dramatic movement
-    setTimeout(() => {
-      tag.style.top = "-80px"; // Float up much higher
-      tag.style.opacity = '0';
-      tag.style.transform = "translate(-50%, -50%) scale(1.2)"; // Scale up as it fades
-    }, 100); // Slight delay so it's visible first
-    
-    setTimeout(() => {
-      if (tag.parentNode) {
-        tag.remove();
-      }
-    }, 1700); // Stays on screen longer
-  },
+    console.log(`Animating floating text: "${text}"`);
+  }, 200); // Longer initial delay so it's clearly visible
+  
+  setTimeout(() => {
+    if (tag && tag.parentNode) {
+      tag.remove();
+      console.log(`Removed floating text: "${text}"`);
+    }
+  }, 2800); // Much longer lifespan
+},
+
+// Enhanced damage floating with debugging
+floatDamage(card, amount) {
+  console.log(`Floating damage: ${amount} on card:`, card.dataset.name);
+  
+  this.createFloatingText(card, `-${amount}`, "float-damage", {
+    color: "#ff4444 !important",
+    fontSize: "clamp(1.5rem, 5vw, 2.5rem)",
+    fontWeight: "900",
+    textShadow: "3px 3px 6px rgba(0, 0, 0, 0.9), 0 0 10px rgba(255, 68, 68, 0.8)"
+  });
+  
+  // Enhanced visual feedback that works on all devices
+  card.classList.add("damage-glow");
+  card.style.animation = "damageShake 0.6s ease-out";
+  
+  setTimeout(() => {
+    card.classList.remove("damage-glow");
+    card.style.animation = "";
+  }, 600);
+},
+
+// Enhanced heal floating
+floatHeal(card, amount) {
+  console.log(`Floating heal: ${amount} on card:`, card.dataset.name);
+  
+  this.createFloatingText(card, `+${amount}`, "float-heal", {
+    color: "#4CAF50 !important",
+    fontSize: "clamp(1.3rem, 4vw, 2.2rem)",
+    fontWeight: "800",
+    textShadow: "3px 3px 6px rgba(0, 0, 0, 0.9), 0 0 10px rgba(76, 175, 80, 0.8)"
+  });
+},
+
+// Enhanced KO floating
+floatKO(card) {
+  console.log(`Floating KO on card:`, card.dataset.name);
+  
+  this.createFloatingText(card, "KO!", "float-ko", {
+    color: "#ff0000 !important",
+    fontSize: "clamp(2.5rem, 8vw, 4.5rem)",
+    fontWeight: "900",
+    textShadow: "4px 4px 8px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 0, 0, 0.9)"
+  });
+},
+
+// Enhanced special floating
+floatSpecial(card) {
+  console.log(`Floating special on card:`, card.dataset.name);
+  
+  this.createFloatingText(card, "SPECIAL!", "float-special", {
+    color: "#ffdd44 !important",
+    fontSize: "clamp(1.4rem, 5vw, 2.8rem)",
+    fontWeight: "800",
+    textShadow: "3px 3px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(255, 221, 68, 0.8)"
+  });
+},
   
   // Calculate random damage
   randomDamage(card) {
