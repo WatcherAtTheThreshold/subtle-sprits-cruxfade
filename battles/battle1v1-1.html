@@ -8,7 +8,7 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Barlow+Semi+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
   
-  <!-- Stylesheets -->
+  <!-- Stylesheets - FIXED ORDER -->
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/battle-shared.css">
   <link rel="stylesheet" href="../css/battle-1v1.css">
@@ -49,734 +49,203 @@
     <div id="restart-container"></div>
   </div>
 
-  <!-- Loading overlay for smooth transitions -->
-  <div id="loading-overlay" class="loading-overlay" style="display: none;">
-    <div class="loading-spinner"></div>
-    <p class="loading-text">Preparing for battle...</p>
-  </div>
-
-  <!-- Character info modal for mobile -->
-  <div id="character-info-modal" class="character-modal" style="display: none;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="modal-character-name">Character</h3>
-        <button class="modal-close" onclick="closeCharacterModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <img id="modal-character-image" src="" alt="Character">
-        <div class="modal-info">
-          <p id="modal-character-description">Description</p>
-          <div class="modal-stats">
-            <div class="modal-stat">
-              <span class="stat-label">Health:</span>
-              <span id="modal-character-hp" class="stat-value">30</span>
-            </div>
-            <div class="modal-stat">
-              <span class="stat-label">Attack:</span>
-              <span id="modal-character-atk" class="stat-value">10</span>
-            </div>
-            <div class="modal-stat">
-              <span class="stat-label">Special:</span>
-              <span id="modal-character-special" class="stat-value">Special Move</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
+  <!-- Scripts - FIXED LOADING ORDER -->
   <script src="../js/battle-shared.js"></script>
   <script src="../js/battle-1v1.js"></script>
   
-  <!-- Inline battle initialization and UI handlers -->
+  <!-- Simplified and Fixed Initialization Script -->
   <script>
 // ═══════════════════════════════════════════════════════════════════════════════
-// ROBUST BATTLE INITIALIZATION SYSTEM
-// Handles both local and remote loading scenarios
+// SIMPLIFIED BATTLE INITIALIZATION - FIXED VERSION
 // ═══════════════════════════════════════════════════════════════════════════════
 
-// Global initialization state
-window.BattleInitialization = {
-  maxRetries: 20, // Increased from 10
-  retryDelay: 250, // 250ms between retries
-  currentRetries: 0,
-  isInitialized: false,
-  requiredSystems: ['BattleShared', 'Battle1v1'],
-  debugMode: true
-};
+// Global state
+let battleInitialized = false;
+let initRetries = 0;
+const maxRetries = 10;
 
-// Enhanced logging
-function battleLog(message, type = 'info') {
-  if (!window.BattleInitialization.debugMode) return;
-  
+// Debug logging
+function log(message, type = 'info') {
   const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
-  const prefix = `[${timestamp}] [BATTLE]`;
-  
-  switch(type) {
-    case 'error':
-      console.error(`${prefix} ERROR:`, message);
-      break;
-    case 'warn':
-      console.warn(`${prefix} WARN:`, message);
-      break;
-    case 'success':
-      console.log(`${prefix} ✓`, message);
-      break;
-    default:
-      console.log(`${prefix}`, message);
-  }
+  console.log(`[${timestamp}] [BATTLE-1V1] ${message}`);
 }
 
-// Check if all required systems are loaded
+// Check if required systems are loaded
 function checkSystemsReady() {
-  const status = {};
-  let allReady = true;
+  const battleSharedReady = window.BattleShared && window.BattleShared.RosterUtils;
+  const battle1v1Ready = window.Battle1v1 && typeof window.Battle1v1.init === 'function';
+  const battleStateReady = window.battleState && typeof window.battleState.getPlayerCharacterData === 'function';
   
-  window.BattleInitialization.requiredSystems.forEach(system => {
-    const isReady = window[system] && typeof window[system] === 'object';
-    status[system] = isReady;
-    if (!isReady) allReady = false;
-  });
-  
-  // Additional checks for system functionality
-  if (status.BattleShared && !window.BattleShared.RosterUtils) {
-    status.BattleShared = false;
-    allReady = false;
-  }
-  
-  if (status.Battle1v1 && typeof window.Battle1v1.init !== 'function') {
-    status.Battle1v1 = false;
-    allReady = false;
-  }
-  
-  return { allReady, status };
+  return {
+    allReady: battleSharedReady && battle1v1Ready && battleStateReady,
+    battleShared: battleSharedReady,
+    battle1v1: battle1v1Ready,
+    battleState: battleStateReady
+  };
 }
 
-// Enhanced initialization with better error handling
-async function initializeBattleSystem() {
-  if (window.BattleInitialization.isInitialized) {
-    battleLog("Battle system already initialized", 'warn');
+// Initialize battle system
+function initializeBattle() {
+  if (battleInitialized) {
+    log('Battle already initialized');
     return true;
   }
   
-  const { allReady, status } = checkSystemsReady();
+  const systems = checkSystemsReady();
+  log(`Systems check: ${JSON.stringify(systems)}`);
   
-  battleLog(`Initialization attempt ${window.BattleInitialization.currentRetries + 1}/${window.BattleInitialization.maxRetries}`);
-  battleLog(`System status: ${JSON.stringify(status)}`);
-  
-  if (allReady) {
+  if (systems.allReady) {
     try {
-      // Initialize Battle1v1 system
-      battleLog("All systems ready, initializing Battle1v1...");
+      log('Initializing Battle1v1 system...');
       const success = window.Battle1v1.init();
       
       if (success) {
-        window.BattleInitialization.isInitialized = true;
-        battleLog("Battle system initialized successfully!", 'success');
-        
-        // Set up UI and initial state
-        setupBattleUI();
+        battleInitialized = true;
+        log('✓ Battle system initialized successfully!');
+        setupUI();
         return true;
       } else {
-        throw new Error("Battle1v1.init() returned false");
+        throw new Error('Battle1v1.init() returned false');
       }
     } catch (error) {
-      battleLog(`Initialization failed: ${error.message}`, 'error');
-      showBattleError(`Initialization error: ${error.message}`);
+      log(`✗ Initialization failed: ${error.message}`);
+      showError('Failed to initialize battle: ' + error.message);
       return false;
     }
   } else {
-    // Systems not ready, retry if we haven't exceeded max attempts
-    window.BattleInitialization.currentRetries++;
-    
-    if (window.BattleInitialization.currentRetries < window.BattleInitialization.maxRetries) {
-      battleLog(`Systems not ready, retrying in ${window.BattleInitialization.retryDelay}ms...`);
-      
-      setTimeout(() => {
-        initializeBattleSystem();
-      }, window.BattleInitialization.retryDelay);
-      
-      return false;
+    // Retry logic
+    initRetries++;
+    if (initRetries < maxRetries) {
+      log(`Systems not ready, retry ${initRetries}/${maxRetries} in 200ms...`);
+      setTimeout(initializeBattle, 200);
     } else {
-      // Max retries exceeded
-      const missingSystem = Object.keys(status).find(key => !status[key]) || 'unknown';
-      const errorMsg = `Failed to load required systems after ${window.BattleInitialization.maxRetries} attempts. Missing: ${missingSystem}`;
-      
-      battleLog(errorMsg, 'error');
-      showBattleError(errorMsg);
-      return false;
+      const missing = Object.keys(systems).filter(key => key !== 'allReady' && !systems[key]);
+      showError(`Failed to load required systems: ${missing.join(', ')}`);
     }
+    return false;
   }
 }
 
-// Set up initial battle UI state
-function setupBattleUI() {
+// Set up UI after successful initialization
+function setupUI() {
   try {
-    // Get selected character info
-    const selectedCharacter = getSelectedCharacterInfo();
-    if (selectedCharacter) {
-      battleLog(`Selected character: ${selectedCharacter.name}`, 'success');
-      updateBattleTitleWithCharacter(selectedCharacter.name);
+    // Update battle title with character name
+    const selectedChar = getSelectedCharacter();
+    if (selectedChar) {
+      updateBattleTitle(selectedChar.name);
     }
     
-    // Set up card interactions
-    setupCardInteractions();
+    // Ensure cards are visible
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.style.opacity = '1';
+      card.style.visibility = 'visible';
+    });
     
-    // Update initial status
-    const battleStatus = document.getElementById('battle-status');
-    if (battleStatus) {
-      const currentText = battleStatus.textContent;
-      if (!currentText.includes('Battle 1') && !currentText.includes('Ready')) {
-        battleStatus.textContent = 'Ready for Battle - Click Start!';
-      }
-    }
-    
-    // Show cards immediately (fix for the original issue)
-    showCardsImmediately();
-    
-    battleLog("Battle UI setup complete", 'success');
+    log(`✓ UI setup complete. ${cards.length} cards found.`);
   } catch (error) {
-    battleLog(`UI setup error: ${error.message}`, 'error');
+    log(`UI setup error: ${error.message}`);
   }
 }
 
-// Fix the card visibility issue - show cards immediately
-function showCardsImmediately() {
-  const cards = document.querySelectorAll('.card');
-  if (cards.length === 0) {
-    battleLog("No cards found, system may not be initialized", 'warn');
-    return;
+// Get selected character
+function getSelectedCharacter() {
+  try {
+    if (window.battleState) {
+      const data = window.battleState.getPlayerCharacterData();
+      return data;
+    }
+  } catch (e) {
+    log('Could not get selected character: ' + e.message);
   }
-  
-  // Ensure cards are visible
-  cards.forEach(card => {
-    card.style.opacity = '1';
-    card.style.visibility = 'visible';
-    card.style.display = 'block';
-  });
-  
-  battleLog(`${cards.length} cards made visible`, 'success');
+  return null;
 }
 
-// Enhanced error display
-function showBattleError(message) {
+// Update battle title
+function updateBattleTitle(characterName) {
+  const titleElement = document.getElementById('battle-status');
+  if (titleElement && characterName) {
+    const isMobile = window.innerWidth <= 768;
+    titleElement.textContent = isMobile ? 
+      `${characterName}'s Battle` : 
+      `Level 1 - Battle 1: ${characterName}`;
+  }
+}
+
+// Show error message
+function showError(message) {
   const statusElement = document.getElementById('battle-status');
   if (statusElement) {
     statusElement.textContent = `Error: ${message}`;
     statusElement.style.color = '#ff6b6b';
   }
   
-  // Show retry button
   const battleButton = document.getElementById('battle-button');
   if (battleButton) {
-    battleButton.textContent = 'Retry Initialization';
-    battleButton.style.display = 'inline-block';
+    battleButton.textContent = 'Retry';
     battleButton.onclick = () => {
-      // Reset retry counter and try again
-      window.BattleInitialization.currentRetries = 0;
-      window.BattleInitialization.isInitialized = false;
+      initRetries = 0;
+      battleInitialized = false;
       statusElement.style.color = '';
-      initializeBattleSystem();
+      statusElement.textContent = 'Retrying...';
+      setTimeout(initializeBattle, 100);
     };
   }
 }
 
-// Get selected character info (reused from your code)
-function getSelectedCharacterInfo() {
-  try {
-    const characterKey = sessionStorage.getItem('selectedCharacter');
-    const characterData = sessionStorage.getItem('characterData');
-    
-    if (characterKey && characterData) {
-      return {
-        key: characterKey,
-        name: JSON.parse(characterData).name || characterKey,
-        data: JSON.parse(characterData)
-      };
-    }
-  } catch (e) {
-    battleLog('Could not load character from session storage: ' + e.message, 'warn');
-  }
-  return null;
-}
-
-// Update battle title (reused from your code)
-function updateBattleTitleWithCharacter(characterName) {
-  const titleElement = document.getElementById('battle-status');
-  if (titleElement) {
-    const viewport = window.innerWidth <= 768;
-    if (viewport) {
-      titleElement.textContent = `${characterName}'s Battle`;
-    } else {
-      titleElement.textContent = `Level 1 - Battle 1: ${characterName}`;
-    }
-  }
-}
-
-// Card interaction setup (simplified version)
-function setupCardInteractions() {
-  // Remove existing listeners
-  document.removeEventListener('click', handleCardClick);
-  document.removeEventListener('touchend', handleCardTouch);
-  
-  // Add new listeners
-  document.addEventListener('click', handleCardClick);
-  document.addEventListener('touchend', handleCardTouch, { passive: false });
-}
-
-function handleCardClick(e) {
-  const card = e.target.closest('.card');
-  if (!card) return;
-  
-  // Simple card interaction feedback
-  card.classList.toggle('active');
-  battleLog(`Card clicked: ${card.dataset.name || 'unknown'}`);
-}
-
-function handleCardTouch(e) {
-  const card = e.target.closest('.card');
-  if (!card) return;
-  
-  e.preventDefault();
-  card.classList.toggle('active');
-  battleLog(`Card touched: ${card.dataset.name || 'unknown'}`);
-}
-
-// Enhanced battle button handler
+// Main battle button handler
 function handleBattleClick() {
-  if (!window.BattleInitialization.isInitialized) {
-    battleLog('Battle not initialized, attempting initialization...', 'warn');
-    initializeBattleSystem();
+  if (!battleInitialized) {
+    log('Battle not initialized, attempting initialization...');
+    initializeBattle();
     return;
   }
   
   try {
-    battleLog('Starting battle...');
+    log('Starting battle...');
     window.Battle1v1.start();
   } catch (error) {
-    battleLog(`Battle start error: ${error.message}`, 'error');
-    showBattleError('Error during battle: ' + error.message);
+    log(`Battle start error: ${error.message}`);
+    showError('Battle error: ' + error.message);
   }
 }
 
-// Multiple initialization triggers for maximum compatibility
-function startInitializationProcess() {
-  battleLog("=== BATTLE INITIALIZATION STARTING ===");
-  battleLog(`Window loaded: ${document.readyState}`);
-  battleLog(`Inner width: ${window.innerWidth}`);
-  
-  // Start the robust initialization
-  initializeBattleSystem();
-}
-
-// DOM Content Loaded handler
-document.addEventListener('DOMContentLoaded', function() {
-  battleLog("DOMContentLoaded event fired");
-  startInitializationProcess();
-});
-
-// Fallback for if DOMContentLoaded already fired
+// Initialize when DOM is ready
 if (document.readyState === 'loading') {
-  battleLog("Document still loading, waiting for DOMContentLoaded");
+  document.addEventListener('DOMContentLoaded', initializeBattle);
 } else {
-  battleLog("Document already loaded, initializing immediately");
-  startInitializationProcess();
+  // DOM already loaded
+  setTimeout(initializeBattle, 100);
 }
 
-// Additional fallback for window load
-window.addEventListener('load', function() {
-  battleLog("Window load event fired");
-  
-  // If still not initialized after window load, force initialization
-  if (!window.BattleInitialization.isInitialized) {
-    battleLog("Forcing initialization on window load", 'warn');
-    setTimeout(startInitializationProcess, 100);
-  }
-});
-
-// Page visibility change handler (for when users switch tabs)
-document.addEventListener('visibilitychange', function() {
-  if (!document.hidden && !window.BattleInitialization.isInitialized) {
-    battleLog("Page became visible, checking initialization");
-    setTimeout(startInitializationProcess, 200);
+// Additional fallback
+window.addEventListener('load', () => {
+  if (!battleInitialized) {
+    log('Fallback initialization on window load');
+    setTimeout(initializeBattle, 200);
   }
 });
 
 // Export for debugging
 window.BattleDebug = {
-  ...window.BattleDebug,
-  forceReinit: () => {
-    window.BattleInitialization.currentRetries = 0;
-    window.BattleInitialization.isInitialized = false;
-    startInitializationProcess();
+  reinit: () => {
+    initRetries = 0;
+    battleInitialized = false;
+    initializeBattle();
   },
-  getStatus: () => {
-    const { allReady, status } = checkSystemsReady();
-    return {
-      initialized: window.BattleInitialization.isInitialized,
-      retries: window.BattleInitialization.currentRetries,
-      systemsReady: allReady,
-      systemStatus: status,
-      selectedCharacter: getSelectedCharacterInfo()
-    };
-  },
-  toggleDebug: () => {
-    window.BattleInitialization.debugMode = !window.BattleInitialization.debugMode;
-    battleLog(`Debug mode: ${window.BattleInitialization.debugMode ? 'ON' : 'OFF'}`);
-  }
+  status: () => ({
+    initialized: battleInitialized,
+    retries: initRetries,
+    systems: checkSystemsReady(),
+    character: getSelectedCharacter()
+  })
 };
 
-battleLog("Robust initialization system loaded");
-    
-    // ═══════════════════════════════════════════════════════════════════════════════
-    // CARD INTERACTION HANDLERS
-    // ═══════════════════════════════════════════════════════════════════════════════
-    
-    // Set up card click/tap interactions
-    function setupCardInteractions() {
-      // Mobile-friendly card interactions
-      document.addEventListener('click', handleCardClick);
-      document.addEventListener('touchend', handleCardTouch, { passive: false });
-      
-      // Prevent context menu on cards
-      document.addEventListener('contextmenu', function(e) {
-        if (e.target.closest('.card')) {
-          e.preventDefault();
-        }
-      });
-    }
-    
-    // Handle card clicks (desktop)
-    function handleCardClick(e) {
-      const card = e.target.closest('.card');
-      if (!card) return;
-      
-      // Show character info
-      showCharacterInfo(card);
-    }
-    
-    // Handle card touches (mobile)
-    function handleCardTouch(e) {
-      const card = e.target.closest('.card');
-      if (!card) return;
-      
-      e.preventDefault();
-      
-      // Show character info modal on mobile
-      if (window.BattleShared && window.BattleShared.DeviceUtils.isMobile()) {
-        showCharacterInfoModal(card);
-      } else {
-        showCharacterInfo(card);
-      }
-    }
-    
-    // Show character information (desktop tooltip-style)
-    function showCharacterInfo(card) {
-      // Remove any existing info displays
-      document.querySelectorAll('.character-info-tooltip').forEach(el => el.remove());
-      
-      const characterName = card.querySelector('.name-tag')?.textContent || 'Unknown';
-      const characterDesc = card.querySelector('.description')?.textContent || 'No description';
-      const characterSpecial = card.querySelector('.special-move')?.textContent || 'No special';
-      const hp = card.querySelector('.hp')?.textContent || '0';
-      const atk = card.querySelector('.atk')?.textContent || '0';
-      
-      // Create tooltip
-      const tooltip = document.createElement('div');
-      tooltip.className = 'character-info-tooltip';
-      tooltip.innerHTML = `
-        <h4>${characterName}</h4>
-        <p>${characterDesc}</p>
-        <div class="tooltip-stats">
-          <span>HP: ${hp}</span>
-          <span>ATK: ${atk}</span>
-        </div>
-        <div class="tooltip-special">Special: ${characterSpecial}</div>
-      `;
-      
-      // Position tooltip
-      const rect = card.getBoundingClientRect();
-      tooltip.style.cssText = `
-        position: fixed;
-        top: ${rect.bottom + 10}px;
-        left: ${rect.left}px;
-        background: rgba(0, 0, 0, 0.9);
-        color: white;
-        padding: 1rem;
-        border-radius: 8px;
-        max-width: 300px;
-        z-index: 1000;
-        font-size: 0.9rem;
-        line-height: 1.4;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        border: 2px solid #ffdd44;
-      `;
-      
-      document.body.appendChild(tooltip);
-      
-      // Auto-remove after 3 seconds
-      setTimeout(() => {
-        if (tooltip.parentNode) {
-          tooltip.remove();
-        }
-      }, 3000);
-    }
-    
-    // Show character info modal (mobile)
-    function showCharacterInfoModal(card) {
-      const modal = document.getElementById('character-info-modal');
-      if (!modal) return;
-      
-      const characterName = card.querySelector('.name-tag')?.textContent || 'Unknown';
-      const characterDesc = card.querySelector('.description')?.textContent || 'No description';
-      const characterSpecial = card.querySelector('.special-move')?.textContent || 'No special';
-      const characterImage = card.querySelector('img')?.src || '';
-      const hp = card.querySelector('.hp')?.textContent || '0';
-      const atk = card.querySelector('.atk')?.textContent || '0';
-      
-      // Update modal content
-      document.getElementById('modal-character-name').textContent = characterName;
-      document.getElementById('modal-character-description').textContent = characterDesc;
-      document.getElementById('modal-character-image').src = characterImage;
-      document.getElementById('modal-character-hp').textContent = hp;
-      document.getElementById('modal-character-atk').textContent = atk;
-      document.getElementById('modal-character-special').textContent = characterSpecial;
-      
-      // Show modal
-      modal.style.display = 'flex';
-    }
-    
-    // Close character info modal
-    function closeCharacterModal() {
-      const modal = document.getElementById('character-info-modal');
-      if (modal) {
-        modal.style.display = 'none';
-      }
-    }
-    
-    // ═══════════════════════════════════════════════════════════════════════════════
-    // UTILITY FUNCTIONS
-    // ═══════════════════════════════════════════════════════════════════════════════
-    
-    // Handle page visibility changes (pause/resume)
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) {
-        // Page is hidden - could pause battle if needed
-        console.log('Battle paused (page hidden)');
-      } else {
-        // Page is visible again
-        console.log('Battle resumed (page visible)');
-      }
-    });
-    
-    // Handle back navigation
-    window.addEventListener('beforeunload', function(e) {
-      if (currentBattlePhase === 'battle') {
-        const message = 'You are in the middle of a battle. Are you sure you want to leave?';
-        e.returnValue = message;
-        return message;
-      }
-    });
-    
-    // Navigation helper
-    function goToCharacterSelect() {
-      window.location.href = '../character-select.html';
-    }
-    
-    function goToNextBattle() {
-      // For now, restart this battle - in the future, navigate to battle1v1-2.html
-      window.location.reload();
-    }
-    
-    // Expose global functions for debugging
-    window.BattleDebug = {
-      reinitialize: initializeBattle,
-      getState: () => ({
-        initialized: battleInitialized,
-        phase: currentBattlePhase,
-        selectedCharacter: getSelectedCharacterInfo()
-      }),
-      goToCharacterSelect,
-      goToNextBattle
-    };
-    
-    console.log('Battle 1v1-1 script loaded. Use BattleDebug for testing.');
+log('Battle initialization script loaded');
   </script>
 
-  <!-- Inline styles for battle-specific UI elements -->
+  <!-- Minimal inline styles for essential UI -->
   <style>
-    /* Loading overlay styles */
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(5px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    
-    .loading-overlay.show {
-      opacity: 1;
-    }
-    
-    .loading-spinner {
-      width: 60px;
-      height: 60px;
-      border: 4px solid rgba(255, 221, 68, 0.3);
-      border-top: 4px solid #ffdd44;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    
-    .loading-text {
-      color: #fff;
-      font-family: 'Bangers', cursive;
-      font-size: clamp(1rem, 3vw, 1.5rem);
-      margin-top: 1rem;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    /* Character info modal styles */
-    .character-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(5px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      padding: 1rem;
-    }
-    
-    .modal-content {
-      background: linear-gradient(135deg, #2c3e50, #34495e);
-      border-radius: 12px;
-      max-width: 90vw;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      border: 2px solid #ffdd44;
-    }
-    
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      border-bottom: 1px solid rgba(255, 221, 68, 0.3);
-    }
-    
-    .modal-header h3 {
-      font-family: 'Bangers', cursive;
-      font-size: 1.5rem;
-      color: #ffdd44;
-      margin: 0;
-    }
-    
-    .modal-close {
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 1.5rem;
-      cursor: pointer;
-      padding: 0.5rem;
-      border-radius: 4px;
-      transition: background 0.3s ease;
-    }
-    
-    .modal-close:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-    
-    .modal-body {
-      display: flex;
-      flex-direction: column;
-      padding: 1rem;
-      gap: 1rem;
-      color: #fff;
-    }
-    
-    .modal-body img {
-      width: 100px;
-      height: 100px;
-      object-fit: contain;
-      border-radius: 8px;
-      align-self: center;
-    }
-    
-    .modal-info p {
-      line-height: 1.5;
-      margin: 0;
-    }
-    
-    .modal-stats {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-    
-    .modal-stat {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.25rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .modal-stat .stat-label {
-      font-weight: 600;
-      color: #ccc;
-    }
-    
-    .modal-stat .stat-value {
-      font-weight: bold;
-      color: #ffdd44;
-    }
-    
-    /* Character info tooltip styles */
-    .character-info-tooltip h4 {
-      margin: 0 0 0.5rem 0;
-      color: #ffdd44;
-      font-family: 'Bangers', cursive;
-    }
-    
-    .character-info-tooltip p {
-      margin: 0 0 0.5rem 0;
-      font-size: 0.85rem;
-    }
-    
-    .tooltip-stats {
-      display: flex;
-      gap: 1rem;
-      margin: 0.5rem 0;
-      font-weight: bold;
-    }
-    
-    .tooltip-special {
-      font-style: italic;
-      color: #ffdd44;
-      font-size: 0.85rem;
-    }
-    
     /* Team area labels */
     .team-area {
       position: relative;
@@ -793,6 +262,7 @@ battleLog("Robust initialization system loaded");
       color: rgba(255, 221, 68, 0.8);
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
       pointer-events: none;
+      z-index: 1;
     }
     
     @media (max-width: 768px) {
@@ -800,6 +270,16 @@ battleLog("Robust initialization system loaded");
         font-size: clamp(0.7rem, 3vw, 1rem);
         top: -1.5rem;
       }
+    }
+    
+    /* Error state styling */
+    #battle-status[style*="color: rgb(255, 107, 107)"] {
+      animation: errorPulse 1s ease-in-out infinite;
+    }
+    
+    @keyframes errorPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
     }
   </style>
 </body>
