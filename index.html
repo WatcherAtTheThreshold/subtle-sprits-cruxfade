@@ -105,7 +105,7 @@
   <h1>Subtle Spirits: Cruxfade</h1>
   <p class="subtitle">A Battle of Spirits and Shadows</p>
   <button id="start-button" class="start-button" onclick="handleStart()">Begin Your Journey</button>
-  <button id="enter-button" class="enter-button" onclick="handleEnter()">Enter</button>
+  <button id="enter-button" class="enter-button" onclick="handleEnter()" style="display: none;">Enter</button>
   <button class="mute-button" onclick="toggleMute()">Mute Music</button>
 
   <audio id="intro-music" src="music/ChosenOne.mp3" preload="auto" loop></audio>
@@ -125,10 +125,17 @@
       // Fade out the start button
       startButton.classList.add('fade-out');
       
-      // After 3 seconds, fade in the enter button
+      // After the fade out completes (1 second), hide start button and show enter button
       setTimeout(() => {
-        enterButton.classList.add('fade-in');
-      }, 3000);
+        startButton.style.display = 'none';
+        enterButton.style.display = 'inline-block';
+        enterButton.style.opacity = '0';
+        
+        // Small delay then fade in enter button
+        setTimeout(() => {
+          enterButton.classList.add('fade-in');
+        }, 100);
+      }, 1000);
     }
 
     function handleEnter() {
