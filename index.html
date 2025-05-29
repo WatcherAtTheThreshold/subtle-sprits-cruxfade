@@ -65,7 +65,6 @@
       transition: background-color 0.3s ease, opacity 1s ease;
       margin: 0.5rem;
       opacity: 0;
-      position: absolute;
     }
 
     .enter-button:hover {
@@ -135,17 +134,9 @@
     function handleEnter() {
       const audio = document.getElementById("intro-music");
       
-      // Fade out music and navigate
-      audio.volume = 1;
-      const fadeOut = setInterval(() => {
-        if (audio.volume > 0.05) {
-          audio.volume -= 0.05;
-        } else {
-          clearInterval(fadeOut);
-          audio.pause();
-          window.location.href = "character-select.html";
-        }
-      }, 100);
+      // Try immediate navigation to avoid any timing issues
+      audio.pause();
+      window.location.href = "character-select.html";
     }
 
     function toggleMute() {
