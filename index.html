@@ -63,10 +63,12 @@
       margin-top: 1rem;
       text-decoration: underline;
     }
-@media (hover: none) and (pointer: coarse) {
+/* Override hover on touch devices */
+@media (pointer: coarse) {
   .start-button:hover {
-    background-color: #444; /* Same as default */
+    background-color: #444;
   }
+}
 }
   </style>
 </head>
