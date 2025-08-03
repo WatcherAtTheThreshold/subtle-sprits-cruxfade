@@ -4,9 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Subtle Spirits: 1v1 Battle</title>
+  <link rel="stylesheet" href="../css/battle-1v1.css" />
+  <link rel="stylesheet" href="../css/battle-shared.css" />
 </head>
 <body>
-  <h1>Subtle Spirits Battle 1v1</h1>
-  <script type="module" src="js/battle-1v1.js"></script>
+  <h1 class="battle-header">Subtle Spirits Battle 1v1</h1>
+
+  <div id="battle-board" class="battle-board">
+    <div id="player-card" class="card player-card">Loading Player...</div>
+    <div id="enemy-card" class="card enemy-card">Loading Enemy...</div>
+  </div>
+
+  <div id="action-bar" class="action-bar">
+    <button id="start-button">Start Battle</button>
+  </div>
+
+  <script type="module" src="../js/battle-1v1.js"></script>
 </body>
 </html>
