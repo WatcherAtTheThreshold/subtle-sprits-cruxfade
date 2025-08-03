@@ -541,3 +541,273 @@
     border-color: #cc0000;
   }
 }
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+   TEAM LAYOUT ADDITIONS - For Battle 1v1 Team System
+   Add these styles to your battle-1v1.css file
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   TEAM AREA LAYOUTS - Support for 2-character teams
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Team area modifications for dual character display */
+.team-area.team-dual {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 3vh, 2rem);
+  align-items: center;
+  justify-content: center;
+}
+
+/* Landscape: arrange team members side by side */
+@media (orientation: landscape) and (min-width: 768px) {
+  .team-area.team-dual {
+    flex-direction: row;
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+}
+
+/* Team cards are slightly smaller than pure 1v1 */
+.team-dual .card {
+  width: clamp(140px, 20vw, 260px);
+  height: clamp(190px, 28vw, 380px);
+  font-size: clamp(0.6rem, 1.8vw, 1rem);
+}
+
+/* Pet cards in teams */
+.team-dual .card[data-is-pet="true"] {
+  width: clamp(120px, 18vw, 220px);
+  height: clamp(160px, 25vw, 320px);
+}
+
+/* Adjust image sizes for team cards */
+.team-dual .card img {
+  width: clamp(80px, 15vw, 130px);
+  height: clamp(80px, 15vw, 130px);
+}
+
+.team-dual .card[data-is-pet="true"] img {
+  width: clamp(70px, 12vw, 110px);
+  height: clamp(70px, 12vw, 110px);
+}
+
+/* Adjust text sizes for team cards */
+.team-dual .name-tag {
+  font-size: clamp(1rem, 2.8vw, 1.8rem);
+  padding: clamp(0.2rem, 0.8vw, 0.4rem) clamp(0.4rem, 1.2vw, 0.8rem);
+}
+
+.team-dual .description,
+.team-dual .special-move {
+  font-size: clamp(0.7rem, 2vw, 1.2rem);
+  -webkit-line-clamp: 2;
+}
+
+.team-dual .stat {
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  padding: clamp(0.15rem, 0.6vw, 0.3rem) clamp(0.4rem, 1.2vw, 0.8rem);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MOBILE OPTIMIZATIONS FOR TEAMS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Mobile portrait: stack teams vertically, characters in rows */
+@media (max-width: 768px) and (orientation: portrait) {
+  .team-area.team-dual {
+    flex-direction: row;
+    gap: clamp(0.8rem, 3vw, 1.5rem);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .team-dual .card {
+    width: clamp(120px, 28vw, 180px);
+    height: clamp(160px, 35vw, 240px);
+  }
+  
+  .team-dual .card[data-is-pet="true"] {
+    width: clamp(100px, 25vw, 160px);
+    height: clamp(140px, 32vw, 210px);
+  }
+}
+
+/* Mobile landscape: keep side-by-side but smaller */
+@media (max-width: 768px) and (orientation: landscape) {
+  .team-dual .card {
+    width: clamp(100px, 20vw, 160px);
+    height: clamp(140px, 28vw, 220px);
+  }
+  
+  .team-dual .card[data-is-pet="true"] {
+    width: clamp(90px, 18vw, 140px);
+    height: clamp(120px, 25vw, 190px);
+  }
+}
+
+/* Very small screens: compact team layout */
+@media (max-width: 480px) {
+  .team-area.team-dual {
+    gap: clamp(0.5rem, 2vw, 1rem);
+  }
+  
+  .team-dual .card {
+    width: clamp(90px, 30vw, 140px);
+    height: clamp(120px, 40vw, 190px);
+  }
+  
+  .team-dual .name-tag {
+    font-size: clamp(0.8rem, 3.5vw, 1.2rem);
+  }
+  
+  .team-dual .stat {
+    font-size: clamp(0.8rem, 3vw, 1.4rem);
+  }
+  
+  .team-dual .description,
+  .team-dual .special-move {
+    font-size: clamp(0.6rem, 2.5vw, 1rem);
+    -webkit-line-clamp: 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   TEAM BATTLE VISUAL ENHANCEMENTS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Enhanced VS indicator for teams */
+.board.battle-1v1.team-battle::after {
+  content: "⚔️ VS ⚔️";
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  opacity: 0.4;
+  animation: teamVsFloat 4s ease-in-out infinite;
+}
+
+@keyframes teamVsFloat {
+  0%, 100% { 
+    transform: translate(-50%, -50%) rotate(-2deg) scale(1);
+    opacity: 0.4;
+  }
+  50% { 
+    transform: translate(-50%, -50%) rotate(2deg) scale(1.1);
+    opacity: 0.6;
+  }
+}
+
+/* Team coordination effects */
+.team-dual .card.team-boost {
+  border-color: #4CAF50;
+  box-shadow: 
+    0 0 clamp(15px, 4vw, 30px) rgba(76, 175, 80, 0.6),
+    0 clamp(6px, 2vw, 12px) clamp(12px, 4vw, 25px) rgba(0, 0, 0, 0.4);
+  animation: teamBoostPulse 2s ease-in-out infinite;
+}
+
+@keyframes teamBoostPulse {
+  0%, 100% { 
+    border-color: #4CAF50;
+    transform: scale(1);
+  }
+  50% { 
+    border-color: #66BB6A;
+    transform: scale(1.02);
+  }
+}
+
+/* Team defeat visual */
+.team-dual .card.defeated {
+  opacity: 0.3;
+  filter: grayscale(100%) brightness(0.6);
+  transform: scale(0.85);
+}
+
+/* Ally pet special styling */
+.team-dual .card[data-name="Simon"] {
+  border-color: #FF69B4;
+  background: linear-gradient(135deg, #fff0f5 0%, #ffe0f0 100%);
+}
+
+.team-dual .card[data-name="Simon"]::before {
+  background: linear-gradient(45deg, #FF69B4, #FFB6C1, #FF69B4);
+  opacity: 0.4;
+  animation: allyGlow 3.5s ease-in-out infinite;
+}
+
+@keyframes allyGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.6; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE TEAM BATTLE ARENA
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Arena adjustments for team battles */
+.board.battle-1v1.team-battle {
+  gap: clamp(1.5rem, 4vh, 3rem);
+  padding: clamp(0.8rem, 2.5vh, 2rem);
+}
+
+/* Larger arena glow for team battles */
+.board.battle-1v1.team-battle::before {
+  width: min(95vw, 900px);
+  height: min(75vh, 650px);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 221, 68, 0.12) 0%,
+    rgba(255, 221, 68, 0.06) 30%,
+    transparent 70%
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   TEAM FLOATING TEXT ADJUSTMENTS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Slightly smaller floating text for team battles to avoid overlap */
+.team-dual .float-damage {
+  font-size: clamp(1.2rem, 4vw, 2rem) !important;
+}
+
+.team-dual .float-heal {
+  font-size: clamp(1rem, 3.5vw, 1.8rem) !important;
+}
+
+.team-dual .float-special {
+  font-size: clamp(1.1rem, 4vw, 2.2rem) !important;
+}
+
+.team-dual .float-ko {
+  font-size: clamp(2rem, 6vw, 3.5rem) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   ACCESSIBILITY FOR TEAM BATTLES
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Reduced motion for team battles */
+@media (prefers-reduced-motion: reduce) {
+  .team-dual .card::before,
+  .team-boost,
+  .teamVsFloat,
+  .allyGlow {
+    animation: none !important;
+  }
+  
+  .team-dual .card.highlight-turn {
+    transform: scale(1.02);
+  }
+}
+
+/* High contrast for team layouts */
+@media (prefers-contrast: high) {
+  .team-dual .card {
+    border-width: clamp(3px, 0.8vw, 5px);
+  }
+  
+  .team-dual .card[data-name="Simon"] {
+    border-color: #000;
+    background: #fff;
+  }
+}
