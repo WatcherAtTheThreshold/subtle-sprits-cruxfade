@@ -503,7 +503,7 @@ const Battle1v1System = {
   
   // ═══════════════════════════════════════════════════════════════════════════════
   // BATTLE END DETECTION
-  // Check for victory/defeat conditions with progression
+  // Check for victory/defeat conditions
   // ═══════════════════════════════════════════════════════════════════════════════
   
   checkBattleEnd() {
@@ -516,11 +516,9 @@ const Battle1v1System = {
       this.currentTurn = 'ended';
       
       if (playerAlive) {
-        // Victory with progression options
         this.updateStatus("🏆 VICTORY! 🏆");
-        this.showVictoryProgression();
+        this.showRestartButton("Victory! Play Again?");
       } else {
-        // Defeat
         this.updateStatus("💀 DEFEAT... 💀");
         this.showRestartButton("Defeat! Try Again?");
       }
@@ -533,91 +531,8 @@ const Battle1v1System = {
   },
   
   // ═══════════════════════════════════════════════════════════════════════════════
-  // VICTORY PROGRESSION SYSTEM
-  // Enhanced victory screen with Simon introduction and progression options
-  // ═══════════════════════════════════════════════════════════════════════════════
-  
-  showVictoryProgression() {
-    const restartContainer = document.getElementById("restart-container");
-    if (restartContainer) {
-      restartContainer.innerHTML = `
-        <div class="victory-celebration" style="text-align: center; margin: 2rem 0;">
-          <div class="victory-title" style="animation: victoryGlow 2s ease-in-out infinite;">
-            <h2 style="color: #ffdd44; font-family: 'Bangers', cursive; font-size: clamp(2rem, 5vw, 3rem); margin: 0 0 1rem 0; text-shadow: 2px 2px 0px #000;">
-              🏆 VICTORY! 🏆
-            </h2>
-          </div>
-          
-          <div class="simon-introduction" style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; margin: 1rem 0; border: 2px solid rgba(255,221,68,0.3);">
-            <img src="../images/Simon.png" alt="Simon" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 1rem;">
-            <p style="color: #ddd; font-size: clamp(1rem, 2.5vw, 1.2rem); margin-bottom: 1rem;">
-              <strong style="color: #ffdd44;">Simon the pet spirit</strong> was impressed by your victory!<br>
-              <em style="color: #aaa;">"Meow! I want to help fight the darkness too!"</em>
-            </p>
-            <p style="color: #4CAF50; font-weight: bold; font-size: clamp(0.9rem, 2vw, 1.1rem);">
-              Simon wants to join your team for the next battle!
-            </p>
-          </div>
-          
-          <div class="progression-buttons" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 2rem;">
-            <button class="restart-button adventure-continue" onclick="continueAdventure()" 
-                    style="background: linear-gradient(145deg, #4CAF50, #45a049); border: 3px solid #4CAF50; font-size: clamp(1rem, 2.5vw, 1.3rem); padding: clamp(0.8rem, 2vw, 1.2rem) clamp(1.5rem, 4vw, 2.5rem); position: relative; overflow: hidden;">
-              <span style="font-size: 1.2em; margin-right: 0.5rem;">🐱</span>
-              <span>Continue Adventure</span>
-              <span style="font-size: 0.9em; margin-left: 0.5rem;">→</span>
-            </button>
-            
-            <button class="restart-button" onclick="window.location.reload()" 
-                    style="background: linear-gradient(145deg, #f5a623, #e0951c); font-size: clamp(0.9rem, 2vw, 1.1rem);">
-              Fight Solo Again
-            </button>
-            
-            <button class="restart-button" onclick="window.location.href='../character-select.html'" 
-                    style="background: linear-gradient(145deg, #6c757d, #5a6268); font-size: clamp(0.9rem, 2vw, 1.1rem);">
-              New Character
-            </button>
-          </div>
-        </div>
-        
-        <style>
-          @keyframes victoryGlow {
-            0%, 100% { text-shadow: 2px 2px 0px #000, 0 0 20px rgba(255,221,68,0.5); }
-            50% { text-shadow: 2px 2px 0px #000, 0 0 30px rgba(255,221,68,0.8), 0 0 40px rgba(255,221,68,0.3); }
-          }
-          
-          .adventure-continue::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.8s ease;
-          }
-          
-          .adventure-continue:hover::before {
-            left: 100%;
-          }
-          
-          @media (max-width: 768px) {
-            .progression-buttons {
-              flex-direction: column;
-              align-items: center;
-            }
-            .progression-buttons .restart-button {
-              width: 90%;
-              max-width: 300px;
-            }
-          }
-        </style>
-      `;
-    }
-  },
-  
-  // ═══════════════════════════════════════════════════════════════════════════════
   // RESTART BUTTON SYSTEM
-  // Fallback restart button for defeats
+  // Display options after battle completion
   // ═══════════════════════════════════════════════════════════════════════════════
   
   showRestartButton(text) {
@@ -682,37 +597,6 @@ const Battle1v1System = {
     this.updateBattleButton();
     console.log(`Battle state: ${this.currentTurn}, In Progress: ${this.battleInProgress}`);
   }
-}; // ← This closing brace was missing in your original file!
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// GLOBAL FUNCTIONS
-// Functions that need to be available globally for onclick handlers
-// ═══════════════════════════════════════════════════════════════════════════════
-
-// Global function for continuing adventure (called from victory screen)
-window.continueAdventure = function() {
-  // Show loading
-  const loadingOverlay = document.getElementById('loading-overlay');
-  if (loadingOverlay) {
-    loadingOverlay.style.display = 'flex';
-    const loadingText = loadingOverlay.querySelector('.loading-text');
-    if (loadingText) {
-      loadingText.textContent = 'Simon joins the adventure...';
-    }
-  }
-  
-  // Store progression state
-  try {
-    sessionStorage.setItem('battleProgression', 'simon_joined');
-    sessionStorage.setItem('previousVictory', 'battle1v1-1');
-  } catch (e) {
-    console.warn('Could not store progression state');
-  }
-  
-  // Navigate to team battle after delay
-  setTimeout(() => {
-    window.location.href = 'battle1v1-2.html';
-  }, 2000);
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
