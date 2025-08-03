@@ -752,3 +752,6 @@ window.continueAdventure = function() {
 window.Battle1v1 = Battle1v1System;
 
 console.log("=== BATTLE 1V1 SYSTEM LOADED SUCCESSFULLY ===");
+
+
+window.Battle1v1 = Battle1v1;
