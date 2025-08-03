@@ -4,6 +4,61 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 console.log("=== LOADING BATTLE 1V1 SYSTEM ===");
+// ═══════════════════════════════════════════════════════════════════════════════
+// ADD this function to battle-1v1.js right after the initial console.log
+// This normalizes character selection data for battle use
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function normalizeCharacterData(rawData) {
+  console.log('Normalizing character data:', rawData);
+  
+  // If the data is already in battle format, return as-is
+  if (rawData.hp && rawData.atk && rawData.img) {
+    console.log('Data already normalized');
+    return rawData;
+  }
+  
+  // Convert character selection format to battle format
+  const normalized = {
+    name: rawData.name || 'Unknown',
+    hp: 30, // Default stats
+    atk: 10,
+    img: rawData.thumbImage || rawData.fullImage || rawData.img || '../images/Magdaline.png',
+    desc: rawData.description || rawData.desc || 'A mysterious fighter.',
+    special: rawData.ability || rawData.special || 'Basic Attack',
+    isPet: rawData.isPet || false
+  };
+  
+  // Fix image path (character select uses 'images/' but battle needs '../images/')
+  if (normalized.img && !normalized.img.startsWith('../')) {
+    normalized.img = '../' + normalized.img;
+  }
+  
+  // Character-specific stats and descriptions
+  switch (rawData.name?.toLowerCase()) {
+    case 'magdaline':
+      normalized.hp = 30;
+      normalized.atk = 10;
+      normalized.desc = 'Gentle healer. Touched by glimmering light.';
+      normalized.special = 'Luminous Veil';
+      break;
+    case 'fizzwick':
+      normalized.hp = 30;
+      normalized.atk = 10;
+      normalized.desc = 'Fast, clever, and full of sparks.';
+      normalized.special = 'Spark Trick';
+      break;
+    case 'timothy':
+      normalized.hp = 30;
+      normalized.atk = 10;
+      normalized.desc = 'Brave and kind. Searches for sprouting light.';
+      normalized.special = 'Plant Blessing';
+      break;
+  }
+  
+  console.log('Normalized character data:', normalized);
+  return normalized;
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ADD this TEMPORARILY at the very top of battle-1v1.js (after the console.log)
