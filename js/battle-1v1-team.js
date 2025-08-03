@@ -596,21 +596,22 @@ const Battle1v1TeamSystem = {
   // Display options after battle completion
   // ═══════════════════════════════════════════════════════════════════════════════
   
-  showRestartButton(text) {
-    const restartContainer = document.getElementById("restart-container");
-    if (restartContainer) {
-      const isVictory = text.includes("Victory");
-      restartContainer.innerHTML = `
-        <button class="restart-button" onclick="window.location.reload()">
-          ${text}
-        </button>
-        <button class="restart-button" onclick="window.location.href='../character-select.html'" style="margin-left: 1rem;">
-          Choose New Character
-        </button>
-        ${isVictory ? '<button class="restart-button" onclick="window.location.href=\'battle1v1-3.html\'" style="margin-left: 1rem; background: #4CAF50;">Next Battle →</button>' : ''}
-      `;
-    }
-  },
+// Replace the showRestartButton method in battle-1v1-team.js (around line 650)
+showRestartButton(text) {
+  const restartContainer = document.getElementById("restart-container");
+  if (restartContainer) {
+    const isVictory = text.includes("Victory");
+    restartContainer.innerHTML = `
+      <button class="restart-button" onclick="window.location.reload()">
+        ${text}
+      </button>
+      <button class="restart-button" onclick="window.location.href='../character-select.html'" style="margin-left: 1rem;">
+        Choose New Character
+      </button>
+      ${isVictory ? '<button class="restart-button" onclick="window.location.href=\'battle1v1-3.html\'" style="margin-left: 1rem; background: #4CAF50;">Final Battle →</button>' : ''}
+    `;
+  }
+},
   
   // ═══════════════════════════════════════════════════════════════════════════════
   // UTILITY FUNCTIONS
