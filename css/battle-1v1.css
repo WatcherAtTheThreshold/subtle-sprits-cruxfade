@@ -26,7 +26,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: clamp(2rem, 6vh, 4rem);
+  gap: clamp(2.5rem, 6vh, 4.5rem); /* Slightly increased base gap */
   width: 100%;
   max-width: 100%;
   position: relative;
@@ -38,8 +38,8 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: clamp(3rem, 12vw, 6rem); /* Reduced max gap from 8rem to 6rem */
-    max-width: min(85vw, 900px); /* Constrain the container width */
+    gap: clamp(4rem, 12vw, 7rem); /* Increased gap for better breathing room */
+    max-width: min(90vw, 1100px); /* Increased container width */
     padding: 0 clamp(1rem, 3vw, 2rem);
   }
 }
@@ -47,8 +47,8 @@
 /* Even larger screens: further constraint for optimal viewing */
 @media (orientation: landscape) and (min-width: 1200px) {
   .board.battle-1v1 .battle-arena-inner {
-    max-width: 800px; /* Fixed max width on very large screens */
-    gap: clamp(4rem, 8vw, 5rem); /* Controlled gap */
+    max-width: 1000px; /* Increased max width on very large screens */
+    gap: clamp(5rem, 10vw, 8rem); /* More generous gap */
   }
 }
 
@@ -443,7 +443,7 @@
 /* Mobile portrait: stack vertically with drama */
 @media (max-width: 768px) and (orientation: portrait) {
   .board.battle-1v1 .battle-arena-inner {
-    gap: clamp(1.5rem, 4vh, 3rem);
+    gap: clamp(2rem, 5vh, 4rem); /* Slightly increased gap for better spacing */
     padding: 0 clamp(0.5rem, 2vw, 1rem);
     max-width: 100%;
   }
@@ -463,8 +463,8 @@
 @media (max-width: 768px) and (orientation: landscape) {
   .board.battle-1v1 .battle-arena-inner {
     flex-direction: row;
-    gap: clamp(1rem, 6vw, 3rem);
-    max-width: min(90vw, 600px); /* Constrain on mobile landscape too */
+    gap: clamp(2rem, 8vw, 4rem); /* Increased gap for mobile landscape */
+    max-width: min(92vw, 700px); /* Slightly larger container on mobile landscape */
     padding: 0 clamp(0.5rem, 2vw, 1rem);
   }
   
