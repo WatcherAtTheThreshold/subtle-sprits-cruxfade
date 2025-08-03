@@ -90,12 +90,33 @@ const Battle1v1System = {
       return false;
     }
     
-    // Get player character from session storage
-    const playerCharacter = window.battleState.getPlayerCharacterData();
-    if (!playerCharacter) {
-      console.error("No player character found!");
-      return false;
-    }
+    // ═══════════════════════════════════════════════════════════════════════════════
+// REPLACE only the highlighted blue section (lines 125-139) with this:
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Get player character from session storage
+const rawPlayerCharacter = window.battleState.getPlayerCharacterData();
+if (!rawPlayerCharacter) {
+  console.error("No player character found!");
+  return false;
+}
+
+// Normalize the player character data for battle
+const playerCharacter = normalizeCharacterData(rawPlayerCharacter);
+console.log('Final player character for battle:', playerCharacter);
+
+// Get random enemy for battle
+const enemyCharacter = window.BattleShared.RosterUtils.getRandomEnemy();
+if (!enemyCharacter) {
+  console.error("No enemy found!");
+  return false;
+}
+
+// Create battle cards and display them
+this.createBattleCards(playerCharacter, enemyCharacter);
+
+console.log("Turn-based battle initialized successfully!");
+return true;
     
     // Get random enemy for battle
     const enemyCharacter = window.BattleShared.RosterUtils.getRandomEnemy();
