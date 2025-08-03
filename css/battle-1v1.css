@@ -1,9 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════════════════════
    BATTLE 1V1 - Specific styling for one-on-one battles (Level 1)
+   Updated with constrained container for better card positioning
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   1V1 ARENA LAYOUT - Dramatic face-off positioning
+   1V1 ARENA LAYOUT - Dramatic face-off positioning with constrained container
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 /* Main battle container for 1v1 */
@@ -13,25 +14,45 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: clamp(2rem, 6vh, 4rem);
   padding: clamp(1rem, 3vh, 2rem);
   min-height: 0;
   overflow: visible;
   position: relative;
 }
 
-/* Landscape: side-by-side dramatic face-off */
+/* Inner constrained container to keep cards closer together */
+.board.battle-1v1 .battle-arena-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(2rem, 6vh, 4rem);
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+}
+
+/* Landscape: side-by-side with controlled maximum separation */
 @media (orientation: landscape) and (min-width: 768px) {
-  .board.battle-1v1 {
+  .board.battle-1v1 .battle-arena-inner {
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    gap: clamp(3rem, 8vw, 8rem);
-    padding: clamp(1rem, 4vh, 3rem) clamp(2rem, 6vw, 4rem);
+    gap: clamp(3rem, 12vw, 6rem); /* Reduced max gap from 8rem to 6rem */
+    max-width: min(85vw, 900px); /* Constrain the container width */
+    padding: 0 clamp(1rem, 3vw, 2rem);
   }
 }
 
-/* Battle arena visual effects */
+/* Even larger screens: further constraint for optimal viewing */
+@media (orientation: landscape) and (min-width: 1200px) {
+  .board.battle-1v1 .battle-arena-inner {
+    max-width: 800px; /* Fixed max width on very large screens */
+    gap: clamp(4rem, 8vw, 5rem); /* Controlled gap */
+  }
+}
+
+/* Battle arena visual effects - adjusted for new container */
 .board.battle-1v1::before {
   content: "";
   position: absolute;
@@ -62,7 +83,7 @@
   }
 }
 
-/* VS indicator in the center */
+/* VS indicator in the center - positioned relative to the constrained area */
 .board.battle-1v1::after {
   content: "⚔️";
   position: absolute;
@@ -88,10 +109,10 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   1V1 TEAM AREAS - Player and enemy positioning
+   1V1 TEAM AREAS - Player and enemy positioning within constrained area
    ═══════════════════════════════════════════════════════════════════════════════ */
 
-/* Team containers for 1v1 */
+/* Team containers for 1v1 - now positioned within the inner container */
 #player-team,
 #enemy-team {
   display: flex;
@@ -99,27 +120,29 @@
   align-items: center;
   position: relative;
   z-index: 2;
+  flex: 0 0 auto; /* Don't grow or shrink */
 }
 
-/* Player area (left side or bottom) */
+/* Player area positioning */
 #player-team {
   order: 1;
 }
 
-/* Enemy area (right side or top) */
+/* Enemy area positioning */
 #enemy-team {
   order: 2;
 }
 
+/* Landscape specific positioning */
 @media (orientation: landscape) and (min-width: 768px) {
   #player-team {
     order: 1;
-    justify-content: flex-end;
+    justify-content: center;
   }
   
   #enemy-team {
     order: 2;
-    justify-content: flex-start;
+    justify-content: center;
   }
 }
 
@@ -419,9 +442,10 @@
 
 /* Mobile portrait: stack vertically with drama */
 @media (max-width: 768px) and (orientation: portrait) {
-  .board.battle-1v1 {
+  .board.battle-1v1 .battle-arena-inner {
     gap: clamp(1.5rem, 4vh, 3rem);
-    padding: clamp(0.5rem, 2vh, 1.5rem);
+    padding: 0 clamp(0.5rem, 2vw, 1rem);
+    max-width: 100%;
   }
   
   .battle-1v1 .card {
@@ -435,12 +459,13 @@
   }
 }
 
-/* Mobile landscape: side-by-side with reduced spacing */
+/* Mobile landscape: side-by-side with constrained spacing */
 @media (max-width: 768px) and (orientation: landscape) {
-  .board.battle-1v1 {
+  .board.battle-1v1 .battle-arena-inner {
     flex-direction: row;
-    gap: clamp(1rem, 4vw, 2rem);
-    padding: clamp(0.5rem, 2vh, 1rem) clamp(1rem, 3vw, 2rem);
+    gap: clamp(1rem, 6vw, 3rem);
+    max-width: min(90vw, 600px); /* Constrain on mobile landscape too */
+    padding: 0 clamp(0.5rem, 2vw, 1rem);
   }
   
   .battle-1v1 .card {
@@ -451,8 +476,9 @@
 
 /* Very small screens: compact but still dramatic */
 @media (max-width: 480px) {
-  .board.battle-1v1 {
+  .board.battle-1v1 .battle-arena-inner {
     gap: clamp(1rem, 3vh, 2rem);
+    max-width: 100%;
   }
   
   .battle-1v1 .card {
