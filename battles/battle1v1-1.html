@@ -24,18 +24,23 @@
   <!-- Special move information display -->
   <div id="special-info" class="hidden">&nbsp;</div>
   
-  <!-- Main battle arena -->
+  <!-- Main battle arena with constrained container -->
   <main class="board battle-1v1" id="battle-board">
     
-    <!-- Player team area (hero) -->
-    <section id="player-team" class="team-area" role="region" aria-label="Your Character">
-      <!-- Player character card will be inserted here by JavaScript -->
-    </section>
-    
-    <!-- Enemy team area (villain) -->
-    <section id="enemy-team" class="team-area" role="region" aria-label="Enemy Character">
-      <!-- Enemy character card will be inserted here by JavaScript -->
-    </section>
+    <!-- Inner constrained container to keep cards closer together -->
+    <div class="battle-arena-inner">
+      
+      <!-- Player team area (hero) -->
+      <section id="player-team" class="team-area" role="region" aria-label="Your Character">
+        <!-- Player character card will be inserted here by JavaScript -->
+      </section>
+      
+      <!-- Enemy team area (villain) -->
+      <section id="enemy-team" class="team-area" role="region" aria-label="Enemy Character">
+        <!-- Enemy character card will be inserted here by JavaScript -->
+      </section>
+      
+    </div>
     
   </main>
   
