@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Subtle Spirits: Cruxfade – 4v4 Battle</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Barlow+Semi+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Modular CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/battle-styles.css">
+</head>
+<body>
+  <div class="mist-overlay"></div>
+
+  <h1 id="battle-status">Round 1</h1>
+  <h2 id="special-info" class="hidden">&nbsp;</h2>
+
+  <div class="board">
+    <div class="team-column" id="player-team"></div>
+    <div class="team-column" id="enemy-team"></div>
+  </div>
+
+  <div class="button-controls">
+    <button class="action-button" id="battle-button" onclick="startBattle()">Start Game</button>
+    <div id="restart-container"></div>
+  </div>
+
+  <!-- Modular JS - Load in correct order -->
+  <script src="js/battle-core.js"></script>
+  <script src="js/battle-ui.js"></script>
+  
+  <!-- Initialize the game -->
+  <script>
+    // Initialize the battle system when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      window.BattleUI.initializeBattleUI();
+    });
+
+    // Fallback initialization if DOMContentLoaded already fired
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        window.BattleUI.initializeBattleUI();
+      });
+    } else {
+      window.BattleUI.initializeBattleUI();
+    }
+
+    // Make startBattle available globally for the onclick handler
+    function startBattle() {
+      window.BattleCore.startBattle();
+    }
+  </script>
+</body>
+</html>
