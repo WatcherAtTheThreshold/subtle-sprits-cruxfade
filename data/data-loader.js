@@ -1,408 +1,181 @@
-// ═══════════════════════════════════════════════════════════════════════════════
-// DATA LOADER - Central data management system
-// Loads and manages all game data from separate files
-// ═══════════════════════════════════════════════════════════════════════════════
+// Create or replace data/data-loader.js
+console.log("=== IMPROVED DATA LOADER START ===");
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// DATA LOADER CLASS
-// Manages loading, caching, and accessing game data
-// ═══════════════════════════════════════════════════════════════════════════════
+// Global data storage
+window.GameData = {
+  characters: {},
+  enemies: [],
+  specials: {},
+  items: {},
+  loaded: false
+};
 
-class GameDataLoader {
-  constructor() {
-    this.isLoaded = false;
-    this.loadingPromise = null;
-    this.data = {
-      characters: null,
-      enemies: null,
-      specials: null,
-      items: null
-    };
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════════
-  // LOADING SYSTEM
-  // Asynchronously load all data files
-  // ═══════════════════════════════════════════════════════════════════════════════
-
+// Enhanced data loader with fallback system
+window.DataLoader = {
+  
+  // Load all data files with proper error handling
   async loadAllData() {
-    if (this.isLoaded) return this.data;
-    if (this.loadingPromise) return this.loadingPromise;
-
-    this.loadingPromise = this._performLoad();
-    return this.loadingPromise;
-  }
-
-  async _performLoad() {
     console.log("Loading game data...");
-
+    
     try {
-      // For now, we'll use the data from window objects
-      // In the future, these could be dynamic imports or fetch requests
+      // Try to load each data file
+      await Promise.allSettled([
+        this.loadCharacters(),
+        this.loadEnemies(), 
+        this.loadSpecials(),
+        this.loadItems()
+      ]);
       
-      await this._loadCharacterData();
-      await this._loadEnemyData();
-      await this._loadSpecialsData();
-      await this._loadItemsData();
-
-      this.isLoaded = true;
-      console.log("All game data loaded successfully!");
+      window.GameData.loaded = true;
+      console.log("✓ Game data loaded successfully");
+      this.logDataStatus();
       
-      return this.data;
     } catch (error) {
-      console.error("Failed to load game data:", error);
-      throw error;
+      console.warn("Some data files failed to load, using fallbacks:", error);
+      this.setupFallbackData();
     }
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════════
-  // INDIVIDUAL DATA LOADERS
-  // Load specific data categories
-  // ═══════════════════════════════════════════════════════════════════════════════
-
-  async _loadCharacterData() {
-    // Check if data is available in window (loaded via script tags)
-    if (window.CharacterData) {
-      this.data.characters = window.CharacterData;
-      console.log("✓ Character data loaded");
-      return;
-    }
-
-    // Fallback: Use embedded data
-    this.data.characters = {
-      PLAYER_CHARACTERS: {
-        magdaline: {
-          name: "Magdaline",
-          type: "Healer",
-          hp: 30,
-          atk: 10,
-          img: "../images/Magdaline.png",
-          desc: "Gentle healer. Touched by glimmering light.",
-          special: "Luminous Veil",
-          isPet: false
+  },
+  
+  // Load character data
+  async loadCharacters() {
+    if (window.CharacterData && window.CharacterData.PLAYER_CHARACTERS) {
+      window.GameData.characters = window.CharacterData.PLAYER_CHARACTERS;
+      console.log("✓ Characters loaded from data file");
+    } else {
+      // Fallback character data
+      window.GameData.characters = {
+        magdaline: { 
+          name: "Magdaline", 
+          hp: 30, 
+          atk: 10, 
+          img: "../images/Magdaline.png", 
+          desc: "Gentle healer. Touched by glimmering light.", 
+          special: "Luminous Veil", 
+          isPet: false 
         },
-        fizzwick: {
-          name: "Fizzwick",
-          type: "Striker",
-          hp: 30,
-          atk: 10,
-          img: "../images/Fizzwick.png",
-          desc: "Fast, clever, and full of sparks.",
-          special: "Spark Trick",
-          isPet: false
+        fizzwick: { 
+          name: "Fizzwick", 
+          hp: 30, 
+          atk: 10, 
+          img: "../images/Fizzwick.png", 
+          desc: "Fast, clever, and full of sparks.", 
+          special: "Spark Trick", 
+          isPet: false 
         },
-        timothy: {
-          name: "Timothy",
-          type: "Support",
-          hp: 30,
-          atk: 10,
-          img: "../images/Timothy.png",
-          desc: "Brave and kind. Searches for sprouting light.",
-          special: "Plant Blessing",
-          isPet: false
+        timothy: { 
+          name: "Timothy", 
+          hp: 30, 
+          atk: 10, 
+          img: "../images/Timothy.png", 
+          desc: "Brave and kind. Searches for sprouting light.", 
+          special: "Plant Blessing", 
+          isPet: false 
         }
+      };
+      console.log("⚠ Using fallback character data");
+    }
+  },
+  
+  // Load enemy data  
+  async loadEnemies() {
+    if (window.EnemyData && window.EnemyData.LEVEL_1_ENEMIES) {
+      window.GameData.enemies = Object.values(window.EnemyData.LEVEL_1_ENEMIES);
+      console.log("✓ Enemies loaded from data file");
+    } else {
+      // Fallback enemy data
+      window.GameData.enemies = [
+        { name: "Gwar", hp: 30, atk: 10, img: "../images/Gwar.png", desc: "Heavy brute. Follows the sound of war.", special: "Skull Bash", isPet: false },
+        { name: "Mildred", hp: 30, atk: 10, img: "../images/Mildred.png", desc: "Old fire. Unforgiving and wild.", special: "Wildfire Curse", isPet: false },
+        { name: "Dr-Burgly", hp: 30, atk: 10, img: "../images/Dr-Burgly.png", desc: "Mad medic. Stitches shadows together.", special: "Panic Injection", isPet: false }
+      ];
+      console.log("⚠ Using fallback enemy data");
+    }
+  },
+  
+  // Load special moves
+  async loadSpecials() {
+    if (window.SpecialData && window.SpecialData.SPECIAL_MOVES) {
+      window.GameData.specials = window.SpecialData.SPECIAL_MOVES;
+      console.log("✓ Specials loaded from data file");
+    } else {
+      window.GameData.specials = {};
+      console.log("⚠ No special moves data file found");
+    }
+  },
+  
+  // Load items
+  async loadItems() {
+    if (window.ItemData && window.ItemData.ITEMS) {
+      window.GameData.items = window.ItemData.ITEMS;
+      console.log("✓ Items loaded from data file");
+    } else {
+      window.GameData.items = {};
+      console.log("⚠ No items data file found");
+    }
+  },
+  
+  // Setup fallback data if files completely fail
+  setupFallbackData() {
+    window.GameData = {
+      characters: {
+        magdaline: { name: "Magdaline", hp: 30, atk: 10, img: "../images/Magdaline.png", desc: "Gentle healer. Touched by glimmering light.", special: "Luminous Veil", isPet: false },
+        fizzwick: { name: "Fizzwick", hp: 30, atk: 10, img: "../images/Fizzwick.png", desc: "Fast, clever, and full of sparks.", special: "Spark Trick", isPet: false },
+        timothy: { name: "Timothy", hp: 30, atk: 10, img: "../images/Timothy.png", desc: "Brave and kind. Searches for sprouting light.", special: "Plant Blessing", isPet: false }
       },
-      CharacterUtils: {
-        getCharacter: (key) => this.data.characters.PLAYER_CHARACTERS[key] || null,
-        getAvailableCharacters: () => Object.keys(this.data.characters.PLAYER_CHARACTERS)
-          .map(key => ({ key, ...this.data.characters.PLAYER_CHARACTERS[key] }))
-      }
+      enemies: [
+        { name: "Gwar", hp: 30, atk: 10, img: "../images/Gwar.png", desc: "Heavy brute. Follows the sound of war.", special: "Skull Bash", isPet: false },
+        { name: "Mildred", hp: 30, atk: 10, img: "../images/Mildred.png", desc: "Old fire. Unforgiving and wild.", special: "Wildfire Curse", isPet: false },
+        { name: "Dr-Burgly", hp: 30, atk: 10, img: "../images/Dr-Burgly.png", desc: "Mad medic. Stitches shadows together.", special: "Panic Injection", isPet: false }
+      ],
+      specials: {},
+      items: {},
+      loaded: true
     };
+    console.log("✓ Fallback data system activated");
+  },
+  
+  // Log current data status
+  logDataStatus() {
+    console.log("=== GAME DATA STATUS ===");
+    console.log(`Characters: ${Object.keys(window.GameData.characters).length}`);
+    console.log(`Enemies: ${window.GameData.enemies.length}`);
+    console.log(`Specials: ${Object.keys(window.GameData.specials).length}`);
+    console.log(`Items: ${Object.keys(window.GameData.items).length}`);
+    console.log("========================");
+  },
+  
+  // Get character by key
+  getCharacter(key) {
+    return window.GameData.characters[key] || null;
+  },
+  
+  // Get random enemy
+  getRandomEnemy() {
+    const enemies = window.GameData.enemies;
+    return enemies[Math.floor(Math.random() * enemies.length)];
+  },
+  
+  // Get multiple random enemies
+  getEnemyTeam(count = 2) {
+    const enemies = [...window.GameData.enemies];
+    const team = [];
     
-    console.log("✓ Character data loaded (fallback)");
-  }
-
-  async _loadEnemyData() {
-    if (window.EnemyData) {
-      this.data.enemies = window.EnemyData;
-      console.log("✓ Enemy data loaded");
-      return;
-    }
-
-    // Fallback: Use embedded data
-    this.data.enemies = {
-      LEVEL_1_ENEMIES: {
-        gwar: {
-          name: "Gwar",
-          hp: 30,
-          atk: 10,
-          img: "../images/Gwar.png",
-          desc: "Heavy brute. Follows the sound of war.",
-          special: "Skull Bash",
-          isPet: false
-        },
-        mildred: {
-          name: "Mildred",
-          hp: 30,
-          atk: 10,
-          img: "../images/Mildred.png",
-          desc: "Old fire. Unforgiving and wild.",
-          special: "Wildfire Curse",
-          isPet: false
-        },
-        drBurgly: {
-          name: "Dr-Burgly",
-          hp: 30,
-          atk: 10,
-          img: "../images/Dr-Burgly.png",
-          desc: "Mad medic. Stitches shadows together.",
-          special: "Panic Injection",
-          isPet: false
-        }
-      },
-      EnemyUtils: {
-        getRandomEnemy: (level = 1) => {
-          const enemies = Object.keys(this.data.enemies.LEVEL_1_ENEMIES)
-            .map(key => ({ key, ...this.data.enemies.LEVEL_1_ENEMIES[key] }));
-          return enemies[Math.floor(Math.random() * enemies.length)];
-        }
-      }
-    };
-    
-    console.log("✓ Enemy data loaded (fallback)");
-  }
-
-  async _loadSpecialsData() {
-    if (window.SpecialsData) {
-      this.data.specials = window.SpecialsData;
-      console.log("✓ Specials data loaded");
-      return;
-    }
-
-    // Fallback: Basic specials data
-    this.data.specials = {
-      SPECIAL_MOVES: {
-        "Luminous Veil": {
-          name: "Luminous Veil",
-          type: "heal",
-          power: 8,
-          description: "Heals for 8 HP with divine light"
-        },
-        "Spark Trick": {
-          name: "Spark Trick",
-          type: "damage",
-          power: 15,
-          description: "Deals 15 electric damage with stunning power"
-        },
-        "Plant Blessing": {
-          name: "Plant Blessing",
-          type: "heal",
-          power: 10,
-          description: "Channels nature's power, healing 10 HP"
-        }
-      },
-      SpecialUtils: {
-        getSpecial: (name) => this.data.specials.SPECIAL_MOVES[name] || null
-      }
-    };
-    
-    console.log("✓ Specials data loaded (fallback)");
-  }
-
-  async _loadItemsData() {
-    if (window.ItemsData) {
-      this.data.items = window.ItemsData;
-      console.log("✓ Items data loaded");
-      return;
-    }
-
-    // Fallback: Basic items data (for future use)
-    this.data.items = {
-      CONSUMABLE_ITEMS: {},
-      EQUIPMENT_ITEMS: {},
-      COLLECTIBLE_ITEMS: {},
-      ItemUtils: {
-        getItem: (key) => null
-      }
-    };
-    
-    console.log("✓ Items data loaded (fallback)");
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════════
-  // DATA ACCESS METHODS
-  // Easy access to loaded data
-  // ═══════════════════════════════════════════════════════════════════════════════
-
-  // Character data access
-  getPlayerCharacters() {
-    return this.data.characters?.PLAYER_CHARACTERS || {};
-  }
-
-  getPlayerCharacter(key) {
-    return this.data.characters?.CharacterUtils?.getCharacter(key) || null;
-  }
-
-  getAvailableCharacters() {
-    return this.data.characters?.CharacterUtils?.getAvailableCharacters() || [];
-  }
-
-  // Enemy data access
-  getEnemies(level = 1) {
-    return this.data.enemies?.LEVEL_1_ENEMIES || {};
-  }
-
-  getRandomEnemy(level = 1) {
-    return this.data.enemies?.EnemyUtils?.getRandomEnemy(level) || null;
-  }
-
-  // Special moves access
-  getSpecialMove(name) {
-    return this.data.specials?.SpecialUtils?.getSpecial(name) || null;
-  }
-
-  getAllSpecials() {
-    return this.data.specials?.SPECIAL_MOVES || {};
-  }
-
-  // Items access
-  getItem(key) {
-    return this.data.items?.ItemUtils?.getItem(key) || null;
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════════
-  // UTILITY METHODS
-  // Helper functions for data management
-  // ═══════════════════════════════════════════════════════════════════════════════
-
-  isDataLoaded() {
-    return this.isLoaded;
-  }
-
-  // Get loading progress (for loading screens)
-  getLoadingProgress() {
-    const loaded = Object.values(this.data).filter(d => d !== null).length;
-    const total = Object.keys(this.data).length;
-    return Math.round((loaded / total) * 100);
-  }
-
-  // Validate data integrity
-  validateData() {
-    const issues = [];
-    
-    // Check characters
-    const characters = this.getPlayerCharacters();
-    if (Object.keys(characters).length === 0) {
-      issues.push("No player characters loaded");
+    for (let i = 0; i < count && enemies.length > 0; i++) {
+      const randomIndex = Math.floor(Math.random() * enemies.length);
+      team.push(enemies.splice(randomIndex, 1)[0]);
     }
     
-    // Check enemies
-    const enemies = this.getEnemies();
-    if (Object.keys(enemies).length === 0) {
-      issues.push("No enemies loaded");
-    }
-    
-    // Check specials
-    const specials = this.getAllSpecials();
-    if (Object.keys(specials).length === 0) {
-      issues.push("No special moves loaded");
-    }
-    
-    return {
-      valid: issues.length === 0,
-      issues: issues
-    };
+    return team;
   }
+};
 
-  // Debug information
-  getDebugInfo() {
-    return {
-      isLoaded: this.isLoaded,
-      loadingProgress: this.getLoadingProgress(),
-      characterCount: Object.keys(this.getPlayerCharacters()).length,
-      enemyCount: Object.keys(this.getEnemies()).length,
-      specialCount: Object.keys(this.getAllSpecials()).length,
-      validation: this.validateData()
-    };
-  }
+// Auto-load data when this script loads
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => window.DataLoader.loadAllData(), 100);
+  });
+} else {
+  setTimeout(() => window.DataLoader.loadAllData(), 100);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// GLOBAL DATA MANAGER
-// Singleton instance for global access
-// ═══════════════════════════════════════════════════════════════════════════════
-
-// Create global instance
-const gameDataLoader = new GameDataLoader();
-
-// Initialize data loading when DOM is ready
-document.addEventListener('DOMContentLoaded', async () => {
-  try {
-    await gameDataLoader.loadAllData();
-    console.log("Game data initialization complete!");
-    
-    // Trigger custom event for other systems
-    window.dispatchEvent(new CustomEvent('gameDataLoaded', {
-      detail: gameDataLoader.getDebugInfo()
-    }));
-  } catch (error) {
-    console.error("Failed to initialize game data:", error);
-    
-    // Trigger error event
-    window.dispatchEvent(new CustomEvent('gameDataError', {
-      detail: { error: error.message }
-    }));
-  }
-});
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// COMPATIBILITY LAYER
-// Bridge between new data system and existing code
-// ═══════════════════════════════════════════════════════════════════════════════
-
-// Update existing battleState to use new data system
-if (typeof window !== 'undefined') {
-  // Enhanced battleState that uses the new data loader
-  window.battleState = {
-    selectedCharacter: null,
-    
-    async getPlayerCharacterData() {
-      await gameDataLoader.loadAllData();
-      
-      try {
-        const characterKey = sessionStorage.getItem('selectedCharacter');
-        if (characterKey) {
-          const character = gameDataLoader.getPlayerCharacter(characterKey);
-          if (character) return character;
-        }
-      } catch (e) {
-        console.warn('Could not load character from session storage');
-      }
-      
-      // Fallback to first available character
-      const available = gameDataLoader.getAvailableCharacters();
-      return available.length > 0 ? available[0] : null;
-    }
-  };
-
-  // Enhanced BattleShared with new data system
-  window.BattleShared = {
-    ...window.BattleShared,
-    
-    RosterUtils: {
-      async getRandomEnemy() {
-        await gameDataLoader.loadAllData();
-        return gameDataLoader.getRandomEnemy(1);
-      }
-    },
-    
-    // Add data loader access
-    DataLoader: gameDataLoader
-  };
-
-  // Global access to data loader
-  window.GameData = gameDataLoader;
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// EXPORT FOR MODULE SYSTEM
-// Make available for import in other files
-// ═══════════════════════════════════════════════════════════════════════════════
-
-// For ES6 modules
-export default gameDataLoader;
-
-// Also export the class for creating additional instances
-export { GameDataLoader };
-
-console.log("Data loader system initialized!");
+console.log("=== IMPROVED DATA LOADER END ===");
