@@ -4,62 +4,38 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 console.log("=== LOADING BATTLE 1V1 SYSTEM ===");
+
 // ═══════════════════════════════════════════════════════════════════════════════
-// ADD this function to battle-1v1.js right after the initial console.log
-// This normalizes character selection data for battle use
+// ADD this TEMPORARILY at the very top of battle-1v1.js (after the console.log)
+// This will help us see exactly what's going wrong
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function normalizeCharacterData(rawData) {
-  console.log('Normalizing character data:', rawData);
-  
-  // If the data is already in battle format, return as-is
-  if (rawData.hp && rawData.atk && rawData.img) {
-    console.log('Data already normalized');
-    return rawData;
-  }
-  
-  // Convert character selection format to battle format
-  const normalized = {
-    name: rawData.name || 'Unknown',
-    hp: 30, // Default stats
-    atk: 10,
-    img: rawData.thumbImage || rawData.fullImage || rawData.img || '../images/Magdaline.png',
-    desc: rawData.description || rawData.desc || 'A mysterious fighter.',
-    special: rawData.ability || rawData.special || 'Basic Attack',
-    isPet: rawData.isPet || false
-  };
-  
-  // Fix image path (character select uses 'images/' but battle needs '../images/')
-  if (normalized.img && !normalized.img.startsWith('../')) {
-    normalized.img = '../' + normalized.img;
-  }
-  
-  // Character-specific stats and descriptions
-  switch (rawData.name?.toLowerCase()) {
-    case 'magdaline':
-      normalized.hp = 30;
-      normalized.atk = 10;
-      normalized.desc = 'Gentle healer. Touched by glimmering light.';
-      normalized.special = 'Luminous Veil';
-      break;
-    case 'fizzwick':
-      normalized.hp = 30;
-      normalized.atk = 10;
-      normalized.desc = 'Fast, clever, and full of sparks.';
-      normalized.special = 'Spark Trick';
-      break;
-    case 'timothy':
-      normalized.hp = 30;
-      normalized.atk = 10;
-      normalized.desc = 'Brave and kind. Searches for sprouting light.';
-      normalized.special = 'Plant Blessing';
-      break;
-  }
-  
-  console.log('Normalized character data:', normalized);
-  return normalized;
-}
+console.log("=== DEBUG CHARACTER DATA ===");
 
+// Check session storage
+console.log("Session Storage Data:");
+console.log("selectedCharacter:", sessionStorage.getItem('selectedCharacter'));
+console.log("characterData:", sessionStorage.getItem('characterData'));
+
+// Check what battleState returns
+setTimeout(() => {
+  if (window.battleState) {
+    console.log("battleState exists!");
+    try {
+      const playerData = window.battleState.getPlayerCharacterData();
+      console.log("Player data from battleState:", playerData);
+      console.log("Player HP:", playerData?.hp);
+      console.log("Player ATK:", playerData?.atk);
+      console.log("Player IMG:", playerData?.img);
+    } catch (error) {
+      console.error("Error getting player data:", error);
+    }
+  } else {
+    console.error("battleState not found!");
+  }
+}, 1000);
+
+console.log("=== END DEBUG ===");
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // MAIN BATTLE SYSTEM OBJECT
@@ -90,33 +66,12 @@ const Battle1v1System = {
       return false;
     }
     
-    // ═══════════════════════════════════════════════════════════════════════════════
-// REPLACE only the highlighted blue section (lines 125-139) with this:
-// ═══════════════════════════════════════════════════════════════════════════════
-
-// Get player character from session storage
-const rawPlayerCharacter = window.battleState.getPlayerCharacterData();
-if (!rawPlayerCharacter) {
-  console.error("No player character found!");
-  return false;
-}
-
-// Normalize the player character data for battle
-const playerCharacter = normalizeCharacterData(rawPlayerCharacter);
-console.log('Final player character for battle:', playerCharacter);
-
-// Get random enemy for battle
-const enemyCharacter = window.BattleShared.RosterUtils.getRandomEnemy();
-if (!enemyCharacter) {
-  console.error("No enemy found!");
-  return false;
-}
-
-// Create battle cards and display them
-this.createBattleCards(playerCharacter, enemyCharacter);
-
-console.log("Turn-based battle initialized successfully!");
-return true;
+    // Get player character from session storage
+    const playerCharacter = window.battleState.getPlayerCharacterData();
+    if (!playerCharacter) {
+      console.error("No player character found!");
+      return false;
+    }
     
     // Get random enemy for battle
     const enemyCharacter = window.BattleShared.RosterUtils.getRandomEnemy();
@@ -372,7 +327,6 @@ return true;
     const status = document.getElementById("battle-status");
     if (status) {
       // Make text mobile-friendly
-      const viewport = window.innerWidth;
       if (viewport <= 768 && message.length > 40) {
         status.textContent = message.substring(0, 37) + "...";
       } else {
@@ -468,7 +422,6 @@ return true;
     await this.sleep(1200);
     
     // Determine attack type (25% chance for special)
-    const useSpecial = this.enemyCard.dataset.specialUsed === 'false' && Math.random() < 0.25;
     
     if (useSpecial) {
       await this.executeSpecialMove(this.enemyCard, this.playerCard);
@@ -509,7 +462,6 @@ return true;
   
   async executeSpecialMove(attacker, target) {
     const specialName = attacker.querySelector(".special-move").textContent;
-    const attackerName = attacker.querySelector(".name-tag").textContent;
     
     // Build up suspense for special move
     this.updateStatus(`${attackerName} charges up their special move...`);
@@ -698,7 +650,6 @@ return true;
   // ═══════════════════════════════════════════════════════════════════════════════
   
   showRestartButton(text) {
-    const restartContainer = document.getElementById("restart-container");
     if (restartContainer) {
       restartContainer.innerHTML = `
         <button class="restart-button" onclick="window.location.reload()">
