@@ -8,32 +8,33 @@ class CharacterSelect {
     this.elements = {};
     
     // Character data mapping
-    this.characterData = {
-      magdaline: {
-        name: 'Magdaline',
-        type: 'Healer',
-        ability: 'Luminous Veil',
-        description: 'Gentle healer. Touched by glimmering light. Special: Luminous Veil - Shields the team from the next hit.',
-        fullImage: 'images/Magdaline-01.png',
-        thumbImage: 'images/Magdaline.png'
-      },
-      fizzwick: {
-        name: 'Fizzwick',
-        type: 'Striker',
-        ability: 'Spark Trick',
-        description: 'Fast, clever, and full of sparks. Special: Spark Trick - Deals extra damage and stuns.',
-        fullImage: 'images/Fizzwick-01.png',
-        thumbImage: 'images/Fizzwick.png'
-      },
-      timothy: {
-        name: 'Timothy',
-        type: 'Support',
-        ability: 'Plant Blessing',
-        description: 'Brave and kind. Searches for sprouting light. Special: Plant Blessing - Heals allies over time.',
-        fullImage: 'images/Timothy-01.png',
-        thumbImage: 'images/Timothy.png'
-      }
-    };
+   // In battle-1v1.js, update the characterData object (around line 25)
+this.characterData = {
+  magdaline: {
+    name: 'Magdaline',
+    type: 'Healer',
+    ability: 'Luminous Veil',
+    description: 'Gentle healer. Touched by glimmering light. Special: Luminous Veil - Shields the team from the next hit.',
+    fullImage: 'images/Magdaline.png', // Changed from Magdaline-01.png
+    thumbImage: 'images/Magdaline.png'
+  },
+  fizzwick: {
+    name: 'Fizzwick',
+    type: 'Striker',
+    ability: 'Spark Trick',
+    description: 'Fast, clever, and full of sparks. Special: Spark Trick - Deals extra damage and stuns.',
+    fullImage: 'images/Fizzwick.png', // Changed from Fizzwick-01.png
+    thumbImage: 'images/Fizzwick.png'
+  },
+  timothy: {
+    name: 'Timothy',
+    type: 'Support',
+    ability: 'Plant Blessing',
+    description: 'Brave and kind. Searches for sprouting light. Special: Plant Blessing - Heals allies over time.',
+    fullImage: 'images/Timothy.png', // Changed from Timothy-01.png
+    thumbImage: 'images/Timothy.png'
+  }
+};
 
     this.init();
   }
