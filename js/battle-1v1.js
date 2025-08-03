@@ -6,6 +6,38 @@
 console.log("=== LOADING BATTLE 1V1 SYSTEM ===");
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// ADD this TEMPORARILY at the very top of battle-1v1.js (after the console.log)
+// This will help us see exactly what's going wrong
+// ═══════════════════════════════════════════════════════════════════════════════
+
+console.log("=== DEBUG CHARACTER DATA ===");
+
+// Check session storage
+console.log("Session Storage Data:");
+console.log("selectedCharacter:", sessionStorage.getItem('selectedCharacter'));
+console.log("characterData:", sessionStorage.getItem('characterData'));
+
+// Check what battleState returns
+setTimeout(() => {
+  if (window.battleState) {
+    console.log("battleState exists!");
+    try {
+      const playerData = window.battleState.getPlayerCharacterData();
+      console.log("Player data from battleState:", playerData);
+      console.log("Player HP:", playerData?.hp);
+      console.log("Player ATK:", playerData?.atk);
+      console.log("Player IMG:", playerData?.img);
+    } catch (error) {
+      console.error("Error getting player data:", error);
+    }
+  } else {
+    console.error("battleState not found!");
+  }
+}, 1000);
+
+console.log("=== END DEBUG ===");
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // MAIN BATTLE SYSTEM OBJECT
 // Core battle state and initialization
 // ═══════════════════════════════════════════════════════════════════════════════
