@@ -309,6 +309,7 @@ const Battle1v1TeamSystem = {
   updateStatus(message) {
     const status = document.getElementById("battle-status");
     if (status) {
+      const viewport = window.innerWidth;
       if (viewport <= 768 && message.length > 40) {
         status.textContent = message.substring(0, 37) + "...";
       } else {
@@ -408,6 +409,7 @@ const Battle1v1TeamSystem = {
   // ═══════════════════════════════════════════════════════════════════════════════
   
   async executeEnemyCharacterTurn(character, opponentTeam) {
+    const characterName = character.querySelector(".name-tag").textContent;
     
     // Highlight character and show status
     character.classList.add("highlight-turn");
@@ -415,6 +417,7 @@ const Battle1v1TeamSystem = {
     await this.sleep(1200);
     
     // Determine attack type (enemies slightly less likely to use specials)
+    const useSpecial = character.dataset.specialUsed === 'false' && Math.random() < 0.25;
     
     if (useSpecial) {
       await this.executeSpecialMove(character, opponentTeam);
@@ -462,6 +465,7 @@ const Battle1v1TeamSystem = {
   
   async executeSpecialMove(attacker, opponentTeam) {
     const specialName = attacker.querySelector(".special-move").textContent;
+    const attackerName = attacker.querySelector(".name-tag").textContent;
     
     // Build up suspense for special move
     this.updateStatus(`${attackerName} charges up their special move...`);
@@ -592,22 +596,21 @@ const Battle1v1TeamSystem = {
   // Display options after battle completion
   // ═══════════════════════════════════════════════════════════════════════════════
   
-// Replace the showRestartButton method in battle-1v1-team.js (around line 650)
-showRestartButton(text) {
-  const restartContainer = document.getElementById("restart-container");
-  if (restartContainer) {
-    const isVictory = text.includes("Victory");
-    restartContainer.innerHTML = `
-      <button class="restart-button" onclick="window.location.reload()">
-        ${text}
-      </button>
-      <button class="restart-button" onclick="window.location.href='../character-select.html'" style="margin-left: 1rem;">
-        Choose New Character
-      </button>
-      ${isVictory ? '<button class="restart-button" onclick="window.location.href=\'battle1v1-3.html\'" style="margin-left: 1rem; background: #4CAF50;">Final Battle →</button>' : ''}
-    `;
-  }
-},
+  showRestartButton(text) {
+    const restartContainer = document.getElementById("restart-container");
+    if (restartContainer) {
+      const isVictory = text.includes("Victory");
+      restartContainer.innerHTML = `
+        <button class="restart-button" onclick="window.location.reload()">
+          ${text}
+        </button>
+        <button class="restart-button" onclick="window.location.href='../character-select.html'" style="margin-left: 1rem;">
+          Choose New Character
+        </button>
+        ${isVictory ? '<button class="restart-button" onclick="window.location.href=\'battle1v1-3.html\'" style="margin-left: 1rem; background: #4CAF50;">Next Battle →</button>' : ''}
+      `;
+    }
+  },
   
   // ═══════════════════════════════════════════════════════════════════════════════
   // UTILITY FUNCTIONS
