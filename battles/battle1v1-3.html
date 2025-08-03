@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subtle Spirits: Cruxfade - Final Battle</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Barlow+Semi+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/battle-shared.css">
+  <link rel="stylesheet" href="../css/battle-1v1.css">
+</head>
+
+<body>
+  <!-- Atmospheric mist background -->
+  <div class="mist-overlay"></div>
+  
+  <!-- Battle title and status -->
+  <h1 id="battle-status">Level 1 - Final Battle: The Darkness Awaits!</h1>
+  
+  <!-- Special move information display -->
+  <div id="special-info" class="hidden">&nbsp;</div>
+  
+  <!-- Main battle arena -->
+  <main class="board battle-1v1" id="battle-board">
+    
+    <!-- Player team area (hero + Simon) -->
+    <section id="player-team" class="team-area team-dual" role="region" aria-label="Your Team">
+      <!-- Player character and Simon cards will be inserted here by JavaScript -->
+    </section>
+    
+    <!-- Enemy team area (boss enemy) -->
+    <section id="enemy-team" class="team-area" role="region" aria-label="Boss Enemy">
+      <!-- Boss enemy card will be inserted here by JavaScript -->
+    </section>
+    
+  </main>
+  
+  <!-- Battle controls -->
+  <div class="button-controls">
+    <button id="battle-button" class="action-button" onclick="handleBattleClick()">
+      Face the Darkness
+    </button>
+    
+    <!-- Restart container for post-battle options -->
+    <div id="restart-container"></div>
+  </div>
+
+  <!-- Loading overlay for smooth transitions -->
+  <div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">The final battle begins...</p>
+  </div>
+
+  <!-- Character info modal for mobile -->
+  <div id="character-info-modal" class="character-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-character-name">Character</h3>
+        <button class="modal-close" onclick="closeCharacterModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <img id="modal-character-image" src="" alt="Character">
+        <div class="modal-info">
+          <p id="modal-character-description">Description</p>
+          <div class="modal-stats">
+            <div class="modal-stat">
+              <span class="stat-label">Health:</span>
+              <span id="modal-character-hp" class="stat-value">30</span>
+            </div>
+            <div class="modal-stat">
+              <span class="stat-label">Attack:</span>
+              <span id="modal-character-atk" class="stat-value">10</span>
+            </div>
+            <div class="modal-stat">
+              <span class="stat-label">Special:</span>
+              <span id="modal-character-special" class="stat-value">Special Move</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts - Load in correct order -->
+  <script>
+    // Boss enemy data for final battle
+    window.BOSS_ENEMY = {
+      name: "Shadow Lord",
+      hp: 50,
+      atk: 15,
+      img: "../images/Xavier.png", // Using Xavier as boss for now
+      desc: "Master of darkness. The source of all evil in Cruxfade.",
+      special: "Dark Vortex",
+      isPet: false
+    };
+    
+    // Enhanced character data for Battle 3
+    window.FALLBACK_CHARACTERS = {
+      magdaline: { name: "Magdaline", hp: 35, atk: 12, img: "../images/Magdaline.png", desc: "Gentle healer. Touched by glimmering light.", special: "Luminous Veil", isPet: false },
+      fizzwick: { name: "Fizzwick", hp: 35, atk: 12, img: "../images/Fizzwick.png", desc: "Fast, clever, and full of sparks.", special: "Spark Trick", isPet: false },
+      timothy: { name: "Timothy", hp: 35, atk: 12, img: "../images/Timothy.png", desc: "Brave and kind. Searches for sprouting light.", special: "Plant Blessing", isPet: false }
+    };
+    
+    // Simon the ally pet - now stronger
+    window.SIMON_ALLY = {
+      name: "Simon", 
+      hp: 20, 
+      atk: 8, 
+      img: "../images/Simon.png", 
+      desc: "Loyal pet spirit. Experienced from previous battles!", 
+      special: "Meowing Chirp", 
+      isPet: true
+    };
+  </script>
+
+  <!-- Battle system scripts -->
+  <script src="../js/battle-shared.js"></script>
+  <script src="../js/battle-1v1-team.js"></script>
+  
+  <!-- Battle initialization for boss fight -->
+  <script>
+    let battleInitialized = false;
+    let initRetryCount = 0;
+    const maxRetries = 15;
+
+    function initializeBattleSystem() {
+      console.log('=== INITIALIZING BOSS BATTLE SYSTEM ===');
+      
+      // Set up battle state for boss battle
+      if (!window.battleState) {
+        window.battleState = {
+          getPlayerCharacterData() {
+            try {
+              const characterKey = sessionStorage.getItem('selectedCharacter');
+              const characterData = sessionStorage.getItem('characterData');
+              
+              if (characterKey && characterData) {
+                const data = JSON.parse(characterData);
+                // Boost player stats for final battle
+                data.hp = 35;
+                data.atk = 12;
+                return data;
+              }
+              
+              const boosted = window.FALLBACK_CHARACTERS[characterKey] || window.FALLBACK_CHARACTERS.magdaline;
+              return boosted;
+              
+            } catch (e) {
+              console.warn('Could not load character data:', e);
+              return window.FALLBACK_CHARACTERS.magdaline;
+            }
+          },
+          
+          getSimonAlly() {
+            return window.SIMON_ALLY;
+          }
+        };
+      }
+
+      // Set up BattleShared for boss battle
+      if (!window.BattleShared) {
+        window.BattleShared = {
+          RosterUtils: {
+            getRandomEnemy() {
+              return window.BOSS_ENEMY;
+            },
+            
+            // Boss battle - just return the boss
+            getEnemyTeam() {
+              return [window.BOSS_ENEMY];
+            }
+          }
+        };
+      }
+
+      // Try to initialize Battle1v1Team
+      if (window.Battle1v1Team && typeof window.Battle1v1Team.init === 'function') {
+        try {
+          const success = window.Battle1v1Team.init();
+          if (success) {
+            battleInitialized = true;
+            console.log('✓ Boss battle system initialized successfully!');
+            
+            setupUIHandlers();
+            return true;
+          }
+        } catch (error) {
+          console.error('Battle initialization error:', error);
+        }
+      }
+
+      // Retry logic
+      initRetryCount++;
+      if (initRetryCount < maxRetries) {
+        console.log(`Retrying battle initialization... (${initRetryCount}/${maxRetries})`);
+        setTimeout(initializeBattleSystem, 500);
+        return false;
+      } else {
+        console.error('Failed to initialize battle system after maximum retries');
+        showInitializationError();
+        return false;
+      }
+    }
+
+    function setupUIHandlers() {
+      document.addEventListener('click', handleCardClick);
+      document.addEventListener('touchend', handleCardTouch, { passive: false });
+      
+      document.addEventListener('contextmenu', function(e) {
+        if (e.target.closest('.card')) {
+          e.preventDefault();
+        }
+      });
+    }
+
+    function handleCardClick(e) {
+      const card = e.target.closest('.card');
+      if (!card) return;
+      
+      document.querySelectorAll('.card.active').forEach(c => {
+        if (c !== card) c.classList.remove('active');
+      });
+      card.classList.toggle('active');
+    }
+
+    function handleCardTouch(e) {
+      const card = e.target.closest('.card');
+      if (!card) return;
+      
+      e.preventDefault();
+      
+      document.querySelectorAll('.card.active').forEach(c => {
+        if (c !== card) c.classList.remove('active');
+      });
+      card.classList.toggle('active');
+    }
+
+    function handleBattleClick() {
+      if (!battleInitialized) {
+        console.log('Battle not initialized, retrying...');
+        initializeBattleSystem();
+        return;
+      }
+      
+      try {
+        if (window.Battle1v1Team && typeof window.Battle1v1Team.start === 'function') {
+          window.Battle1v1Team.start();
+        } else {
+          console.error('Battle1v1Team.start function not available');
+          showInitializationError();
+        }
+      } catch (error) {
+        console.error('Error starting battle:', error);
+        showInitializationError();
+      }
+    }
+
+    function closeCharacterModal() {
+      const modal = document.getElementById('character-info-modal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    function showInitializationError() {
+      const statusElement = document.getElementById('battle-status');
+      const battleButton = document.getElementById('battle-button');
+      
+      if (statusElement) {
+        statusElement.textContent = 'Battle system failed to load - Check console for details';
+        statusElement.style.color = '#ff6b6b';
+      }
+      
+      if (battleButton) {
+        battleButton.textContent = 'Retry Initialization';
+        battleButton.onclick = () => {
+          initRetryCount = 0;
+          battleInitialized = false;
+          statusElement.style.color = '';
+          initializeBattleSystem();
+        };
+      }
+    }
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded, checking boss battle system...');
+      if (!battleInitialized) {
+        setTimeout(initializeBattleSystem, 500);
+      }
+    });
+
+    // Fallback initialization
+    window.addEventListener('load', function() {
+      if (!battleInitialized) {
+        console.log('Window loaded, final initialization attempt...');
+        setTimeout(initializeBattleSystem, 200);
+      }
+    });
+
+    console.log('Boss Battle HTML loaded.');
+  </script>
+
+</body>
+</html>
