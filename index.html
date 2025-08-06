@@ -17,17 +17,56 @@
     font-family: 'Source Sans Pro', sans-serif;
     color: #fff;
     position: relative;
-    background: #2a2a2f url('images/mist-overlay.png') repeat center center fixed;
-    background-size: 400px 400px;
+    background: #333;
     overflow-x: hidden;
-    animation: mistScroll 20s linear infinite;
-    transition: background-image 2s ease-in-out, background-color 2s ease-in-out;
   }
 
-  body.danger-mode {
+  /* Test: Simple overlay approach */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('images/mist-overlay.png') repeat;
+    opacity: 0.6;
+    z-index: -1;
+    animation: mistScroll 20s linear infinite;
+    pointer-events: none;
+    transition: background-image 2s ease-in-out, opacity 2s ease-in-out;
+  }
+
+  body.danger-mode::before {
     background-image: url('images/mist-overlay2.png');
-    background-color: #111;
+    opacity: 0.8;
     animation-duration: 15s;
+  }
+
+  /* Fallback: If images don't load, show animated gradient mist */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(255,255,255,0.08) 0%, transparent 50%);
+    z-index: -2;
+    animation: mistScroll 25s linear infinite reverse;
+    pointer-events: none;
+    opacity: 0.3;
+  }
+
+  body.danger-mode::after {
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(100,0,0,0.2) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(100,0,0,0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(100,0,0,0.15) 0%, transparent 50%);
+    opacity: 0.4;
   }
 
   .background {
